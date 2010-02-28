@@ -1,0 +1,102 @@
+This is the source code for the web site: http://tryhaskell.org/
+
+Email me at chrisdone@gmail.com for more information.
+
+REQUIREMENTS
+----------
+
+These are the main components:
+
+* A JSON service provided by a FastCGI process haskell-jsonrpc
+   <http://github.com/chrisdone/haskell-jsonrpc>
+* Which in turn uses a patched (mutilated) version of mueval
+   <http://github.com/chrisdone/mueval-interactive>
+* It also includes the graphics-raphael micro-project just for
+  providing simple Raphael features to the learner
+   <http://github.com/chrisdone/graphics-raphael>
+
+A web server. FastCGI support. PHP support.
+
+OTHER (INCLUDED) COMPONENTS
+------------------------
+
+* For the JavaScript interactive console it uses jquery.console.js
+   <http://github.com/chrisdone/jquery-console>
+
+STEPS TO GET RUNNING
+--------------------
+
+Download and build the patched mueval. Might not necessarily have to
+install it.
+
+Download and build haskell-jsonrpc, edit the file to set any paths
+(should only be one) to your mueval-core location.
+
+Install graphics-raphael.
+
+I used lighttpd, so I don't know about other HTTP servers, here is my
+lighttpd configuration:
+
+$HTTP["host"] =~ "tryhaskell" {
+    server.document-root       = "/home/chris/Projects/Kiboki/wwwroot/haskell/tryhaskell"
+    url.rewrite-once = ( "haskell-eval\.json(.*)$" => "haskell-json.fcgi$1" )
+    # haskell json evaluator
+    fastcgi.server = ("haskell-json.fcgi" =>
+      ("localhost" =>
+        ("socket" => "/home/chris/Projects/Kiboki/haskell/haskell-json/httpd/haskell-json.sock",
+         "bin-path" => "/home/chris/Projects/Kiboki/haskell/haskell-json/dist/build/haskell-json.fcgi/haskell-json.fcgi",
+         "max-procs" => 4,
+         "docroot" => "/home/chris/Projects/Kiboki/haskell/haskell-json")))
+}
+
+The main functionality/central process is provided by
+js/tryhaskell.js. Have a look at the `pages` variable, those are the
+lessons.
+
+You should be able to make your own tutorials from this project. Feel
+free to change the look and feel completely and visual creditation on
+the page is not necessary.
+
+TESTED ON
+---------
+
+  Internet Explorer 6 / 7 / 8
+  Opera 10.01
+  Chromium 4.0.237.0 (Ubuntu build 31094)
+  Firefox 3.5.8
+
+LICENSE
+-------
+
+Copyright 2010 Chris Done. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+   1. Redistributions of source code must retain the above
+      copyright notice, this list of conditions and the following
+      disclaimer.
+
+   2. Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials
+      provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY CHRIS DONE ``AS IS'' AND ANY EXPRESS
+OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL CHRIS DONE OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGE.
+
+The views and conclusions contained in the software and
+documentation are those of the authors and should not be
+interpreted as representing official policies, either expressed or
+implied, of Chris Done.

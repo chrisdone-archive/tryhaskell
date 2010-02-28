@@ -1,0 +1,150 @@
+/* Try Haskell design by Chris Done */
+/* Mon Feb 22 22:39:10 GMT 2010 */
+body {
+    font-family:"DejaVu Sans",sans-serif;
+}
+a {
+    text-decoration:none;
+    color: #382567
+}
+div.page-wrap {
+    width:600px; margin:10px auto;
+}
+div.main-wrapper { 
+    background:url(../images/main-wrapper.gif) 
+}
+div.main-wrapper-top {
+    height:5px;background:url(../images/main-wrapper-borders.gif);
+    font-size:0 /* IE6, go figure */
+}
+div.main-wrapper-bottom {
+    height:4px;background:url(../images/main-wrapper-borders.gif) 0 100%;
+    font-size:0 /* IE6, go figure */
+}
+div.main-wrapper-borders {
+    background:url(../images/main-wrapper-bg.gif); padding:15px;
+}
+div.console-wrapper {
+    margin:10px auto;width:566px;
+    cursor:text;
+    font-family:"DejaVuSansMonoBook",monospace;
+}
+div.console-wrapper-top {
+    height:3px;background:url(../images/console-wrapper-borders.gif);
+    font-size:0 /* IE6, go figure */
+}
+div.console-wrapper-bottom {
+    height:3px;background:url(../images/console-wrapper-borders.gif) 0 100%;
+    font-size:0 /* IE6, go figure */
+}
+div.console-wrapper-borders {
+    background:url(../images/console-wrapper-bg.gif); padding:15px;
+}
+div.editor-wrapper {
+    margin:10px auto;width:566px;
+    font-family:"DejaVuSansMonoBook",monospace;
+}
+div.editor-wrapper-top {
+    height:3px;background:url(../images/console-wrapper-borders.gif);
+    font-size:0 /* IE6, go figure */
+}
+div.editor-wrapper-bottom {
+    height:3px;background:url(../images/console-wrapper-borders.gif) 0 100%;
+    font-size:0 /* IE6, go figure */
+}
+div.editor-wrapper-borders {
+    background:url(../images/console-wrapper-bg.gif); padding:15px;
+}
+div.editor-wrapper textarea {
+    border:0;
+}
+div.guide-wrapper {
+    color:#fff; width:566px;margin-left:2px
+}
+div.guide-wrapper-top {
+    height:4px;background:url(../images/guide-wrapper-borders.gif);
+    font-size:0 /* IE6, go figure */
+}
+div.guide-wrapper-bottom {
+    height:4px;background:url(../images/guide-wrapper-borders.gif) 0 100%;
+    font-size:0 /* IE6, go figure */
+}
+div.guide-wrapper-borders {
+    background:url(../images/guide-wrapper-bg.gif); padding:15px;
+}
+div.footer-wrapper {
+    background:url(../images/footer-wrapper.gif);
+    margin:10px auto;width:600px;
+    font-family:"DejaVu Sans",sans-serif;
+    margin-bottom:20px
+}
+div.footer-wrapper-top {
+    height:5px;background:url(../images/footer-wrapper-borders.gif);
+    font-size:0 /* IE6, go figure */
+}
+div.footer-wrapper-bottom {
+    height:5px;background:url(../images/footer-wrapper-borders.gif) 0 100%;
+    font-size:0 /* IE6, go figure */
+}
+div.footer-wrapper-borders {
+    background:url(../images/footer-wrapper-bg.gif); padding:10px;
+    font-size:12px
+}
+h1 { 
+    text-indent:-9999px; background:url(../images/tryhaskell.gif) no-repeat;
+    width:318px; height:48px; margin-bottom:20px;
+}
+div.console {
+    /*height:200px*/
+    height:258px;
+    cursor:text;
+}
+div.footer {
+    line-height: 1.3em;
+}
+div.console { font-size:14px; }
+div.console div.jquery-console-inner 
+{ height:258px; overflow:auto }
+div.console div.jquery-console-prompt-box
+{ color:#437375; font-family:"DejaVuSansMonoBook",monospace; margin-top:1em; }
+div.console div.jquery-console-focus span.jquery-console-cursor 
+{ background:#666; color:#fff; }
+div.console div.jquery-console-message-error {
+    color:#ef0505; font-family:sans-serif; font-weight:bold;
+    padding-left:1em;padding-top:0.5em 
+}
+div.console div.jquery-console-message-value
+{ color:#000; font-family:"DejaVuSansMonoBook",monospace;padding-left:1em;padding-top:0.5em; font-weight: bold; }
+div.console div.jquery-console-message-type
+{ color:#382567; font-family:"DejaVuSansMonoBook",monospace;padding-left:1em;padding-top:0.5em; font-size:.9em  }
+div.console span.jquery-console-prompt-label { font-weight:bold }
+div.console div.jquery-console-welcome { font-family:"DejaVu Sans",sans-serif; }
+
+div.guide { background:#453d5b;font-size:14px; }
+div.guide h2,h3 { font-weight:bold;margin-bottom:1em }
+div.guide p { margin-bottom:0.5em }
+div.guide ul { margin-left:1em; margin-bottom:1em }
+div.guide li { line-height:2em }
+div.guide code { color:#8ae0c2; font-family:"DejaVuSansMonoBook",monospace; background:#2d2542;padding:0.2em;cursor:default }
+div.guide div.indent { margin-left: 10px }
+div.guide p { line-height: 1.7em }
+div.guide p em { font-style:italic }
+div.guide p strong { text-decoration:underline;color:#fff;font-weight:bold; }
+div.guide ol { margin-left:50px; list-style-type:decimal  }
+div.guide a { color:white; text-decoration:underline; }
+div.guide img.book-thumb { float: right; padding:0px 3px }
+div.guide small.note { color:#ed9fda; font-size:0.9em}
+div.share-wrapper { font-size:12px;padding:10px 0em 0em 10px }
+div.share-wrapper strong { font-weight: bold }
+
+.clearfix:after { content:"."; display:block; height:0; clear:both; visibility:hidden }
+
+div.badge-wrap {
+    position:relative;
+    width:600px;margin:0 auto;
+}
+div.badge {
+    width:100px; height:104px; 
+    background:url(../images/alpha.png) no-repeat;
+    position:absolute; top: 0px;left:510px
+}
