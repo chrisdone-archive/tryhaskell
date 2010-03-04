@@ -41,8 +41,10 @@
 //   Firefox 3.5.8
 
 (function($){
+/*
     var raphaelPaper;
     var raphaelObjs;
+    */
     var tutorialGuide;
     // Page variables
     //
@@ -321,9 +323,9 @@
         ////////////////////////////////////////////////////////////////////////
         // Raphael globals
         // Create Raphael canvas
-        $('#raphael').css('height','150px').parent().parent().hide();
-        raphaelPaper = Raphael($('#raphael')[0],536, 150);
-        raphaelObjs = {};
+        // $('#raphael').css('height','150px').parent().parent().hide();
+        // raphaelPaper = Raphael($('#raphael')[0],536, 150);
+        // raphaelObjs = {};
 
         ////////////////////////////////////////////////////////////////////////
         // Guide globals
@@ -395,7 +397,7 @@
 
     String.prototype.trim = function() {
         return this.replace(/^[\t ]*(.*)[\t ]*$/,'$1');
-    }
+    };
 
     ////////////////////////////////////////////////////////////////////////
     // Trigger console commands
@@ -418,8 +420,8 @@
                 }
             }
         }
-        }
-    } 
+        };
+    };
 
     ////////////////////////////////////////////////////////////////////////
     // Change the tutorial page
@@ -436,7 +438,7 @@
                 tutorialGuide.animate({opacity:1},'fast');
             });
         }
-    }
+    };
 
     ////////////////////////////////////////////////////////////////////////
     // Trigger a page according to a result
@@ -448,13 +450,13 @@
             pageTrigger++; 
             setTutorialPage(result,n);
         }
-    }
+    };
 
     ////////////////////////////////////////////////////////////////////////
     // Trigger various libraries after JSONRPC returned
     function handleSuccess(report,result) {
         if (result.type.match(/^Graphics\.Raphael\.Raphael[\r\n ]/)) {
-            runRaphael(result.result);
+            //runRaphael(result.result);
             report();
         } else {
             if (result.result) {
@@ -471,10 +473,11 @@
                 );
             }
         }
-    }
+    };
 
     ////////////////////////////////////////////////////////////////////////
     // Raphael support
+/*
     function runRaphael(expr) {
         raphaelPaper.clear();
         $('#raphael').parent().parent().slideDown(function(){
@@ -498,4 +501,5 @@
         }
         }
     }
+    */
 })(jQuery);
