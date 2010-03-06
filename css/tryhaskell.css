@@ -103,9 +103,9 @@ div.console {
 div.footer {
     line-height: 1.3em;
 }
-div.console { background:#fff;font-size:14px; }
+div.console { background:#fff;font-size:14px; position:relative }
 div.console div.jquery-console-inner 
-{ height:220px; overflow:auto }
+{ height:220px; overflow:auto; background:white}
 div.console div.jquery-console-prompt-box
 { color:#437375; font-family:monospace; margin-top:0.5em; }
 div.console div.jquery-console-focus span.jquery-console-cursor 
@@ -167,3 +167,18 @@ a.tryhaskellcover {
     background-position: 0px 0px no-repeat;
 }
 a.tryhaskellcover span { display:none; }
+div.console-wrapper .notice {
+    position:absolute;
+    bottom:0;right:0;
+    margin:10px;
+    background:#eee;
+    color:black;
+    padding:10px;
+    font-size:12px;
+    font-family:sans-serif;
+    font-weight:bold;
+}
+p.ajax-loader { background:url(../images/ajax-loader.gif); width:16px; height:16px;text-indent:-9999px }
+
+.notice a { padding:3px;background:#333;color:white}
+.notice .action { text-align: right }

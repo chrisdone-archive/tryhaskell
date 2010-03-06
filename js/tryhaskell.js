@@ -41,9 +41,9 @@
 //   Firefox 3.5.8
 
 (function($){
-/*
-    var raphaelPaper;
-    var raphaelObjs;
+    /*
+      var raphaelPaper;
+      var raphaelObjs;
     */
     var tutorialGuide;
     // Page variables
@@ -266,21 +266,8 @@
 
         ];
     var pageTrigger = -1;
-
-    /*
-      Some demo values:
-
-      "<p>That's all for now! Here are some <a href=\"http://www.haskell.org/ghc/docs/latest/html/libraries/base/Data-List.html\">neat things</a> you can "+
-      "try:</p>"+
-      "<ul><li><code>:t show</code></li>"+
-      "<li><code>show 1</code></li>"+
-      "<li><code>map (*5) [12,13,74]</code></li>"+
-      "<li><code>reverse (map (+2) [1..5])</code></li>"+
-      "<li><code>\"hello \" ++ \"world!\"</code></li>"+
-      "<li><code>circle 20 30 20</code></li>"+
-      "<li><code>mapM_ (\\x -> circl­e (10*x) (sin x*10+20) 10) [1..10]</code></li>"+
-      "</ul>"
-    */
+    var notices = [];
+    var controller; // Console controller
 
     ////////////////////////////////////////////////////////////////////////
     // Unshow a string
@@ -311,13 +298,15 @@
 
     $(document).ready(function(){
         $('.reset-btn').click(function(){
-            controller.reset();
-            tutorialGuide.animate({opacity:0,height:0},'fast',function(){
-                tutorialGuide.html(initalGuide);
-                tutorialGuide.css({height:'auto'});
-                tutorialGuide.animate({opacity:1},'fast');
-            });
-
+            if (confirm("Are you sure you want to reset? " +
+                        "You will lose your current state.")) {
+                controller.reset();
+                tutorialGuide.animate({opacity:0,height:0},'fast',function(){
+                    tutorialGuide.html(initalGuide);
+                    tutorialGuide.css({height:'auto'});
+                    tutorialGuide.animate({opacity:1},'fast');
+                });
+            }
         });
 
         ////////////////////////////////////////////////////////////////////////
@@ -332,67 +321,86 @@
         // Get the guide element.
         tutorialGuide = $('.guide');
         var initalGuide = tutorialGuide.html();
+        var toldAboutRet = false;
+        var tellAboutRet;
 
         ////////////////////////////////////////////////////////////////////////
         // Create console
         var console = $('.console');
-        var controller; // Console controller
-        if (!$.browser.msie) {
-            var loader = $('<img src="images/ajax-loader.gif">');
-            console.parent().append(loader);
-            console.hide();
-        }
-        setTimeout(function(){
-            if (!$.browser.msie) {
-                loader.remove();
-                console.slideDown();
-            }
-            controller = console.console({
-                promptLabel: '> ',
-                commandValidate:function(line){
-                    if (line == "") return false; // Empty line is invalid
-                    else return true;
-                },
-                commandHandle:function(line,report){
-                    if (libTrigger(line,report)) return;
-                    // TODO: a proper UrlEncode
-                    $.get("/haskell-eval.json?jsonrpc=2.0&id=1&method=eval&params="
-                          + JSON.stringify({expr:line.replace(/\+/g,'%2b').replace(/\#/g,'%23')}),
-                          function(resp){
-                              var result = JSON.parse(resp).result;
-                              if (pageTrigger > -1) { triggerTutorialPage(pageTrigger,result); }
-                              if (result.type) {
-                                  handleSuccess(report,result);
-                              } else if (result.error) {
-                                  report(
-                                      [{msg:result.error,
-                                        className:"jquery-console-message-error"}]
-                                  );
-                              } else if (result.exception) {
-                                  report(
-                                      [{msg:result.exception,
-                                        className:"jquery-console-message-error"}]
-                                  );
-                              } else if (result.internal) {
-                                  report(
-                                      [{msg:result.internal,
-                                        className:"jquery-console-message-error"}]
-                                  );
-                              } else if (result.result) {
-                                  if (result.expr.match(/^:modules/)) {
-                                      report(
-                                          [{msg:result.result.replace(/[\["\]]/g,'').replace(/,/g,', '),
-                                            className:"jquery-console-message-type"}]);
-                                  }
+        controller = console.console({
+            promptLabel: '> ',
+            commandValidate:function(line){
+                if (line == "") return false; // Empty line is invalid
+                else return true;
+            },
+            commandHandle:function(line,report){
+                if (tellAboutRet) tellAboutRet.fadeOut(function(){
+                    $(this).remove();
+                });
+                if (libTrigger(line,report)) return;
+                var ajaxloader = $('<p class="ajax-loader">Loading...</p>');
+                controller.inner.append(ajaxloader);
+                controller.scrollToBottom();
+                // TODO: a proper UrlEncode
+                $.get("/haskell-eval.json?jsonrpc=2.0&id=1&method=eval&params="
+                      + JSON.stringify({expr:line.replace(/\+/g,'%2b')
+                                        .replace(/\#/g,'%23')}),
+                      function(resp){
+                          ajaxloader.remove();
+                          var result = JSON.parse(resp).result;
+                          if (pageTrigger > -1) {
+                              triggerTutorialPage(pageTrigger,result); }
+                          if (result.type) {
+                              handleSuccess(report,result);
+                          } else if (result.error) {
+                              report(
+                                  [{msg:result.error,
+                                    className:"jquery-console-message-error jquery-console-message-compile-error"}]
+                              );
+                              notice('compile-error',
+                                     "A compile-time error! "+
+                                     "It just means the expression wasn't quite right. " +
+                                     "Try again.",
+                                     'prompt');
+                          } else if (result.exception) {
+                              var err = limitsError(result.exception);
+                              report(
+                                  [{msg:err,
+                                    className:"jquery-console-message-error jquery-console-message-exception"}]
+                              );
+                              if (err == result.exception) {
+                                  notice('compile-error',
+                                         "A run-time error! The expression was right but the"+
+                                         " result didn't make sense. Check your expression and try again.",
+                                         'prompt');
                               }
-                          });
-                },
-                autofocus:true,
-                promptHistory:true,
-                historyPreserveColumn:true,
-                welcomeMessage:'Type Haskell expressions in here.'
-            });
-        },$.browser.msie?0:500);
+                          } else if (result.internal) {
+                              report(
+                                  [{msg:limitsError(result.internal),
+                                    className:"jquery-console-message-error jquery-console-message-internal"}]
+                              );
+                          } else if (result.result) {
+                              if (result.expr.match(/^:modules/)) {
+                                  report(
+                                      [{msg:result.result.replace(/[\["\]]/g,'')
+                                        .replace(/,/g,', '),
+                                        className:"jquery-console-message-type"}]);
+                              }
+                          }
+                      });
+            },
+            charInsertTrigger:function(){
+                var t = notice('tellaboutreturn',
+                               "Hit Return when you're "+
+                               "finished typing your expression.");
+                if (t) tellAboutRet = t;
+                return true;
+            },
+            autofocus:true,
+            promptHistory:true,
+            historyPreserveColumn:true,
+            welcomeMessage:'Type Haskell expressions in here.'
+        });
     });
 
     String.prototype.trim = function() {
@@ -433,7 +441,10 @@
                     tutorialGuide.html(pages[n].guide(result));
                 else
                     tutorialGuide.html(pages[n].guide);
-                if (true) tutorialGuide.append('<div class="note">Tip: You\'re at step ' + (n+1) + ', type <code>step' + (n+1) + '</code> to return to this step.</div>');
+                if (true) tutorialGuide
+                    .append('<div class="note">Tip: You\'re at step ' + (n+1)
+                            + ', type <code>step' + (n+1)
+                            + '</code> to return to this step.</div>');
                 tutorialGuide.css({height:'auto'});
                 tutorialGuide.animate({opacity:1},'fast');
             });
@@ -477,29 +488,54 @@
 
     ////////////////////////////////////////////////////////////////////////
     // Raphael support
-/*
-    function runRaphael(expr) {
-        raphaelPaper.clear();
-        $('#raphael').parent().parent().slideDown(function(){
-            var exprs = expr.split(/\n/g);
-            for (var x in exprs)
-                raphaelRunExpr(exprs[x]);
-        });
-    }
-    function raphaelRunExpr(expr) {
-        var expr = expr.split(/ /g);
-        switch (expr[0]) {
-        case 'new': {
-            switch (expr[2]) {
-            case 'circle': {
-                var x = expr[3], y = expr[4], radius = expr[5];
-                var circle = raphaelPaper.circle(x*1,y*1,radius*1);
-                circle.attr("fill", "#7360a4");
-                break;
-            }
-            }
-        }
-        }
-    }
+    /*
+      function runRaphael(expr) {
+      raphaelPaper.clear();
+      $('#raphael').parent().parent().slideDown(function(){
+      var exprs = expr.split(/\n/g);
+      for (var x in exprs)
+      raphaelRunExpr(exprs[x]);
+      });
+      }
+      function raphaelRunExpr(expr) {
+      var expr = expr.split(/ /g);
+      switch (expr[0]) {
+      case 'new': {
+      switch (expr[2]) {
+      case 'circle': {
+      var x = expr[3], y = expr[4], radius = expr[5];
+      var circle = raphaelPaper.circle(x*1,y*1,radius*1);
+      circle.attr("fill", "#7360a4");
+      break;
+      }
+      }
+      }
+      }
+      }
     */
+
+    function notice(name,msg,style) {
+        if (!notices[name]) {
+            notices[name] = name;
+            return controller.notice(msg,style);
+        }
+    }
+
+    function limitsError(str) {
+        if (str == "Terminated!") {
+            notice('terminated',
+                   "This error means it took to long to work" +
+                   " out on the server.",
+                   'fadeout');
+            return "Terminated!";
+        } else if (str == "Time limit exceeded.") {
+            notice('exceeded',
+                   "This error means it took to long to work out on the server. " +
+                   "Try again.",
+                   'fadeout');
+            return "Terminated! Try again.";
+        }
+        return str;
+    }
+
 })(jQuery);

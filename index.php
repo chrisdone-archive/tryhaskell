@@ -17,7 +17,8 @@
     </style>
     <![endif]-->
     <script type="text/javascript" src="js/lib.min.js"></script>
-    <script type="text/javascript" src="js/tryhaskell.min.js"></script>
+    <script type="text/javascript" src="js/jquery.console.js"></script>
+    <script type="text/javascript" src="js/tryhaskell.js"></script>
   </head>
   <body>
     <div class="page-wrap">
