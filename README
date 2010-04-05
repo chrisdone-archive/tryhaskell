@@ -5,57 +5,7 @@ Email me at chrisdone@gmail.com for more information.
 REQUIREMENTS
 ----------
 
-These are the main components:
-
-* A JSON service provided by a FastCGI process haskell-jsonrpc
-   <http://github.com/chrisdone/haskell-jsonrpc>
-* Which in turn uses a patched (mutilated) version of mueval
-   <http://github.com/chrisdone/mueval-interactive>
-* It also includes the graphics-raphael micro-project just for
-  providing simple Raphael features to the learner
-   <http://github.com/chrisdone/graphics-raphael>
-
-A web server. FastCGI support. PHP support.
-
-OTHER (INCLUDED) COMPONENTS
-------------------------
-
-* For the JavaScript interactive console it uses jquery.console.js
-   <http://github.com/chrisdone/jquery-console>
-
-STEPS TO GET RUNNING
---------------------
-
-Download and build the patched mueval. Might not necessarily have to
-install it.
-
-Download and build haskell-jsonrpc, edit the file to set any paths
-(should only be one) to your mueval-core location.
-
-Install graphics-raphael.
-
-I used lighttpd, so I don't know about other HTTP servers, here is my
-lighttpd configuration:
-
-$HTTP["host"] =~ "tryhaskell" {
-    server.document-root       = "/home/chris/Projects/Kiboki/wwwroot/haskell/tryhaskell"
-    url.rewrite-once = ( "haskell-eval\.json(.*)$" => "haskell-json.fcgi$1" )
-    # haskell json evaluator
-    fastcgi.server = ("haskell-json.fcgi" =>
-      ("localhost" =>
-        ("socket" => "/home/chris/Projects/Kiboki/haskell/haskell-json/httpd/haskell-json.sock",
-         "bin-path" => "/home/chris/Projects/Kiboki/haskell/haskell-json/dist/build/haskell-json.fcgi/haskell-json.fcgi",
-         "max-procs" => 4,
-         "docroot" => "/home/chris/Projects/Kiboki/haskell/haskell-json")))
-}
-
-The main functionality/central process is provided by
-js/tryhaskell.js. Have a look at the `pages` variable, those are the
-lessons.
-
-You should be able to make your own tutorials from this project. Feel
-free to change the look and feel completely and visual creditation on
-the page is not necessary.
+An internet connection.
 
 TESTED ON
 ---------
