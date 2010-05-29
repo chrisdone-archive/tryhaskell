@@ -424,6 +424,14 @@ function toHex(n){
                 jsonp("http://tryhaskell.org/haskell.json?method=eval&pad=handleJSON&expr=" + encodeHex(line),
                       function(resp){
                           ajaxloader.remove();
+                          $('.jquery-console-prompt').each(function(){
+                              if (!$(this).hasClass('prompt-done')) {
+                                  $(this).addClass('prompt-done');
+                                  $(this).click(function(){
+                                      controller.promptText($(this).text());
+                                  });
+                              }
+                          });
                           var result = resp;
                           if (pageTrigger > -1) {
                               triggerTutorialPage(pageTrigger,result); }
@@ -477,6 +485,12 @@ function toHex(n){
             promptHistory:true,
             historyPreserveColumn:true,
             welcomeMessage:'Type Haskell expressions in here.'
+        });
+
+        $('.guide code').css('cursor','pointer');
+        $('.guide code').click(function(){
+            controller.promptText($(this).text());
+            controller.inner.click();
         });
     });
 

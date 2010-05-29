@@ -111,6 +111,10 @@ div.console div.jquery-console-inner
 { height:220px; overflow:auto; background:white}
 div.console div.jquery-console-prompt-box
 { color:#437375; font-family:monospace; margin-top:0.5em; }
+div.console div.jquery-console-prompt-box .prompt-done
+{ cursor: pointer }
+div.console div.jquery-console-prompt-box .prompt-done:hover
+{ background:#453D5B; color: white; }
 div.console div.jquery-console-focus span.jquery-console-cursor 
 { background:#666; color:#fff; }
 div.console div.jquery-console-message-error {
