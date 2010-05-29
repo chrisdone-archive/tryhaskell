@@ -76,6 +76,9 @@ div.footer-wrapper {
     font-family:"DejaVu Sans",sans-serif;
     margin-bottom:20px
 }
+div.footer-wrapper a:hover {
+  text-decoration: underline;
+}
 div.footer-wrapper-top {
     height:5px;background-position:  -50px -54px;
     font-size:0 /* IE6, go figure */

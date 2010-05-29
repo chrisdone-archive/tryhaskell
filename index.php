@@ -89,22 +89,23 @@
           <div class="footer-wrapper-borders bgs">
             <div class="footer">
               <p>
-                Snerged by
+                <a href="http://chrisdone.com/posts/2010-04-05-haskell-json-service-tryhaskell.html">Evaluation
+                  service</a>
+                  and <a href="http://github.com/chrisdone/tryhaskell">Try
+                  Haskell</a> by
                 <a href="http://chrisdone.com/">
                   Chris Done,
                 </a>
                 concept and interface blatantly copied from
                 <a href="http://tryruby.org/"
                    title="_why's Try Ruby">
-                  _why's Try Ruby!,
-                </a>
+                  _why's Try Ruby!</a>,
                 Haskell evaluator powered by a patched version of 
                 <a href="http://hackage.haskell.org/package/mueval"
                    title="mueval on Hackage">
-                  Gwern Branwen's mueval,
-                </a>
-                console proudly written 
-                in
+                  Gwern Branwen's mueval</a>,
+                <a href="http://github.com/chrisdone/jquery-console">console
+                  library</a> proudly written in
                 <a href="http://jquery.com/">
                   JQuery.
                 </a>
