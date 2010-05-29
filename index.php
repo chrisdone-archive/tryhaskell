@@ -115,9 +115,6 @@
         </div>
       </div>
     </div>
-    <!--[if lte IE 6]>
-    <script type="text/javascript" src="js/supersleight-min.js"></script>
-    <![endif]-->
     <? if ($_SERVER['HTTP_HOST'] != "kiboki" && $_SERVER['HTTP_HOST'] != "kiboki.net") { ?>
     <script type="text/javascript">
       var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
