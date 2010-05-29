@@ -199,8 +199,9 @@
             var keyCode = e.keyCode || e.which;
             if (cancelKeyPress != keyCode && keyCode >= 32){
                 if (cancelKeyPress) return false;
-                if (typeof config.charInsertTrigger == 'function' &&
-                    config.charInsertTrigger(keyCode))
+                if (typeof config.charInsertTrigger == 'undefined' ||
+                    (typeof config.charInsertTrigger == 'function' &&
+                     config.charInsertTrigger(keyCode,promptText)))
                     typer.consoleInsert(keyCode);
             }
             if ($.browser.webkit) return false;
@@ -417,6 +418,16 @@
                 column += n;
                 return true;
             } else return false;
+        };
+
+        extern.promptText = function(text){
+            if (text) {
+                promptText = text;
+                if (column > promptText.length)
+                    column = promptText.length;
+                updatePromptDisplay();
+            }
+            return promptText;
         };
 
         ////////////////////////////////////////////////////////////////////////
