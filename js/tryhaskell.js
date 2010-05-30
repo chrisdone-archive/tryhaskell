@@ -366,7 +366,7 @@ function toHex(n){
                  return result.type == "(Num t) => t";
              }},
             {guide:function(result){
-                if (!result) result = { value: "[1,4,9,16,25,36,49,64,81,100]" };
+                if (!result || !result.value) result = { value: "[1,4,9,16,25,36,49,64,81,100]" };
                 return "<h3>Let there be functions</h3>" +
 
                 "<p>That's so cool! We described a simple function <code>square</code> and then " +
@@ -458,7 +458,7 @@ function toHex(n){
                  "<code>let (a:b:c:[]) = \"xyz\" in a</code>"
              },
              trigger:function(result){
-                 return result.type == "Char";
+                 return result.type == "(Num t) => t";
              }},
             {guide:function(result){
                 return "<h3>"+rmsg(["Ignorance is bliss","Ignoring values"])+"</h3>" +
@@ -563,7 +563,7 @@ function toHex(n){
     function htmlEncode(text){
         var wbr = $.browser.opera? '&#8203;' : '';
         return (
-            text.replace(/&/g,'&amp;')
+            (''+text).replace(/&/g,'&amp;')
                 .replace(/</g,'&lt;')
                 .replace(/</g,'&lt;')
                 .replace(/ /g,'&nbsp;')
