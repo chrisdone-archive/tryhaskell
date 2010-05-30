@@ -99,8 +99,7 @@ h1.main-header {
     float:left
 }
 div.console {
-    /*height:200px*/
-    height:220px;
+    height:150px;
     cursor:text;
 }
 div.footer {
@@ -108,7 +107,7 @@ div.footer {
 }
 div.console { background:#fff;font-size:14px; position:relative }
 div.console div.jquery-console-inner 
-{ height:220px; overflow:auto; background:white}
+{ height:150px; overflow:auto; background:white}
 div.console div.jquery-console-prompt-box
 { color:#437375; font-family:monospace; margin-top:0.5em; }
 div.console div.jquery-console-prompt-box .prompt-done
