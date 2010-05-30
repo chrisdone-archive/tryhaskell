@@ -127,7 +127,7 @@ div.console div.jquery-console-message-type
 div.console span.jquery-console-prompt-label { font-weight:bold }
 div.console div.jquery-console-welcome { font-family:"DejaVu Sans",sans-serif; }
 
-div.guide { background:#453d5b;font-size:14px; }
+div.guide { background:#453d5b;font-size:14px; position:relative }
 div.guide h2,h3 { font-weight:bold;margin-bottom:1em }
 div.guide p { margin-bottom:0.5em }
 div.guide ul { margin-left:1em; margin-bottom:1em }
@@ -144,6 +144,8 @@ div.guide img.book-thumb { float: right; padding:0px 3px }
 div.guide small.note { color:#ed9fda; font-size:0.9em}
 div.guide div.note { font-size:0.8em;color:#ac739e;margin-top:2em }
 div.guide div.note code { color:#6eb29a; }
+div.guide div.lesson { color:#ed9fda; font-size:0.8em; display:block;
+  position:absolute; right: 0px; bottom: 0px; }
 
 div.share-wrapper { font-size:12px;padding:10px 0em 0em 10px }
 div.share-wrapper strong { font-weight: bold }

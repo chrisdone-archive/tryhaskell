@@ -109,7 +109,8 @@ function toHex(n){
             // Lesson 1
 
             // Simple addition
-            {guide:
+            {lesson:1,
+             guide:
              '<h3>' + rmsg(['Learning By Numbers','Music is Math','Back to Basics'])
              + '</h3>' 
              + "<p>To kick off let's try some maths out. Up there you can"
@@ -176,7 +177,8 @@ function toHex(n){
             ////////////////////////////////////////////////////////////////////////
             // Lesson 2 - Functions
             // Functions on lists
-            {guide:function(result){
+            {lesson:2,
+             guide:function(result){
                 if (!result) result = {result:"[13,23,30]"};
                 return '<h3>' + rmsg(["We put the funk in function"]) +
                     '</h3>' +
@@ -231,7 +233,8 @@ function toHex(n){
              }
             },
             // Summary of lesson 2
-            {guide:function(result){
+            {lesson:3,
+             guide:function(result){
                 return '<h3>' +
                     rmsg(["Lesson 2 done! Wow, great job!",
                           "Lesson 2 completo!"]) +
@@ -247,7 +250,9 @@ function toHex(n){
                     "<p>Next, we take a short detour to learn about " +
                     "<strong>syntactic sugar</strong>. " +
                     "Try typing this out:</p>" +
-                    "<code>'a' : []</code>"
+                    "<p><code>'a' : []</code></p>" + 
+                    "<p>Or skip to <code>lesson4</code> to learn about functions," +
+                    " the meat of Haskell!" 
             },
              trigger:function(result){
                  return result.type == "(Num t) => t";
@@ -294,7 +299,8 @@ function toHex(n){
              }
             },
             // Summary of syntactic sugar section
-            {guide:function(result){
+            {lesson:4,
+             guide:function(result){
                 return '<h3>' +
                     rmsg(["Lesson 3 over! Syntactic sugar is sweet"]) +
                     '</h3>' +
@@ -516,7 +522,7 @@ function toHex(n){
             pageTrigger = 0;
             return true;
         }
-        default: {
+        default: {            
             var m = line.trim().match(/^step([0-9]+)/);
             if (m) {
                 if ((m[1]*1) <= pages.length) {
@@ -524,6 +530,17 @@ function toHex(n){
                     report();
                     pageTrigger = m[1]-1;
                     return true;
+                }
+            }
+            var m = line.trim().match(/^lesson([0-9]+)/);
+            if (m) {
+                for (var i = 0; i < pages.length; i++) {
+                    if (pages[i].lesson == m[1]*1) {
+                        setTutorialPage(undefined,i);
+                        report();
+                        pageTrigger = i;
+                        return true;
+                    }
                 }
             }
         }
@@ -535,6 +552,7 @@ function toHex(n){
 
     function setTutorialPage(result,n) {
         if (pages[n]) {
+            tutorialGuide.find('.lesson').remove();
             tutorialGuide.animate({opacity:0,height:0},'fast',function(){
                 if (typeof(pages[n].guide) == 'function')
                     tutorialGuide.html(pages[n].guide(result));
@@ -543,13 +561,23 @@ function toHex(n){
                 if (true) tutorialGuide
                     .append('<div class="note">Tip: You\'re at step ' + (n+1)
                             + ', type <code>step' + (n+1)
-                            + '</code> to return to this step.</div>');
+                            + '</code> to return to this step.</div>')
+                    .append('<div class="lesson">Lesson: ' +
+                            searchLessonBack(n) +
+                            '</div>');
                 tutorialGuide.css({height:'auto'});
                 tutorialGuide.animate({opacity:1},'fast');
                 makeGuidSamplesClickable();
             });
         }
     };
+
+    function searchLessonBack(page) {
+       for (var i = page; i >= 0; i--) {
+           if (pages[i].lesson) return pages[i].lesson;
+       }
+       return "1";
+    }
 
     ////////////////////////////////////////////////////////////////////////
     // Trigger a page according to a result
