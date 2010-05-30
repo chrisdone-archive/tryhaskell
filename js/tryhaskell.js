@@ -712,6 +712,11 @@ function toHex(n){
         });
 
         makeGuidSamplesClickable();
+
+        var match = window.location.href.match(/#([0-9]+)$/);
+        if (match) {
+            setTutorialPage(undefined,match[1]-1);
+        }
     });
 
     function makeGuidSamplesClickable() {
@@ -789,6 +794,7 @@ function toHex(n){
 
     function setTutorialPage(result,n) {
         if (pages[n]) {
+            window.location.href = '#' + (1*n + 1);
             tutorialGuide.find('.lesson').remove();
             tutorialGuide.animate({opacity:0,height:0},'fast',function(){
                 if (typeof(pages[n].guide) == 'function')
