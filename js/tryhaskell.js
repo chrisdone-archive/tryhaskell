@@ -165,7 +165,7 @@ function toHex(n){
                     "<p>Let's see what you've learned so far:</p>" +
                     "<ol>"+
                     "<li>How to write maths and lists of things.</li>"+
-                    +"</ol>" +
+                    "</ol>" +
                     "<p>We can do stuff with lists. Maybe you want the lottery "+
                     "numbers sorted in the right order, try this: " +
                     "<code>sort " + result.result + "</code></p>"
