@@ -235,25 +235,25 @@ function toHex(n){
             },
             // Summary of lesson 2
             {guide:function(result){
-                 return '<h3>' +
-                     rmsg(["Lesson 2 done! Wow, great job!",
-                           "Lesson 2 completo!"]) +
-                     '</h3>' +
-                     "<p>Good job! You got the age back from the tuple! Didn't " +
-                     " even break a sweat, did you?</p>" +
-                     "<p>Time to take a rest and see what you learned:</p>" +
-                     "<ol>"+
-                     "<li>Functions can be used on lists of any type.</li>" +
-                     "<li>We can stuff values into tuples.</li>" +
-                     "<li>Getting the values back from tuples is easy.</li>"+
-                     "</ol>"+
-                     "<p>Next, we take a short detour to learn about " +
-                     "<strong>syntactic sugar</strong>. " +
-                     "Try typing this out:</p>" +
-                     "<p><code>'a' : []</code></p>" +
-                     "<p>Or skip to <code>lesson4</code> to learn about functions," +
-                     " the meat of Haskell!"
-             },
+                return '<h3>' +
+                    rmsg(["Lesson 2 done! Wow, great job!",
+                          "Lesson 2 completo!"]) +
+                    '</h3>' +
+                    "<p>Good job! You got the age back from the tuple! Didn't " +
+                    " even break a sweat, did you?</p>" +
+                    "<p>Time to take a rest and see what you learned:</p>" +
+                    "<ol>"+
+                    "<li>Functions can be used on lists of any type.</li>" +
+                    "<li>We can stuff values into tuples.</li>" +
+                    "<li>Getting the values back from tuples is easy.</li>"+
+                    "</ol>"+
+                    "<p>Next, we take a short detour to learn about " +
+                    "<strong>syntactic sugar</strong>. " +
+                    "Try typing this out:</p>" +
+                    "<p><code>'a' : []</code></p>" +
+                    "<p>Or skip to <code>lesson4</code> to learn about functions," +
+                    " the meat of Haskell!"
+            },
              trigger:function(result){
                  return result.type == "(Num t) => t";
              }
@@ -262,24 +262,24 @@ function toHex(n){
             {lesson:3,
              title:'Syntactic Sugar',
              guide:function(result){
-                return '<h3>' +
-                    rmsg(["You constructed a list!"]) +
-                    '</h3>' +
-                    "<p>Well done, that was tricky syntax. We used the (:) " +
-                    "function. It takes two values, some value and a list, and " +
-                    " constructs a new list" +
-                    " out of them. We call it 'cons' for short.</p>" +
-                    "<p><code>'a'</code> is " +
-                    "the character 'a', <code>[]</code> is an empty list. So " +
-                    "tacking <code>'a'</code> at the start of an empty list just "+
-                    "makes a list <code>['a']</code>!</p>" +
-                    "<p>But thankfully we don't have to type out " +
-                    "<code>'a' : 'b' : []</code> every time to we want to make a "+
-                    "list of characters; we can use " +
-                    "<strong>syntactic sugar</strong> and just write"+
-                    " <code>['a','b']</code>. Don't believe me, check this!</p>" +
-                    "<code>'a' : 'b' : [] == ['a','b']</code>"
-            },
+                 return '<h3>' +
+                     rmsg(["You constructed a list!"]) +
+                     '</h3>' +
+                     "<p>Well done, that was tricky syntax. We used the (:) " +
+                     "function. It takes two values, some value and a list, and " +
+                     " constructs a new list" +
+                     " out of them. We call it 'cons' for short.</p>" +
+                     "<p><code>'a'</code> is " +
+                     "the character 'a', <code>[]</code> is an empty list. So " +
+                     "tacking <code>'a'</code> at the start of an empty list just "+
+                     "makes a list <code>['a']</code>!</p>" +
+                     "<p>But thankfully we don't have to type out " +
+                     "<code>'a' : 'b' : []</code> every time to we want to make a "+
+                     "list of characters; we can use " +
+                     "<strong>syntactic sugar</strong> and just write"+
+                     " <code>['a','b']</code>. Don't believe me, check this!</p>" +
+                     "<code>'a' : 'b' : [] == ['a','b']</code>"
+             },
              trigger:function(result){
                  return result.type == "[Char]";
              }
@@ -302,24 +302,24 @@ function toHex(n){
             },
             // Summary of syntactic sugar section
             {guide:function(result){
-                 return '<h3>' +
-                     rmsg(["Lesson 3 over! Syntactic sugar is sweet"]) +
-                     '</h3>' +
-                     "<p>Let's have a gander at what you learned:</p>" +
-                     "<ol>" +
-                     "<li>In <code>'a' : []</code>, <code>:</code> is really just " +
-                     " another function, just clever looking.</li>" +
-                     "<li>Pretty functions like this are written like (:) when " +
-                     " you talk about them.</li>" +
-                     "<li>A list of characters ['a','b'] can just be written " +
-                     "\"ab\". Much easier!</li>"
-                     + "</ol>" +
-                     "<p>Phew! You're getting pretty deep! Your arch nemesis, " +
-                     nemesis + ", is gonna try to steal your " + rmsg(['mojo',
-                                                                       'pizza']) +
-                     "! Let's learn a bit more about functions and passing " +
-                     "them around. Try this:</p> <code>map (+1) [1..5]</code></p>";
-             },
+                return '<h3>' +
+                    rmsg(["Lesson 3 over! Syntactic sugar is sweet"]) +
+                    '</h3>' +
+                    "<p>Let's have a gander at what you learned:</p>" +
+                    "<ol>" +
+                    "<li>In <code>'a' : []</code>, <code>:</code> is really just " +
+                    " another function, just clever looking.</li>" +
+                    "<li>Pretty functions like this are written like (:) when " +
+                    " you talk about them.</li>" +
+                    "<li>A list of characters ['a','b'] can just be written " +
+                    "\"ab\". Much easier!</li>"
+                    + "</ol>" +
+                    "<p>Phew! You're getting pretty deep! Your arch nemesis, " +
+                    nemesis + ", is gonna try to steal your " + rmsg(['mojo',
+                                                                      'pizza']) +
+                    "! Let's learn a bit more about functions and passing " +
+                    "them around. Try this:</p> <code>map (+1) [1..5]</code></p>";
+            },
              trigger:function(result){
                  return result.type == "Bool";
              }
@@ -327,29 +327,29 @@ function toHex(n){
             {lesson:4,
              title:'Functions, reloaded; passing, defining, etc.',
              guide:function(){
-                var title =
-                    rmsg(["Functions [of a Geisha]",
-                          "Functions, functors, functoids, funky",
-                          "Functions: Expanded fo' real"]);
-                return "<h3>" + title + "</h3>" +
+                 var title =
+                     rmsg(["Functions [of a Geisha]",
+                           "Functions, functors, functoids, funky",
+                           "Functions: Expanded fo' real"]);
+                 return "<h3>" + title + "</h3>" +
 
-                "<p>Here's where the magic begins!</p>" +
+                 "<p>Here's where the magic begins!</p>" +
 
-                "<p>You just passed the <code>(+1)</code> " +
-                    "function to the <code>map</code> function.</p>" +
+                 "<p>You just passed the <code>(+1)</code> " +
+                     "function to the <code>map</code> function.</p>" +
 
-                "<p>You can try other things like <small class='note'>(remember: click to insert them)</small>:</p>" +
+                 "<p>You can try other things like <small class='note'>(remember: click to insert them)</small>:</p>" +
 
-                "<ul>" +
-                    "<li><code>map (*99) [1..10]</code></li>" +
-                    "<li><code>map (/5) [13,24,52,42]</code></li>" +
-                    "<li><code>filter (>5) [62,3,25,7,1,9]</code></li>" +
-                    "</ul>" +
+                 "<ul>" +
+                     "<li><code>map (*99) [1..10]</code></li>" +
+                     "<li><code>map (/5) [13,24,52,42]</code></li>" +
+                     "<li><code>filter (>5) [62,3,25,7,1,9]</code></li>" +
+                     "</ul>" +
 
-                "<p>Let's write our own functions! It's really easy. How about something simple:</p>" +
-                    "<code>let square x = x * x in square "+rmsg([52,10,3])+"</code>"
+                 "<p>Let's write our own functions! It's really easy. How about something simple:</p>" +
+                     "<code>let square x = x * x in square "+rmsg([52,10,3])+"</code>"
 
-            },
+             },
              trigger:function(result){
                  return result.type == "(Num a, Enum a) => [a]";
              }},
@@ -493,16 +493,16 @@ function toHex(n){
 
                 "<p>Wizard! I think you've got pattern-matching down.</p>" +
 
-                "<p>If you're still a bit unsure, here are some other things you can try:</p>" + 
+                "<p>If you're still a bit unsure, here are some other things you can try:</p>" +
 
-                "<ul>" + 
+                "<ul>" +
                     "<li><code>let (_:_:c:_) = \"abcd\" in c</code></li>" +
                     "<li><code>let (Just a) = Just 10 in a</code></li>" +
                     "<li><code>let [a,b,c] = \"cat\" in (a,b,c)</code></li>" +
                     "</ul>" +
-                    
-                "<p>You can also grab a whole value <em>and</em> pattern match on it (have your cake and eat it too):</p>" + 
-                    
+
+                "<p>You can also grab a whole value <em>and</em> pattern match on it (have your cake and eat it too):</p>" +
+
                 "<code>let abc@(a,b,c) = (10,20,30) in (abc,a,b,c)</code>"
             },
              trigger:function(result){
@@ -518,7 +518,7 @@ function toHex(n){
                 "<ol>" +
                     "<li>Values are pattern matched, or <em>deconstructed</em>, by writing however they were constructed.</li>" +
                     "<li>Patterns let you use the values that you match.</li>" +
-                    "<li>You can ignore whichever values you want.</li>" + 
+                    "<li>You can ignore whichever values you want.</li>" +
                     "<li>You can pattern match and keep hold of the original value too.</li>" +
                     "</ol>" +
 
@@ -535,7 +535,7 @@ function toHex(n){
              guide:function(result){
                  return "<h3>"+rmsg(["Types","What's in a Type?","Types & Values"])+"</h3>" +
                      "Coming soon! Hang tight!"
-            },
+             },
              trigger:function(result){
                  return result.type == "Char";
              }},
@@ -560,16 +560,14 @@ function toHex(n){
     // Simply replace '<', '>' and '&'
     // TODO: Use jQuery's .html() trick, or grab a proper, fast
     // HTML encoder.
-    function htmlEncode(text){
-        var wbr = $.browser.opera? '&#8203;' : '';
+    function htmlEncode(text,shy){
         return (
             (''+text).replace(/&/g,'&amp;')
                 .replace(/</g,'&lt;')
                 .replace(/</g,'&lt;')
                 .replace(/ /g,'&nbsp;')
-                .replace(/([^<>&]{10})/g,'$1<wbr>&shy;' + wbr)
         );
-    };
+    }
 
     $(document).ready(function(){
         $('.reset-btn').click(function(){
@@ -748,7 +746,7 @@ function toHex(n){
                 if (pages[i].lesson) {
                     lessons.append($('<li></li>').
                                    html('<code>lesson'+pages[i].lesson+'</code> - ' +
-                                       pages[i].title));
+                                        pages[i].title));
                 }
             }
             var lessonsList = '<h3>Lessons</h3>' + lessons.html();
