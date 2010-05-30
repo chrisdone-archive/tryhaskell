@@ -179,18 +179,18 @@ function toHex(n){
             // Functions on lists
             {lesson:2,
              guide:function(result){
-                if (!result) result = {result:"[13,23,30]"};
-                return '<h3>' + rmsg(["We put the funk in function"]) +
-                    '</h3>' +
-                    "<p>Congratulations, you just used a <strong>function</strong>."+
-                    " They're how you get things done in Haskell." +
-                    "<p>As you might've guessed, we got back <code>" +
-                    htmlEncode(result.result)
-                    + "</code>.</p><p>Ever wanted an evil twin nemesis? Me too. "+
-                    "Luckily, we can sort lists of characters, or "+
-                    "<strong>strings</strong>" +
-                    ", in the same way as numbers! <code>sort \"chris\"</code></p>"
-            },
+                 if (!result) result = {result:"[13,23,30]"};
+                 return '<h3>' + rmsg(["We put the funk in function"]) +
+                     '</h3>' +
+                     "<p>Congratulations, you just used a <strong>function</strong>."+
+                     " They're how you get things done in Haskell." +
+                     "<p>As you might've guessed, we got back <code>" +
+                     htmlEncode(result.result)
+                     + "</code>.</p><p>Ever wanted an evil twin nemesis? Me too. "+
+                     "Luckily, we can sort lists of characters, or "+
+                     "<strong>strings</strong>" +
+                     ", in the same way as numbers! <code>sort \"chris\"</code></p>"
+             },
              trigger:function(result){
                  return result.type == "(Num t, Ord t) => [t]";
              }
@@ -235,25 +235,25 @@ function toHex(n){
             // Summary of lesson 2
             {lesson:3,
              guide:function(result){
-                return '<h3>' +
-                    rmsg(["Lesson 2 done! Wow, great job!",
-                          "Lesson 2 completo!"]) +
-                    '</h3>' +
-                    "<p>Good job! You got the age back from the tuple! Didn't " +
-                    " even break a sweat, did you?</p>" +
-                    "<p>Time to take a rest and see what you learned:</p>" +
-                    "<ol>"+
-                    "<li>Functions can be used on lists of any type.</li>" +
-                    "<li>We can stuff values into tuples.</li>" + 
-                    "<li>Getting the values back from tuples is easy.</li>"+
-                    "</ol>"+
-                    "<p>Next, we take a short detour to learn about " +
-                    "<strong>syntactic sugar</strong>. " +
-                    "Try typing this out:</p>" +
-                    "<p><code>'a' : []</code></p>" + 
-                    "<p>Or skip to <code>lesson4</code> to learn about functions," +
-                    " the meat of Haskell!" 
-            },
+                 return '<h3>' +
+                     rmsg(["Lesson 2 done! Wow, great job!",
+                           "Lesson 2 completo!"]) +
+                     '</h3>' +
+                     "<p>Good job! You got the age back from the tuple! Didn't " +
+                     " even break a sweat, did you?</p>" +
+                     "<p>Time to take a rest and see what you learned:</p>" +
+                     "<ol>"+
+                     "<li>Functions can be used on lists of any type.</li>" +
+                     "<li>We can stuff values into tuples.</li>" + 
+                     "<li>Getting the values back from tuples is easy.</li>"+
+                     "</ol>"+
+                     "<p>Next, we take a short detour to learn about " +
+                     "<strong>syntactic sugar</strong>. " +
+                     "Try typing this out:</p>" +
+                     "<p><code>'a' : []</code></p>" + 
+                     "<p>Or skip to <code>lesson4</code> to learn about functions," +
+                     " the meat of Haskell!" 
+             },
              trigger:function(result){
                  return result.type == "(Num t) => t";
              }
@@ -301,24 +301,24 @@ function toHex(n){
             // Summary of syntactic sugar section
             {lesson:4,
              guide:function(result){
-                return '<h3>' +
-                    rmsg(["Lesson 3 over! Syntactic sugar is sweet"]) +
-                    '</h3>' +
-                    "<p>Let's have a gander at what you learned:</p>" +
-                    "<ol>" +
-                    "<li>In <code>'a' : []</code>, <code>:</code> is really just " +
-                    " another function, just clever looking.</li>" + 
-                    "<li>Pretty functions like this are written like (:) when " +
-                    " you talk about them.</li>" +
-                    "<li>A list of characters ['a','b'] can just be written " +
-                    "\"ab\". Much easier!</li>"
-                    + "</ol>" +
-                    "<p>Phew! You're getting pretty deep! Your arch nemesis, " + 
-                    nemesis + ", is gonna try to steal your " + rmsg(['mojo',
-                                                                      'pizza']) + 
-                    "! Let's learn a bit more about functions and passing " +
-                    "them around <strong>-- coming soon.</strong></p>"
-            },
+                 return '<h3>' +
+                     rmsg(["Lesson 3 over! Syntactic sugar is sweet"]) +
+                     '</h3>' +
+                     "<p>Let's have a gander at what you learned:</p>" +
+                     "<ol>" +
+                     "<li>In <code>'a' : []</code>, <code>:</code> is really just " +
+                     " another function, just clever looking.</li>" + 
+                     "<li>Pretty functions like this are written like (:) when " +
+                     " you talk about them.</li>" +
+                     "<li>A list of characters ['a','b'] can just be written " +
+                     "\"ab\". Much easier!</li>"
+                     + "</ol>" +
+                     "<p>Phew! You're getting pretty deep! Your arch nemesis, " + 
+                     nemesis + ", is gonna try to steal your " + rmsg(['mojo',
+                                                                       'pizza']) + 
+                     "! Let's learn a bit more about functions and passing " +
+                     "them around <strong>-- coming soon.</strong></p>"
+             },
              trigger:function(result){
                  return result.type == "Bool";
              }
@@ -500,7 +500,7 @@ function toHex(n){
         $('.guide code').each(function(){
             $(this).css('cursor','pointer');
             $(this).attr('title','Click me to insert "' +
-                                 $(this).text() + '" into the console.');
+                         $(this).text() + '" into the console.');
             $(this).click(function(){
                 controller.promptText($(this).text());
                 controller.inner.click();
@@ -573,10 +573,10 @@ function toHex(n){
     };
 
     function searchLessonBack(page) {
-       for (var i = page; i >= 0; i--) {
-           if (pages[i].lesson) return pages[i].lesson;
-       }
-       return "1";
+        for (var i = page; i >= 0; i--) {
+            if (pages[i].lesson) return pages[i].lesson;
+        }
+        return "1";
     }
 
     ////////////////////////////////////////////////////////////////////////
