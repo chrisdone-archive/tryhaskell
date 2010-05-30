@@ -134,6 +134,7 @@ div.guide p { margin-bottom:0.5em }
 div.guide ul { margin-left:1em; margin-bottom:1em }
 div.guide li { line-height:2em }
 div.guide code { color:#8ae0c2; font-family:monospace; background:#2d2542;padding:0.2em;cursor:default }
+div.guide code:hover { color:#8ae0c2; background:#2d2542 }
 div.guide div.indent { margin-left: 10px }
 div.guide p { line-height: 1.7em }
 div.guide p em { font-style:italic }

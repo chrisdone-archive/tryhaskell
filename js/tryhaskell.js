@@ -487,10 +487,14 @@ function toHex(n){
             welcomeMessage:'Type Haskell expressions in here.'
         });
 
-        $('.guide code').css('cursor','pointer');
-        $('.guide code').click(function(){
-            controller.promptText($(this).text());
-            controller.inner.click();
+        $('.guide code').each(function(){
+            $(this).css('cursor','pointer');
+            $(this).attr('title','Click me to insert "' +
+                                 $(this).text() + '" into the console.');
+            $(this).click(function(){
+                controller.promptText($(this).text());
+                controller.inner.click();
+            });
         });
     });
 
