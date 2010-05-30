@@ -487,6 +487,10 @@ function toHex(n){
             welcomeMessage:'Type Haskell expressions in here.'
         });
 
+        makeGuidSamplesClickable();
+    });
+
+    function makeGuidSamplesClickable() {
         $('.guide code').each(function(){
             $(this).css('cursor','pointer');
             $(this).attr('title','Click me to insert "' +
@@ -496,7 +500,7 @@ function toHex(n){
                 controller.inner.click();
             });
         });
-    });
+    }
 
     String.prototype.trim = function() {
         return this.replace(/^[\t ]*(.*)[\t ]*$/,'$1');
@@ -542,6 +546,7 @@ function toHex(n){
                             + '</code> to return to this step.</div>');
                 tutorialGuide.css({height:'auto'});
                 tutorialGuide.animate({opacity:1},'fast');
+                makeGuidSamplesClickable();
             });
         }
     };
