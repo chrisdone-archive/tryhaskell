@@ -51,7 +51,9 @@
                   </p>
                   <h3>Beginners</h3>
                   <div class="indent">
-                    <p>Type <code>help</code> to start the tutorial.</p>
+                    <p>Type <code>help</code> to start the
+                    tutorial. Type <code>lessons</code> to see the
+                    list of lessons.</p>
                     <p>Or try typing these out and see what happens
                       <small class="note">(click to insert)</small>:</p>
                     <ul>

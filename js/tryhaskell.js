@@ -110,9 +110,10 @@ function toHex(n){
 
             // Simple addition
             {lesson:1,
+             title:'Basics; numbers, strings, etc.',
              guide:
              '<h3>' + rmsg(['Learning By Numbers','Music is Math','Back to Basics'])
-             + '</h3>' 
+             + '</h3>'
              + "<p>To kick off let's try some maths out. Up there you can"
              + " type in Haskell expressions. Try this out: <code>5 + 7</code></p>"
             },
@@ -121,7 +122,7 @@ function toHex(n){
                 var complied = result.expr.replace(/ /g,'')=="5+7";
                 var who = complied? 'we' : 'you';
                 return '<h3>' + rmsg(['Your first Haskell expression',
-                                      "First Time's a Charm"]) + '</h3>' 
+                                      "First Time's a Charm"]) + '</h3>'
                     + '<p>Well done, you typed it perfect! You got back the number'+
                     ' <code>' + result.result + '</code>. Just what '+who+' wanted. '
                     + "</p><p>Let's try something completely different."+
@@ -140,11 +141,11 @@ function toHex(n){
                 var n = unString(result.result); if (n) n = ", " +n;
                 n += "!";
                 return '<h3>' + rmsg(['Types of values',"What's in a name?"]) +
-                    '</h3>' 
+                    '</h3>'
                     + '<p>Hi there' + htmlEncode(n)
                     + (n!="!"? " That's a pretty name. Honest." : "")
                     + " You're getting the hang of this! </p>"
-                    + "<p>Each time, we're getting back the value and the type. So "+
+                    + "<p>Each time, we're getting back the value of the expression. So "+
                     "far, just a number and a list of characters.</p>" +
                     "<p>You can have lists of other stuff, too. Let's see your " +
                     " lottery numbers: <code>[42,13,22]</code></p>"
@@ -164,7 +165,6 @@ function toHex(n){
                     "<p>Let's see what you've learned so far:</p>" +
                     "<ol>"+
                     "<li>How to write maths and lists of things.</li>"+
-                    "<li>In Haskell every value has a type.</li>"
                     +"</ol>" +
                     "<p>We can do stuff with lists. Maybe you want the lottery "+
                     "numbers sorted in the right order, try this: " +
@@ -178,6 +178,7 @@ function toHex(n){
             // Lesson 2 - Functions
             // Functions on lists
             {lesson:2,
+             title: 'Simple Functions',
              guide:function(result){
                  if (!result) result = {result:"[13,23,30]"};
                  return '<h3>' + rmsg(["We put the funk in function"]) +
@@ -223,7 +224,7 @@ function toHex(n){
                     '</h3>' +
                     "<p>Is "+(age?age[1]:"that")+" a normal age for a " +
                     "super-villain?</p>" +
-                    "<p>Actually, let's say our villain <em>is</em> " + 
+                    "<p>Actually, let's say our villain <em>is</em> " +
                     villain +
                     ", how do we get their age?</p>" +
                     "<code>let villain = " + villain + " in fst villain</code>"
@@ -233,8 +234,7 @@ function toHex(n){
              }
             },
             // Summary of lesson 2
-            {lesson:3,
-             guide:function(result){
+            {guide:function(result){
                  return '<h3>' +
                      rmsg(["Lesson 2 done! Wow, great job!",
                            "Lesson 2 completo!"]) +
@@ -244,26 +244,28 @@ function toHex(n){
                      "<p>Time to take a rest and see what you learned:</p>" +
                      "<ol>"+
                      "<li>Functions can be used on lists of any type.</li>" +
-                     "<li>We can stuff values into tuples.</li>" + 
+                     "<li>We can stuff values into tuples.</li>" +
                      "<li>Getting the values back from tuples is easy.</li>"+
                      "</ol>"+
                      "<p>Next, we take a short detour to learn about " +
                      "<strong>syntactic sugar</strong>. " +
                      "Try typing this out:</p>" +
-                     "<p><code>'a' : []</code></p>" + 
+                     "<p><code>'a' : []</code></p>" +
                      "<p>Or skip to <code>lesson4</code> to learn about functions," +
-                     " the meat of Haskell!" 
+                     " the meat of Haskell!"
              },
              trigger:function(result){
                  return result.type == "(Num t) => t";
              }
             },
-            // Lesson 3: Syntactic sugar 
-            {guide:function(result){
+            // Lesson 3: Syntactic sugar
+            {lesson:3,
+             title:'Syntactic Sugar',
+             guide:function(result){
                 return '<h3>' +
                     rmsg(["You constructed a list!"]) +
                     '</h3>' +
-                    "<p>Well done, that was tricky syntax. We used the (:) " + 
+                    "<p>Well done, that was tricky syntax. We used the (:) " +
                     "function. It takes two values, some value and a list, and " +
                     " constructs a new list" +
                     " out of them. We call it 'cons' for short.</p>" +
@@ -299,31 +301,244 @@ function toHex(n){
              }
             },
             // Summary of syntactic sugar section
-            {lesson:4,
-             guide:function(result){
+            {guide:function(result){
                  return '<h3>' +
                      rmsg(["Lesson 3 over! Syntactic sugar is sweet"]) +
                      '</h3>' +
                      "<p>Let's have a gander at what you learned:</p>" +
                      "<ol>" +
                      "<li>In <code>'a' : []</code>, <code>:</code> is really just " +
-                     " another function, just clever looking.</li>" + 
+                     " another function, just clever looking.</li>" +
                      "<li>Pretty functions like this are written like (:) when " +
                      " you talk about them.</li>" +
                      "<li>A list of characters ['a','b'] can just be written " +
                      "\"ab\". Much easier!</li>"
                      + "</ol>" +
-                     "<p>Phew! You're getting pretty deep! Your arch nemesis, " + 
+                     "<p>Phew! You're getting pretty deep! Your arch nemesis, " +
                      nemesis + ", is gonna try to steal your " + rmsg(['mojo',
-                                                                       'pizza']) + 
+                                                                       'pizza']) +
                      "! Let's learn a bit more about functions and passing " +
-                     "them around <strong>-- coming soon.</strong></p>"
+                     "them around. Try this:</p> <code>map (+1) [1..5]</code></p>";
              },
              trigger:function(result){
                  return result.type == "Bool";
              }
-            }
+            },
+            {lesson:4,
+             title:'Functions, reloaded; passing, defining, etc.',
+             guide:function(){
+                var title =
+                    rmsg(["Functions [of a Geisha]",
+                          "Functions, functors, functoids, funky",
+                          "Functions: Expanded fo' real"]);
+                return "<h3>" + title + "</h3>" +
 
+                "<p>Here's where the magic begins!</p>" +
+
+                "<p>You just passed the <code>(+1)</code> " +
+                    "function to the <code>map</code> function.</p>" +
+
+                "<p>You can try other things like <small class='note'>(remember: click to insert them)</small>:</p>" +
+
+                "<ul>" +
+                    "<li><code>map (*99) [1..10]</code></li>" +
+                    "<li><code>map (/5) [13,24,52,42]</code></li>" +
+                    "<li><code>filter (>5) [62,3,25,7,1,9]</code></li>" +
+                    "</ul>" +
+
+                "<p>Let's write our own functions! It's really easy. How about something simple:</p>" +
+                    "<code>let square x = x * x in square "+rmsg([52,10,3])+"</code>"
+
+            },
+             trigger:function(result){
+                 return result.type == "(Num a, Enum a) => [a]";
+             }},
+            {guide:function(result){
+                return "<h3>Let there be functions</h3>" +
+                    "<p>Nice one! I think you're getting used to the <code>let</code> syntax.</p>" +
+                    "<p>We defined our function. You can read it as, as for a given " +
+                    "<em>parameter</em> called <code>x</code>, <code>square</code> of " +
+                    "<code>x</code> is <code>x * x</code>." +
+                    "<p>Let's go crazy and use our function with map:</p>" +
+                    "<code>let square x = x * x in map square [1..10]</code>"
+            },
+             trigger:function(result){
+                 return result.type == "(Num t) => t";
+             }},
+            {guide:function(result){
+                if (!result) result = { value: "[1,4,9,16,25,36,49,64,81,100]" };
+                return "<h3>Let there be functions</h3>" +
+
+                "<p>That's so cool! We described a simple function <code>square</code> and then " +
+                    "we just passed it to another function (<code>map</code>) and got back <code>" +
+                    htmlEncode(result.value) + "</code>, exactly what we expected!</p>" +
+
+                "<p>Haskell is pretty good at composing things together like this. " +
+                    "Some other things you can try are:</p>" +
+
+                "<ul>" +
+                    "<li><code>let add1 x = x + 1 in map add1 [1,5,7]</code></li>" +
+                    "<li><code>let take5s = filter (==5) in take5s [1,5,2,5,3,5]</code></li>" +
+                    "<li><code>let take5s = filter (==5) in map take5s [[1,5],[5],[1,1]]</code></li>" +
+                    "</ul>" +
+
+                "<p>Did you get back what you expected?</p>" +
+
+                "<p>One more example for text; how do you upcase a letter?</p>" +
+
+                "<p><code>toUpper 'a'</code></p>"
+            },
+             trigger:function(result){
+                 return result.type == "(Num a, Enum a) => [a]";
+             }},
+            {guide:function(result){
+                return "<h3>Exercise time!</h3>" +
+
+                "<p>Easy! Remember: characters are written like <code>'a'</code> and " +
+                    "strings (lists of characters) are written like <code>\"a\"</code>." +
+
+                "<p>I need you to use <code>toUpper</code> capitalise my whole name, " +
+                    "<code>\"Chris\"</code>. Give it a try." +
+                    " You can do it, I believe in you!</p>" +
+
+                '<p>Spoiler: <code class="spoiler">map toUpper "Chris"</code></p>'
+            },
+             trigger:function(result){
+                 return result.type == "Char";
+             }},
+            {guide:function(result){
+                return "<h3>Lesson 4 complete!</h3>" +
+
+                "<p>Brilliant! You're making excellent progress! " +
+                    "We just passed <code>toUpper</code> to <code>map</code>. No problem.</p>" +
+
+                "<p>Let's go over what we've learned in this lesson:</p>" +
+
+                "<ol>" +
+                    "<li>Functions like <code>map</code> take other functions as parameters.</li>" +
+                    "<li>Functions like <code>(+1)</code>, <code>(>5)</code> and "+
+                    "<code>square</code> can be passed to other functions.</li>" +
+                    "<li>Defining functions is just a case of writing what "+
+                    "to do with the parameters.</li>"  + "</ol>" +
+
+                "<p>Let's check out <em>pattern matching</em>; a way to "+
+                    "get values from other values using patterns. Try this: </p>" +
+                    "<p><code>let (a,b) = (10,12) in a * 2</code></p>" +
+
+                "<p>Or you can skip this section and go to straight to <code>lesson6</code>; <em>types!</em></p>"
+            },
+             trigger:function(result){
+                 return result.type == "[Char]" &&
+                     result.expr.match(/^map[ ]+toUpper/);
+             }},
+            {lesson:5,
+             title:'Pattern Matching',
+             guide:function(result){
+                 var title =
+                     rmsg(["And therefore, patterns emerge in nature.",
+                           "And Then Patterns",
+                           "Pattern matching!"])
+                 return "<h3>" + title + "</h3>" +
+
+                 "<p>Good typing, sir!</p>" +
+                     "<p>So you had a value <code>(10,12)</code> and matched " +
+                     "it against a pattern <code>(a,b)</code>, then you were able" +
+                     " to do stuff with the <code>a</code> and <code>b</code>!" +
+
+                 "<p>Note: Pattern matching <code>(a,b)</code> against "+
+                     "<code>(1,2)</code> to get the <code>a</code> is the same as" +
+                     " doing <code>fst (1,2)</code>, like we did in <code>step7</code>!</p>" +
+
+                 "<p>A pattern always matches the way the "+
+                     "value was originally constructed. Remember that <code>\"abc\"</code> is " +
+                     "syntactic sugar for <code>'a' : 'b' : 'c' : []</code>.</p>" +
+
+                 "<p>So you can get the characters from a string with patterns:</p>" +
+
+                 "<code>let (a:b:c:[]) = \"xyz\" in a</code>"
+             },
+             trigger:function(result){
+                 return result.type == "Char";
+             }},
+            {guide:function(result){
+                return "<h3>"+rmsg(["Ignorance is bliss","Ignoring values"])+"</h3>" +
+
+                "<p>We're getting into tricky syntax, huh? I know you can handle it!</p>" +
+
+                "<p>If we just want some of the values, we can ignore the others with <code>_</code> (underscore) like this:</p>" +
+
+                "<p><code>let (a:_:_:_) = \"xyz\" in a</code></p>" +
+
+                "<p>In fact, <code>(a:b:c:d)</code> is short-hand for " +
+                    "<code>(a:(b:(c:d)))</code>, so we can just ignore the rest in one go:</p>" +
+
+                "<code>let (a:_) = \"xyz\" in a</code>"
+            },
+             trigger:function(result){
+                 return result.type == "Char";
+             }},
+            {guide:function(result){
+                return "<h3>"+rmsg(["Exercise!","Show me the money!"])+"</h3>" +
+
+                "<p>Try to get the <code>'a'</code> value from this value using pattern matching:</p>" +
+                    "<p><code>(10,\"abc\")</code></p>" +
+
+                "<p>Spoiler: <code class='spoiler'>let (_,(a:_)) = (10,\"abc\") in a</code></p>"
+            },
+             trigger:function(result){
+                 return result.type == "Char";
+             }},
+            {guide:function(result){
+                return "<h3>"+rmsg(["Well done!","Brilliant!","Perfetto!"])+"</h3>" +
+
+                "<p>Wizard! I think you've got pattern-matching down.</p>" +
+
+                "<p>If you're still a bit unsure, here are some other things you can try:</p>" + 
+
+                "<ul>" + 
+                    "<li><code>let (_:_:c:_) = \"abcd\" in c</code></li>" +
+                    "<li><code>let (Just a) = Just 10 in a</code></li>" +
+                    "<li><code>let [a,b,c] = \"cat\" in (a,b,c)</code></li>" +
+                    "</ul>" +
+                    
+                "<p>You can also grab a whole value <em>and</em> pattern match on it (have your cake and eat it too):</p>" + 
+                    
+                "<code>let abc@(a,b,c) = (10,20,30) in (abc,a,b,c)</code>"
+            },
+             trigger:function(result){
+                 return result.type == "Char";
+             }},
+            {guide:function(result){
+                return "<h3>"+rmsg(["And that's the end of that chapter"])+"</h3>" +
+
+                "<p>That was easy, right?</p>" +
+
+                "<p>Let's go over what you've learned in this lesson:</p>" +
+
+                "<ol>" +
+                    "<li>Values are pattern matched, or <em>deconstructed</em>, by writing however they were constructed.</li>" +
+                    "<li>Patterns let you use the values that you match.</li>" +
+                    "<li>You can ignore whichever values you want.</li>" + 
+                    "<li>You can pattern match and keep hold of the original value too.</li>" +
+                    "</ol>" +
+
+                "<p>Now we get to the Deep Ones. Types!</p>" +
+
+                "<p>Consider the following value: <code>'a'</code></p>"
+
+            },
+             trigger:function(result){
+                 return result.type == "(Num t, Num t1, Num t2) => ((t, t1, t2), t, t1, t2)";
+             }},
+            {lesson:6,
+             title:'Types',
+             guide:function(result){
+                 return "<h3>"+rmsg(["Types","What's in a Type?","Types & Values"])+"</h3>" +
+                     "Coming soon! Hang tight!"
+            },
+             trigger:function(result){
+                 return result.type == "Char";
+             }},
         ];
     var pageTrigger = -1;
     var notices = [];
@@ -336,7 +551,7 @@ function toHex(n){
     }
 
     ////////////////////////////////////////////////////////////////////////
-    // Random message from a list of messages    
+    // Random message from a list of messages
     function rmsg(choices) {
         return choices[Math.floor((Math.random()*100) % choices.length)];
     }
@@ -379,7 +594,7 @@ function toHex(n){
               + JSON.stringify({expr:line.replace(/\+/g,'%2b')
               .replace(/\#/g,'%23')}),
               function(resp){
-              
+
               });
             */
         });
@@ -434,7 +649,7 @@ function toHex(n){
                               if (!$(this).hasClass('prompt-done')) {
                                   $(this).addClass('prompt-done');
                                   $(this).click(function(){
-                                      controller.promptText($(this).text());
+                                      controller.promptText(line);
                                   });
                               }
                           });
@@ -442,7 +657,12 @@ function toHex(n){
                           if (pageTrigger > -1) {
                               triggerTutorialPage(pageTrigger,result); }
                           if (result.type) {
-                              handleSuccess(report,result);
+                              if (pages[pageTrigger]) {
+                                  handleSuccess(report,result,
+                                                pages[pageTrigger].showType);
+                              } else {
+                                  handleSuccess(report,result,false);
+                              }
                           } else if (result.error) {
                               report(
                                   [{msg:result.error,
@@ -522,7 +742,26 @@ function toHex(n){
             pageTrigger = 0;
             return true;
         }
-        default: {            
+        case 'lessons': {
+            var lessons = $('<ol></ol>');
+            for (var i = 0; i < pages.length; i++) {
+                if (pages[i].lesson) {
+                    lessons.append($('<li></li>').
+                                   html('<code>lesson'+pages[i].lesson+'</code> - ' +
+                                       pages[i].title));
+                }
+            }
+            var lessonsList = '<h3>Lessons</h3>' + lessons.html();
+            tutorialGuide.animate({opacity:0,height:0},'fast',function(){
+                tutorialGuide.html(lessonsList);
+                tutorialGuide.css({height:'auto'});
+                tutorialGuide.animate({opacity:1},'fast');
+                makeGuidSamplesClickable();
+            });
+            report();
+            return true;
+        }
+        default: {
             var m = line.trim().match(/^step([0-9]+)/);
             if (m) {
                 if ((m[1]*1) <= pages.length) {
@@ -586,24 +825,27 @@ function toHex(n){
         n++;
         if (pages[n] && (typeof (pages[n].trigger) == 'function')
             && pages[n].trigger(result)) {
-            pageTrigger++; 
+            pageTrigger++;
             setTutorialPage(result,n);
         }
     };
 
     ////////////////////////////////////////////////////////////////////////
     // Trigger various libraries after JSONRPC returned
-    function handleSuccess(report,result) {
+    function handleSuccess(report,result,showType) {
         if (result.type.match(/^Graphics\.Raphael\.Raphael[\r\n ]/)) {
             //runRaphael(result.result);
             report();
         } else {
             if (result.result) {
+                var type = [];
+                if (showType) {
+                    [{msg:':: ' + result.type,
+                      className:"jquery-console-message-type"}];
+                }
                 report(
                     [{msg:'=> ' + result.result,
-                      className:"jquery-console-message-value"},
-                     {msg:':: ' + result.type,
-                      className:"jquery-console-message-type"}]
+                      className:"jquery-console-message-value"}].concat(type)
                 );
             } else {
                 report(
