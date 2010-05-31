@@ -537,41 +537,41 @@ function toHex(n){
                  showTypes = true;
                  return "<h3>"+rmsg(["Types","What's in a Type?","Types & Values"])+"</h3>" +
                      "<p>What's this? Something new!</p>" +
-                     
-                     "<p>In Haskell there are types of values. Every value belongs to a type. To demonstrate this fact, I've sneakily enabled types to be " +
+
+                 "<p>In Haskell there are types of values. Every value belongs to a type. To demonstrate this fact, I've sneakily enabled types to be " +
                      "shown of every value in the console from now on.</p>" +
 
                  "<p>The type of the value <code>'a'</code> is <code>Char</code> (short for 'character', but you guessed that, right?).</p>" +
-                     
+
                  "<p>You've seen the type of a character, now what about" +
-                     " a list of characters?</p>" + 
+                     " a list of characters?</p>" +
                      "<code>\"Sparticus\"</code>"
              },
              trigger:function(result){
                  return result.type == 'Char';
              }},
             {guide:function(result){
-                 showTypes = true;
-                 return "<h3>"+rmsg(["Lists of stuff, types"])+"</h3>" +
-                    
+                showTypes = true;
+                return "<h3>"+rmsg(["Lists of stuff, types"])+"</h3>" +
+
                 "<p>I'm Sparticus!</p>" +
 
                 "<p>Okay, so a list of characters has type <code>[Char]</code>.</p>" +
 
                 "<p>Notice that when we write <code>a :: X</code> it means <em>the value a has type X</em>. It's just a short-hand called a <em>signature</em>.</p>" +
-                   
+
                 "<p>If you just want the type of a value, without actually evaluating it, you can just type: </p>" +
                     "<code>:t toUpper</code>"
-             },
+            },
              trigger:function(result){
                  return result.type == '[Char]';
              }},
             {guide:function(result){
-                 showTypes = true;
-                 return "<h3>"+rmsg(["Function types"])+"</h3>" +
-                    
-                "<p>Woah! Hold your blinkin' 'orses! The type of <code>toUpper</code> reads: <code>Char -> Char</code></p>" + 
-                    
+                showTypes = true;
+                return "<h3>"+rmsg(["Function types"])+"</h3>" +
+
+                "<p>Woah! Hold your blinkin' 'orses! The type of <code>toUpper</code> reads: <code>Char -> Char</code></p>" +
+
                 "<p>It's pretty easy; <code>a -> b</code> means <em>function from <code>a</code> to <code>b</code></em>. " +
                     "So</p><p><code>toUpper :: Char -> Char</code> means: for a" +
                     " given character (<code>Char</code> value) <code>a</code>, <code>toUpper a</code> has type <code>Char</code>.</p>" +
@@ -583,16 +583,16 @@ function toHex(n){
                     "<li><code>:t True</code></li>" +
                     "<li><code>:t not</code></li>"
                     +"</ul>" +
-                    
+
                 "<p>The words function is pretty handy. Want to get a list of words from a sentence?</p>" +
                     "<code>words \"There's jam in my pants.\"</code>"
-             },
+            },
              trigger:function(result){
                  return result.type == 'Char -> Char';
              }},
             {guide:function(result){
-                 showTypes = true;
-                 return "<h3>"+rmsg(["Mid-way review"])+"</h3>" +
+                showTypes = true;
+                return "<h3>"+rmsg(["Mid-way review"])+"</h3>" +
 
                 "<p>The type of <code>words</code> was <code>String -> [String]</code>. You got a list of strings back! Just what you expected, right?</p>" +
 
@@ -604,63 +604,63 @@ function toHex(n){
                     "<li>Functions can be defined for any type to any other type.</li>"+
                     "<li>Humble reader has a thing for jammy pants.</li>"+
                     "</ol>" +
-                    
-                "<p>But what if you have a type that can contain values of <em>any</em> type, like a tuple?</p>" + 
+
+                "<p>But what if you have a type that can contain values of <em>any</em> type, like a tuple?</p>" +
                     "<code>:t fst</code>"
-    
-             },
+
+            },
              trigger:function(result){
                  return result.type == '[String]';
              }},
             {guide:function(result){
-                 showTypes = true;
-                 return "<h3>"+rmsg(["Polymorphic functions"])+"</h3>" +
-                    
-                "<p>Remember this one? I know you do! <code>fst (1,2)</code> is <code>1</code>, right?</p>" + 
+                showTypes = true;
+                return "<h3>"+rmsg(["Polymorphic functions"])+"</h3>" +
+
+                "<p>Remember this one? I know you do! <code>fst (1,2)</code> is <code>1</code>, right?</p>" +
                     "<p>We read its type</p>" +
-                    "<p><code>fst :: (a, b) -> a</code></p>" + 
+                    "<p><code>fst :: (a, b) -> a</code></p>" +
                     "<p>as: <em>for all types <code>a</code> and <code>b</code>, the <code>fst</code> has type <code>(a,b)</code> to <code>a</code>. </em>So the <code>fst</code> "+
                     "function works on a pair of values of any types! We call such a function <em>polymorphic</em>."+
-                    "</p>" + 
+                    "</p>" +
                     "<p>Remember the <code>drop</code> function? Maybe you don't. I don't! Let's check out its type:</p>" +
                     "<p><code>:t drop</code></p>"
-             },
+            },
              trigger:function(result){
                  return result.type == '(a, b) -> a';
              }},
             {guide:function(result){
-                 showTypes = true;
-                 return "<h3>"+rmsg(["Multi parameter functions"])+"</h3>" +
+                showTypes = true;
+                return "<h3>"+rmsg(["Multi parameter functions"])+"</h3>" +
 
                 "<p>So the <code>drop</code> function has type</p><p><code>Int -> [a] -> [a]</code>.</p>" +
 
                 "<p>This is something new. You've got two arrows! Relax. You can read</p>" +
                     "<p><code>a -> b -> c</code> as <code>a -> (b -> c)</code></p>" +
-                    
+
                 "<p>In other words, <code>drop</code> is a function from integers (<code>Int</code> values) to functions of lists to lists (<code>[a] -> [a]</code> values). Drop is a function to another function.</p>" +
 
                 "<p>Check for yourself! <code>:t drop 3</code></p>"
-             },
+            },
              trigger:function(result){
                  return result.type == 'Int -> [a] -> [a]';
              }},
             {guide:function(result){
-                 showTypes = true;
-                 return "<h3>"+rmsg(["Partial application"])+"</h3>" +
+                showTypes = true;
+                return "<h3>"+rmsg(["Partial application"])+"</h3>" +
 
                 "<p>You've got a function of type <code>[a] -> [a]</code>! The <code>drop</code> function is considered a multi-parameter function. Remember the <code>map</code> function? Its parameters were a function and a list. Just another multi-parameter function.</p>" +
-                    
+
                 "<p>You can add another parameter and, hey presto, you get a list!</p>" +
-                    
+
                 "<code>drop 3 \"hello!\"</code>"
 
-             },
+            },
              trigger:function(result){
                  return result.type == '[a] -> [a]';
              }},
             {guide:function(result){
-                 showTypes = true;
-                 return "<h3>"+rmsg(["Higher order functions"])+"</h3>" +
+                showTypes = true;
+                return "<h3>"+rmsg(["Higher order functions"])+"</h3>" +
 
                 "<p>'Lo bob! You've already used the <code>map</code> function loads. I wonder if you can guess its type?</p>" +
 
@@ -670,13 +670,13 @@ function toHex(n){
 
                 "<p>Tip: You can use parantheses to use more than one function. You want to double all the numbers over five? Psch! </p>" +
                     "<code>map (*2) (filter (>5) [10,2,16,9,4])</code>"
-             },
+            },
              trigger:function(result){
                  return result.type == '[Char]';
              }},
             {guide:function(result){
-                 showTypes = true;
-                 return "<h3>"+rmsg(["Phew! Rest time!"])+"</h3>" +
+                showTypes = true;
+                return "<h3>"+rmsg(["Phew! Rest time!"])+"</h3>" +
 
                 "<p>Wow! You're doing so great! Have a look at what you know now!</p>" +
 
@@ -684,12 +684,12 @@ function toHex(n){
                     "<li>Function parameters can be <em>polymorphic</em>; any type!</li>" +
                     "<li>Functions can have multiple parameters by returning more functions.</li>" +
                     "<li>You can wrap expressions in parentheses and apply functions to them as a whole value.</li>" +
-                "</ol>" +
+                    "</ol>" +
 
                 "<p>You're really making great progress. Don't hesitate to sit and play in the console between chapters to get a good feel of it!</p>" +
-                    
+
                 "<p>Stay tuned for more chapters on <em>type classes</em> and the meaning of <code>:t 1</code>, <code>:t (*)</code>, etc.</p>"
-             },
+            },
              trigger:function(result){
                  return result.type == '(Num a, Ord a) => [a]';
              }},
@@ -722,6 +722,8 @@ function toHex(n){
                 .replace(/ /g,'&nbsp;')
         );
     }
+
+    var lastLine;
 
     $(document).ready(function(){
         $('.reset-btn').click(function(){
@@ -798,6 +800,7 @@ function toHex(n){
                       function(resp){
                           ajaxloader.remove();
                           $('.jquery-console-prompt').each(function(){
+                              lastLine = line;
                               if (!$(this).hasClass('prompt-done')) {
                                   $(this).addClass('prompt-done');
                                   $(this).click(function(){
@@ -866,7 +869,28 @@ function toHex(n){
         if (match) {
             setTutorialPage(undefined,match[1]-1);
         }
+
+        var match = window.location.href.match(/\?input=([^&]+)/);
+        if (match) {
+            controller.promptText(urlDecode(match[1]));
+            controller.inner.click();
+            controller.typer.consoleControl(13);
+        }
     });
+
+    function urlDecode (encodedString) {
+        var output = encodedString;
+        var binVal, thisString;
+        var myregexp = /(%[^%]{2})/;
+        while ((match = myregexp.exec(output)) != null
+               && match.length > 1
+               && match[1] != '') {
+            binVal = parseInt(match[1].substr(1),16);
+            thisString = String.fromCharCode(binVal);
+            output = output.replace(match[1], thisString);
+        }
+        return output;
+    }
 
     function makeGuidSamplesClickable() {
         $('.guide code').each(function(){
@@ -914,6 +938,24 @@ function toHex(n){
             return true;
         }
         default: {
+            var m = line.trim().match(/^link(.*)/);
+            if (m) {
+                var data;
+                if (m[1]) data = m[1].trim();
+                else if (lastLine) data = lastLine;
+                if (data) {
+                    var addr = '?input=' + encodeHex(data);
+                    report([{msg:'',className:'latest-link'}]);
+                    var link = $('<a href="' + addr + '"></a>').
+                        text('link for ' + data).click(function(){
+                            window.location.href = $(this).attr('href');
+                            return false;
+                        });
+                    $('.latest-link').html(link).removeClass('latest-link');
+                    return true;
+                }
+            }
+
             var m = line.trim().match(/^step([0-9]+)/);
             if (m) {
                 if ((m[1]*1) <= pages.length) {

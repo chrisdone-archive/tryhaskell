@@ -98,6 +98,7 @@
                 },100);
             }
             extern.inner = inner;
+            extern.typer = typer;
             extern.scrollToBottom = scrollToBottom;
         })();
 
