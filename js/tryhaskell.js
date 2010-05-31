@@ -103,6 +103,7 @@ function toHex(n){
     // Page variables
     //
     var nemesis = 'chirs';
+    var showTypes = false;
     var pages =
         [
             ////////////////////////////////////////////////////////////////////////
@@ -145,7 +146,7 @@ function toHex(n){
                     + '<p>Hi there' + htmlEncode(n)
                     + (n!="!"? " That's a pretty name. Honest." : "")
                     + " You're getting the hang of this! </p>"
-                    + "<p>Each time, we're getting back the value of the expression. So "+
+                    + "<p>Each time, you're getting back the value of the expression. So "+
                     "far, just a number and a list of characters.</p>" +
                     "<p>You can have lists of other stuff, too. Let's see your " +
                     " lottery numbers: <code>[42,13,22]</code></p>"
@@ -166,7 +167,7 @@ function toHex(n){
                     "<ol>"+
                     "<li>How to write maths and lists of things.</li>"+
                     "</ol>" +
-                    "<p>We can do stuff with lists. Maybe you want the lottery "+
+                    "<p>You can do stuff with lists. Maybe you want the lottery "+
                     "numbers sorted in the right order, try this: " +
                     "<code>sort " + result.result + "</code></p>"
             },
@@ -188,7 +189,7 @@ function toHex(n){
                      "<p>As you might've guessed, we got back <code>" +
                      htmlEncode(result.result)
                      + "</code>.</p><p>Ever wanted an evil twin nemesis? Me too. "+
-                     "Luckily, we can sort lists of characters, or "+
+                     "Luckily, you can sort lists of characters, or "+
                      "<strong>strings</strong>" +
                      ", in the same way as numbers! <code>sort \"chris\"</code></p>"
              },
@@ -206,7 +207,7 @@ function toHex(n){
                     "<p>Watch out for "+nemesis+"! " +
                     "They've got a ray gun, a dinosaur museum pamphlet and some " +
                     " butter, and <strong>they're out to get you!</strong></p>" +
-                    "<p>We should keep our nemesis's credentials for the police." +
+                    "<p>You should keep your nemesis's credentials for the police." +
                     " My nemesis is 28 years of age: "+
                     "<code>(28,\"chirs\")</code></p>"
             },
@@ -226,7 +227,7 @@ function toHex(n){
                     "super-villain?</p>" +
                     "<p>Actually, let's say our villain <em>is</em> " +
                     villain +
-                    ", how do we get their age?</p>" +
+                    ", how do you get their age?</p>" +
                     "<code>let villain = " + villain + " in fst villain</code>"
             },
              trigger:function(result){
@@ -265,7 +266,7 @@ function toHex(n){
                  return '<h3>' +
                      rmsg(["You constructed a list!"]) +
                      '</h3>' +
-                     "<p>Well done, that was tricky syntax. We used the (:) " +
+                     "<p>Well done, that was tricky syntax. You used the (:) " +
                      "function. It takes two values, some value and a list, and " +
                      " constructs a new list" +
                      " out of them. We call it 'cons' for short.</p>" +
@@ -290,7 +291,7 @@ function toHex(n){
                     rmsg(["You're on fire!"]) +
                     '</h3>' +
                     "<p>You're handling this syntax really well, nice!</p>" +
-                    "<p>We just got a boolean value back, and it said " +
+                    "<p>You just got a boolean value back, and it said " +
                     "<code>True</code>. That means they're equal!</p>" +
                     "<p>One final demonstration on syntactic sugar for now:</p>" +
                     "<code>['a','b','c'] == \"abc\"</code>"
@@ -356,7 +357,7 @@ function toHex(n){
             {guide:function(result){
                 return "<h3>Let there be functions</h3>" +
                     "<p>Nice one! I think you're getting used to the <code>let</code> syntax.</p>" +
-                    "<p>We defined our function. You can read it as, as for a given " +
+                    "<p>You defined our function. You can read it as, as for a given " +
                     "<em>parameter</em> called <code>x</code>, <code>square</code> of " +
                     "<code>x</code> is <code>x * x</code>." +
                     "<p>Let's go crazy and use our function with map:</p>" +
@@ -369,9 +370,9 @@ function toHex(n){
                 if (!result || !result.value) result = { value: "[1,4,9,16,25,36,49,64,81,100]" };
                 return "<h3>Let there be functions</h3>" +
 
-                "<p>That's so cool! We described a simple function <code>square</code> and then " +
-                    "we just passed it to another function (<code>map</code>) and got back <code>" +
-                    htmlEncode(result.value) + "</code>, exactly what we expected!</p>" +
+                "<p>That's so cool! You described a simple function <code>square</code> and then " +
+                    "you just passed it to another function (<code>map</code>) and got back <code>" +
+                    htmlEncode(result.value) + "</code>, exactly what you expected!</p>" +
 
                 "<p>Haskell is pretty good at composing things together like this. " +
                     "Some other things you can try are:</p>" +
@@ -410,9 +411,9 @@ function toHex(n){
                 return "<h3>Lesson 4 complete!</h3>" +
 
                 "<p>Brilliant! You're making excellent progress! " +
-                    "We just passed <code>toUpper</code> to <code>map</code>. No problem.</p>" +
+                    "You just passed <code>toUpper</code> to <code>map</code>. No problem.</p>" +
 
-                "<p>Let's go over what we've learned in this lesson:</p>" +
+                "<p>Let's go over what you've learned in this lesson:</p>" +
 
                 "<ol>" +
                     "<li>Functions like <code>map</code> take other functions as parameters.</li>" +
@@ -447,7 +448,7 @@ function toHex(n){
 
                  "<p>Note: Pattern matching <code>(a,b)</code> against "+
                      "<code>(1,2)</code> to get the <code>a</code> is the same as" +
-                     " doing <code>fst (1,2)</code>, like we did in <code>step7</code>!</p>" +
+                     " doing <code>fst (1,2)</code>, like you did in <code>step7</code>!</p>" +
 
                  "<p>A pattern always matches the way the "+
                      "value was originally constructed. Remember that <code>\"abc\"</code> is " +
@@ -463,14 +464,14 @@ function toHex(n){
             {guide:function(result){
                 return "<h3>"+rmsg(["Ignorance is bliss","Ignoring values"])+"</h3>" +
 
-                "<p>We're getting into tricky syntax, huh? I know you can handle it!</p>" +
+                "<p>You're getting into tricky syntax, huh? I know you can handle it!</p>" +
 
-                "<p>If we just want some of the values, we can ignore the others with <code>_</code> (underscore) like this:</p>" +
+                "<p>If you just want some of the values, you can ignore the others with <code>_</code> (underscore) like this:</p>" +
 
                 "<p><code>let (a:_:_:_) = \"xyz\" in a</code></p>" +
 
                 "<p>In fact, <code>(a:b:c:d)</code> is short-hand for " +
-                    "<code>(a:(b:(c:d)))</code>, so we can just ignore the rest in one go:</p>" +
+                    "<code>(a:(b:(c:d)))</code>, so you can just ignore the rest in one go:</p>" +
 
                 "<code>let (a:_) = \"xyz\" in a</code>"
             },
@@ -533,11 +534,164 @@ function toHex(n){
             {lesson:6,
              title:'Types',
              guide:function(result){
+                 showTypes = true;
                  return "<h3>"+rmsg(["Types","What's in a Type?","Types & Values"])+"</h3>" +
-                     "Coming soon! Hang tight!"
+                     "<p>What's this? Something new!</p>" +
+                     
+                     "<p>In Haskell there are types of values. Every value belongs to a type. To demonstrate this fact, I've sneakily enabled types to be " +
+                     "shown of every value in the console from now on.</p>" +
+
+                 "<p>The type of the value <code>'a'</code> is <code>Char</code> (short for 'character', but you guessed that, right?).</p>" +
+                     
+                 "<p>You've seen the type of a character, now what about" +
+                     " a list of characters?</p>" + 
+                     "<code>\"Sparticus\"</code>"
              },
              trigger:function(result){
-                 return result.type == "Char";
+                 return result.type == 'Char';
+             }},
+            {guide:function(result){
+                 showTypes = true;
+                 return "<h3>"+rmsg(["Lists of stuff, types"])+"</h3>" +
+                    
+                "<p>I'm Sparticus!</p>" +
+
+                "<p>Okay, so a list of characters has type <code>[Char]</code>.</p>" +
+
+                "<p>Notice that when we write <code>a :: X</code> it means <em>the value a has type X</em>. It's just a short-hand called a <em>signature</em>.</p>" +
+                   
+                "<p>If you just want the type of a value, without actually evaluating it, you can just type: </p>" +
+                    "<code>:t toUpper</code>"
+             },
+             trigger:function(result){
+                 return result.type == '[Char]';
+             }},
+            {guide:function(result){
+                 showTypes = true;
+                 return "<h3>"+rmsg(["Function types"])+"</h3>" +
+                    
+                "<p>Woah! Hold your blinkin' 'orses! The type of <code>toUpper</code> reads: <code>Char -> Char</code></p>" + 
+                    
+                "<p>It's pretty easy; <code>a -> b</code> means <em>function from <code>a</code> to <code>b</code></em>. " +
+                    "So</p><p><code>toUpper :: Char -> Char</code> means: for a" +
+                    " given character (<code>Char</code> value) <code>a</code>, <code>toUpper a</code> has type <code>Char</code>.</p>" +
+
+                "<p>Some other things you can try are:</p>" +
+
+                "<ul><li><code>:t words</code></li>"+
+                    "<li><code>:t unwords</code></li>" +
+                    "<li><code>:t True</code></li>" +
+                    "<li><code>:t not</code></li>"
+                    +"</ul>" +
+                    
+                "<p>The words function is pretty handy. Want to get a list of words from a sentence?</p>" +
+                    "<code>words \"There's jam in my pants.\"</code>"
+             },
+             trigger:function(result){
+                 return result.type == 'Char -> Char';
+             }},
+            {guide:function(result){
+                 showTypes = true;
+                 return "<h3>"+rmsg(["Mid-way review"])+"</h3>" +
+
+                "<p>The type of <code>words</code> was <code>String -> [String]</code>. You got a list of strings back! Just what you expected, right?</p>" +
+
+                "<p>Let's take a rest in the middle of this lesson and go over what we've learned:</p>" +
+
+                "<ol>"+
+                    "<li>All values in Haskell have a <em>type</em>. We describe the types of values with <em>signatures</em>, like <code>True :: Bool</code>.</li>"+
+                    "<li>Functions are values too, and they have types, notated <code>a -> b</code>.</li>"+
+                    "<li>Functions can be defined for any type to any other type.</li>"+
+                    "<li>Humble reader has a thing for jammy pants.</li>"+
+                    "</ol>" +
+                    
+                "<p>But what if you have a type that can contain values of <em>any</em> type, like a tuple?</p>" + 
+                    "<code>:t fst</code>"
+    
+             },
+             trigger:function(result){
+                 return result.type == '[String]';
+             }},
+            {guide:function(result){
+                 showTypes = true;
+                 return "<h3>"+rmsg(["Polymorphic functions"])+"</h3>" +
+                    
+                "<p>Remember this one? I know you do! <code>fst (1,2)</code> is <code>1</code>, right?</p>" + 
+                    "<p>We read its type</p>" +
+                    "<p><code>fst :: (a, b) -> a</code></p>" + 
+                    "<p>as: <em>for all types <code>a</code> and <code>b</code>, the <code>fst</code> has type <code>(a,b)</code> to <code>a</code>. </em>So the <code>fst</code> "+
+                    "function works on a pair of values of any types! We call such a function <em>polymorphic</em>."+
+                    "</p>" + 
+                    "<p>Remember the <code>drop</code> function? Maybe you don't. I don't! Let's check out its type:</p>" +
+                    "<p><code>:t drop</code></p>"
+             },
+             trigger:function(result){
+                 return result.type == '(a, b) -> a';
+             }},
+            {guide:function(result){
+                 showTypes = true;
+                 return "<h3>"+rmsg(["Multi parameter functions"])+"</h3>" +
+
+                "<p>So the <code>drop</code> function has type</p><p><code>Int -> [a] -> [a]</code>.</p>" +
+
+                "<p>This is something new. You've got two arrows! Relax. You can read</p>" +
+                    "<p><code>a -> b -> c</code> as <code>a -> (b -> c)</code></p>" +
+                    
+                "<p>In other words, <code>drop</code> is a function from integers (<code>Int</code> values) to functions of lists to lists (<code>[a] -> [a]</code> values). Drop is a function to another function.</p>" +
+
+                "<p>Check for yourself! <code>:t drop 3</code></p>"
+             },
+             trigger:function(result){
+                 return result.type == 'Int -> [a] -> [a]';
+             }},
+            {guide:function(result){
+                 showTypes = true;
+                 return "<h3>"+rmsg(["Partial application"])+"</h3>" +
+
+                "<p>You've got a function of type <code>[a] -> [a]</code>! The <code>drop</code> function is considered a multi-parameter function. Remember the <code>map</code> function? Its parameters were a function and a list. Just another multi-parameter function.</p>" +
+                    
+                "<p>You can add another parameter and, hey presto, you get a list!</p>" +
+                    
+                "<code>drop 3 \"hello!\"</code>"
+
+             },
+             trigger:function(result){
+                 return result.type == '[a] -> [a]';
+             }},
+            {guide:function(result){
+                 showTypes = true;
+                 return "<h3>"+rmsg(["Higher order functions"])+"</h3>" +
+
+                "<p>'Lo bob! You've already used the <code>map</code> function loads. I wonder if you can guess its type?</p>" +
+
+                "<p><code>map :: <code class=\"spoiler\">(a -> b) -> [a] -> [b]</code></code> (spoiler)</p>" +
+
+                "<p>It's okay to peek! Have a go at guessing these: <code>filter</code>, <code>take</code></p>" +
+
+                "<p>Tip: You can use parantheses to use more than one function. You want to double all the numbers over five? Psch! </p>" +
+                    "<code>map (*2) (filter (>5) [10,2,16,9,4])</code>"
+             },
+             trigger:function(result){
+                 return result.type == '[Char]';
+             }},
+            {guide:function(result){
+                 showTypes = true;
+                 return "<h3>"+rmsg(["Phew! Rest time!"])+"</h3>" +
+
+                "<p>Wow! You're doing so great! Have a look at what you know now!</p>" +
+
+                "<ol>" +
+                    "<li>Function parameters can be <em>polymorphic</em>; any type!</li>" +
+                    "<li>Functions can have multiple parameters by returning more functions.</li>" +
+                    "<li>You can wrap expressions in parentheses and apply functions to them as a whole value.</li>" +
+                "</ol>" +
+
+                "<p>You're really making great progress. Don't hesitate to sit and play in the console between chapters to get a good feel of it!</p>" +
+                    
+                "<p>Stay tuned for more chapters on <em>type classes</em> and the meaning of <code>:t 1</code>, <code>:t (*)</code>, etc.</p>"
+             },
+             trigger:function(result){
+                 return result.type == '(Num a, Ord a) => [a]';
              }},
         ];
     var pageTrigger = -1;
@@ -655,12 +809,7 @@ function toHex(n){
                           if (pageTrigger > -1) {
                               triggerTutorialPage(pageTrigger,result); }
                           if (result.type) {
-                              if (pages[pageTrigger]) {
-                                  handleSuccess(report,result,
-                                                pages[pageTrigger].showType);
-                              } else {
-                                  handleSuccess(report,result,false);
-                              }
+                              handleSuccess(report,result,showTypes);
                           } else if (result.error) {
                               report(
                                   [{msg:result.error,
@@ -844,8 +993,8 @@ function toHex(n){
             if (result.result) {
                 var type = [];
                 if (showType) {
-                    [{msg:':: ' + result.type,
-                      className:"jquery-console-message-type"}];
+                    type = [{msg:':: ' + result.type,
+                             className:"jquery-console-message-type"}];
                 }
                 report(
                     [{msg:'=> ' + result.result,
