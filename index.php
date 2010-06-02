@@ -19,6 +19,7 @@
     <script type="text/javascript" src="js/lib.min.js"></script>
     <script type="text/javascript" src="js/jquery.console.js"></script>
     <script type="text/javascript" src="js/tryhaskell.js"></script>
+    <script type="text/javascript" src="js/raphael-min.js"></script>
   </head>
   <body>
     <div class="page-wrap">
@@ -41,6 +42,14 @@
                 </div>
               </div>
               <div class="console-wrapper-bottom sprites"></div>
+            </div>
+            <div class="guide-wrapper" style="margin-bottom:10px">
+              <div class="guide-wrapper-top sprites"></div>
+              <div class="guide-wrapper-borders bgs">
+                <div id="raphael">
+                </div>
+              </div>
+              <div class="guide-wrapper-bottom sprites"></div>
             </div>
             <div class="guide-wrapper">
               <div class="guide-wrapper-top sprites"></div>

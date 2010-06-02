@@ -95,10 +95,8 @@ function toHex(n){
 }
 
 (function($){
-    /*
-      var raphaelPaper;
-      var raphaelObjs;
-    */
+    var raphaelPaper;
+    var raphaelObjs;
     var tutorialGuide;
     // Page variables
     //
@@ -840,9 +838,9 @@ function toHex(n){
         ////////////////////////////////////////////////////////////////////////
         // Raphael globals
         // Create Raphael canvas
-        // $('#raphael').css('height','150px').parent().parent().hide();
-        // raphaelPaper = Raphael($('#raphael')[0],536, 150);
-        // raphaelObjs = {};
+        $('#raphael').css('height','150px').parent().parent().hide();
+        raphaelPaper = Raphael($('#raphael')[0],536, 150);
+        raphaelObjs = {};
 
         ////////////////////////////////////////////////////////////////////////
         // Guide globals
@@ -1129,7 +1127,7 @@ function toHex(n){
     // Trigger various libraries after JSONRPC returned
     function handleSuccess(report,result,showType) {
         if (result.type.match(/^Graphics\.Raphael\.Raphael[\r\n ]/)) {
-            //runRaphael(result.result);
+            runRaphael(result.result);
             report();
         } else {
             if (result.result) {
@@ -1153,31 +1151,29 @@ function toHex(n){
 
     ////////////////////////////////////////////////////////////////////////
     // Raphael support
-    /*
-      function runRaphael(expr) {
-      raphaelPaper.clear();
-      $('#raphael').parent().parent().slideDown(function(){
-      var exprs = expr.split(/\n/g);
-      for (var x in exprs)
-      raphaelRunExpr(exprs[x]);
-      });
-      }
-      function raphaelRunExpr(expr) {
-      var expr = expr.split(/ /g);
-      switch (expr[0]) {
-      case 'new': {
-      switch (expr[2]) {
-      case 'circle': {
-      var x = expr[3], y = expr[4], radius = expr[5];
-      var circle = raphaelPaper.circle(x*1,y*1,radius*1);
-      circle.attr("fill", "#7360a4");
-      break;
-      }
-      }
-      }
-      }
-      }
-    */
+    function runRaphael(expr) {
+        raphaelPaper.clear();
+        $('#raphael').parent().parent().slideDown(function(){
+            var exprs = expr.split(/\n/g);
+            for (var i = 0; i < exprs.length; i++)
+                raphaelRunExpr(exprs[i]);
+        });
+    }
+    function raphaelRunExpr(expr) {
+        var expr = expr.split(/ /g);
+        switch (expr[0]) {
+        case 'new': {
+            switch (expr[2]) {
+            case 'circle': {
+                var x = expr[3], y = expr[4], radius = expr[5];
+                var circle = raphaelPaper.circle(x*1,y*1,radius*1);
+                circle.attr("fill", "#7360a4");
+                break;
+            }
+            }
+        }
+        }
+    }
 
     function notice(name,msg,style) {
         if (!notices[name]) {
