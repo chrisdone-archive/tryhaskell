@@ -172,7 +172,8 @@ function toHex(n){
                     "<code>sort " + result.result + "</code></p>"
             },
              trigger:function(result){
-                 return result.type == "(Num t) => [t]";
+                 return result.expr.match(/^[ ]*\[[0-9,]+\][ ]*$/) &&
+                     result.type == "(Num t) => [t]";
              }
             },
             ////////////////////////////////////////////////////////////////////////
@@ -194,7 +195,8 @@ function toHex(n){
                      ", in the same way as numbers! <code>sort \"chris\"</code></p>"
              },
              trigger:function(result){
-                 return result.type == "(Num t, Ord t) => [t]";
+                 return result.expr.match(/sort/) &&
+                     result.type == "(Num t, Ord t) => [t]";
              }
             },
             // Tuples
@@ -209,7 +211,8 @@ function toHex(n){
                     "<code>(28,\"chirs\")</code></p>"
             },
              trigger:function(result){
-                 return result.type == "[Char]";
+                 return result.expr.match(/sort/) &&
+                     result.type == "[Char]";
              }
             },
             // Functions on tuples
@@ -231,7 +234,8 @@ function toHex(n){
                     "<code>fst " + villain + "</code>"
             },
              trigger:function(result){
-                 return result.type == "(Num t) => (t, [Char])";
+                 return result.expr.match(/\([0-9]+,"[^"]+"\)/) &&
+                     result.type == "(Num t) => (t, [Char])";
              }
             },
             // Summary of lesson 2
@@ -260,7 +264,8 @@ function toHex(n){
                 "<code>let x = 4 in x * x</code>"
             },
              trigger:function(result){
-                 return result.type == "(Num t) => t";
+                 return result.expr.match(/fst/) &&
+                     result.type == "(Num t) => t";
              }
             },
             {guide:function(result){
@@ -283,7 +288,8 @@ function toHex(n){
                 "<code><span class='highlight'>let</span> villain <span class='highlight'>=</span> (28,\"chirs\") <span class='highlight'>in</span> fst villain</code>"
 
             },trigger:function(result){
-                return result.type == "(Num t) => t";
+                return result.expr.match(/^[ ]*let[ ]+x[ ]*=[ ]*[0-9]+[ ]*in[ ]*x[ ]*\*[ ]*x/) &&
+                    result.type == "(Num t) => t";
             }
             },
             {guide:function(result){
@@ -322,7 +328,8 @@ function toHex(n){
                      "<code>'a' : 'b' : [] == ['a','b']</code>"
              },
              trigger:function(result){
-                 return result.type == "[Char]";
+                 return result.expr.match(/^[ ]*'a'[ ]*:[ ]*\[\][ ]*/) &&
+                     result.type == "[Char]";
              }
             },
             // Booleans and string syntactic sugar
@@ -362,7 +369,8 @@ function toHex(n){
                     "them around. Try this:</p> <code>map (+1) [1..5]</code></p>";
             },
              trigger:function(result){
-                 return result.type == "Bool";
+                 return result.expr.replace(/[^\]\[',=\"]?/g,'') == "['','','']==\"\"" &&
+                     result.type == "Bool";
              }
             },
             {lesson:4,
@@ -391,7 +399,8 @@ function toHex(n){
                      "<code>(1,\"George\")</code>"
              },
              trigger:function(result){
-                 return result.type == "(Num a, Enum a) => [a]";
+                 return result.expr.match(/^[ ]*map[ ]+\(\+1\)[ ]*\[1..5\][ ]*$/) &&
+                     result.type == "(Num a, Enum a) => [a]";
              }},
             {guide:function(result){
                 return "<h3>Lists and Tuples</h3>" +
@@ -409,7 +418,8 @@ function toHex(n){
 
              },
              trigger:function(result){
-                 return result.type == "(Num t) => (t, [Char])";
+                 return result.expr.match(/^[ ]*\(1,"[^"]+"\)[ ]*$/) &&
+                     result.type == "(Num t) => (t, [Char])";
              }},
             {guide:function(result){
                 return "<h3>Let there be functions</h3>" +
@@ -425,7 +435,8 @@ function toHex(n){
                     "<code>let square x = x * x in map square [1..10]</code>"
             },
              trigger:function(result){
-                 return result.type == "(Num t) => t";
+                 return result.expr.match(/^[ ]*let[ ]*square[ ]+x[ ]*=[ ]*x[ ]*\*[ ]*x[ ]*in[ ]*square[ ]+[0-9]+/) &&
+                     result.type == "(Num t) => t";
              }},
             {guide:function(result){
                 if (!result || !result.value) result = { value: "[1,4,9,16,25,36,49,64,81,100]" };
@@ -451,7 +462,8 @@ function toHex(n){
                 "<p><code>toUpper 'a'</code></p>"
             },
              trigger:function(result){
-                 return result.type == "(Num a, Enum a) => [a]";
+                 return result.expr.match(/^[ ]*let[ ]+square[ ]+x[ ]*=[ ]*x[ ]*\*[ ]*x[ ]*in[ ]+map[ ]+square[ ]*\[1..10\][ ]*$/) &&
+                     result.type == "(Num a, Enum a) => [a]";
              }},
             {guide:function(result){
                 return "<h3>Exercise time!</h3>" +
@@ -466,7 +478,8 @@ function toHex(n){
                 '<p>Spoiler: <code class="spoiler">map toUpper "Chris"</code></p>'
             },
              trigger:function(result){
-                 return result.type == "Char";
+                 return result.expr.match(/^toUpper 'a'$/) &&
+                     result.type == "Char";
              }},
             {guide:function(result){
                 return "<h3>Lesson 4 complete!</h3>" +
@@ -520,7 +533,8 @@ function toHex(n){
                  "<code>let (a:b:c:[]) = \"xyz\" in a</code>"
              },
              trigger:function(result){
-                 return result.type == "(Num t) => t";
+                 return result.expr.match(/^[ ]*let[ ]+\(a,b\)[ ]+=[ ]+\(10,12\)[ ]+in[ ]+a[ ]*\*[ ]*2[ ]*$/) &&
+                     result.type == "(Num t) => t";
              }},
             {guide:function(result){
                 return "<h3>"+rmsg(["Ignorance is bliss","Ignoring values"])+"</h3>" +
@@ -537,7 +551,8 @@ function toHex(n){
                 "<code>let (a:_) = \"xyz\" in a</code>"
             },
              trigger:function(result){
-                 return result.type == "Char";
+                 return result.expr.match(/^[ ]*let[ ]+\(a:b:c:\[\]\)[ ]*=[ ]*\"xyz\"[ ]*in[ ]+a[ ]*$/) &&
+                     result.type == "Char";
              }},
             {guide:function(result){
                 return "<h3>"+rmsg(["Exercise!","Show me the money!"])+"</h3>" +
@@ -548,7 +563,8 @@ function toHex(n){
                 "<p>Spoiler: <code class='spoiler'>let (_,(a:_)) = (10,\"abc\") in a</code></p>"
             },
              trigger:function(result){
-                 return result.type == "Char";
+                 return result.expr.match(/^[ ]*let[ ]*\(a:_\)[ ]*=[ ]*"xyz"[ ]*in[ ]*a[ ]*$/) &&
+                     result.type == "Char";
              }},
             {guide:function(result){
                 return "<h3>"+rmsg(["Well done!","Brilliant!","Perfetto!"])+"</h3>" +
@@ -567,7 +583,8 @@ function toHex(n){
                 "<code>let abc@(a,b,c) = (10,20,30) in (abc,a,b,c)</code>"
             },
              trigger:function(result){
-                 return result.type == "Char";
+                 return result.expr.match(/^[ ]*let[ ]*\(_,\(a:_\)\)[ ]*=[ ]*\(10,\"abc\"\)[ ]*in[ ]*a[ ]*$/) &&
+                     result.type == "Char";
              }},
             {guide:function(result){
                 return "<h3>"+rmsg(["And that's the end of that chapter"])+"</h3>" +
@@ -624,7 +641,8 @@ function toHex(n){
                     "<code>:t toUpper</code>"
             },
              trigger:function(result){
-                 return result.type == '[Char]';
+                 return result.expr.match(/"[^"]+"/) &&
+                     result.type == '[Char]';
              }},
             {guide:function(result){
                 showTypes = true;
@@ -670,7 +688,8 @@ function toHex(n){
 
             },
              trigger:function(result){
-                 return result.type == '[String]';
+                 return result.expr.match(/^[ ]*words[ ]*\"[^"]+\"[ ]*$/) &&
+                     result.type == '[String]';
              }},
             {guide:function(result){
                 showTypes = true;
@@ -732,7 +751,8 @@ function toHex(n){
                     "<code>map (*2) (filter (>5) [10,2,16,9,4])</code>"
             },
              trigger:function(result){
-                 return result.type == '[Char]';
+                 return result.expr.match(/^[ ]*drop[ ]*[0-9]+[ ]*"[^"]+"[ ]*$/) &&
+                     result.type == '[Char]';
              }},
             {guide:function(result){
                 showTypes = true;
