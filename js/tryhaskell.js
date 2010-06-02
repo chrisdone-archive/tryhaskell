@@ -872,6 +872,7 @@ function toHex(n){
                           if (pageTrigger > -1) {
                               triggerTutorialPage(pageTrigger,result); }
                           if (result.type) {
+                              if (pageTrigger == 24) showTypes = true;
                               handleSuccess(report,result,showTypes);
                           } else if (result.error) {
                               report(
