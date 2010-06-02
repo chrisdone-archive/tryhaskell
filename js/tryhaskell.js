@@ -226,7 +226,7 @@ function toHex(n){
                     "<p>Is "+(age?age[1]:"that")+" a normal age for a " +
                     "super-villain?</p>" +
                     "<p>You just wrote a <em>tuple</em>. It's a way to keep a bunch of values together in Haskell. " +
-                    "You can put as many as you like in there:</p>" + 
+                    "You can put as many as you like in there:</p>" +
                     "<ul><li><code>(1,\"hats\",23/35)</code></li><li><code>(\"Shaggy\",\"Daphnie\",\"Velma\")</code></li></ul>" +
                     "<p>Actually, let's say our villain <em>is</em> " +
                     "<code>" + villain + "</code>" +
@@ -277,14 +277,14 @@ function toHex(n){
                     " it will mean the same as if you'd written <code>4</code>.</p>" +
 
                 "<p>It's like this: <code>let <em>var</em> = <em>expression</em> in <em>body</em></code></p>" +
-                    
-                    "The <code>in</code> part just separates the expression from the body.</p>" +
 
-                "<p>For example try: " + 
+                "The <code>in</code> part just separates the expression from the body.</p>" +
+
+                "<p>For example try: " +
                     "<code><span class='highlight'>let</span> x <span class='highlight'>=</span> 8 * 10 <span class='highlight'>in</span> x + x</code></p>" +
-                    
+
                 "<p>So if we wanted to get the age of our villain, we could do:</p>" +
-                    
+
                 "<code><span class='highlight'>let</span> villain <span class='highlight'>=</span> (28,\"chirs\") <span class='highlight'>in</span> fst villain</code>"
 
             },trigger:function(result){
@@ -405,18 +405,18 @@ function toHex(n){
             {guide:function(result){
                 return "<h3>Lists and Tuples</h3>" +
 
-                 "<p>You can only " +
-                     " have a list of numbers or a list of characters, whereas in a tuple you can throw anything in! </p>" +
-                    
+                "<p>You can only " +
+                    " have a list of numbers or a list of characters, whereas in a tuple you can throw anything in! </p>" +
+
                 "<p>We've also seen that you can make a new list with <code>(:)</code> that joins two values together, like: </p>" +
                     "<p><code>1 : [2,3]</code></p>" +
 
                 "<p>But we can't do this with tuples! You can only write a tuple and then look at what's inside. You can't make new ones on the fly like a list." +
 
-                 "<p>Let's write our own functions! It's really easy. How about something simple:</p>" +
-                     "<code>let square x = x * x in square "+rmsg([52,10,3])+"</code>"
+                "<p>Let's write our own functions! It's really easy. How about something simple:</p>" +
+                    "<code>let square x = x * x in square "+rmsg([52,10,3])+"</code>"
 
-             },
+            },
              trigger:function(result){
                  return result.expr.match(/^[ ]*\(1,"[^"]+"\)[ ]*$/) &&
                      result.type == "(Num t) => (t, [Char])";
@@ -427,7 +427,7 @@ function toHex(n){
                     "<p>You defined a function. You can read it as, as for a given " +
                     "<em>parameter</em> called <code>x</code>, <code>square</code> of " +
                     "<code>x</code> is <code>x * x</code>." +
-                    "<p>Some others you can try are:</p>" + 
+                    "<p>Some others you can try are:</p>" +
                     "<ul><li><code>let add1 x = x + 1 in add1 5</code></li>" +
                     "<li><code>let second x = snd x in second (3,4)</code></li>" +
                     "</ul>" +
@@ -1004,7 +1004,7 @@ function toHex(n){
             pageTrigger = 0;
             return true;
         }
-        case 'back': { 
+        case 'back': {
             if (pageTrigger > 0) {
                 setTutorialPage(undefined,pageTrigger-1);
                 pageTrigger--;
