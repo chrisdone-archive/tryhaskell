@@ -204,11 +204,8 @@ function toHex(n){
                 return '<h3>' +
                     rmsg(["Tuples, because sometimes one value ain't enough!"]) +
                     '</h3>' +
-                    "<p>Watch out for "+nemesis+"! " +
-                    "They've got a ray gun, a dinosaur museum pamphlet and some " +
-                    " butter, and <strong>they're out to get you!</strong></p>" +
-                    "<p>You should keep your nemesis's credentials for the police." +
-                    " My nemesis is 28 years of age: "+
+                    "<p>Watch out for "+nemesis+"! You should keep their credentials for the police.</p>" +
+                    "<p>My nemesis is 28 years of age: "+
                     "<code>(28,\"chirs\")</code></p>"
             },
              trigger:function(result){
@@ -221,14 +218,17 @@ function toHex(n){
                 var age = result.result.match(/^\(([0-9]+)+/);
                 var villain = htmlEncode(result.result.replace(/\\"/g,'"'));
                 return '<h3>' +
-                    rmsg(["We'll keep them safe, sir.","Let it be"]) +
+                    rmsg(["We'll keep them safe, sir."]) +
                     '</h3>' +
                     "<p>Is "+(age?age[1]:"that")+" a normal age for a " +
                     "super-villain?</p>" +
+                    "<p>You just wrote a <em>tuple</em>. It's a way to keep a bunch of values together in Haskell. " +
+                    "You can put as many as you like in there:</p>" + 
+                    "<ul><li><code>(1,\"hats\",23/35)</code></li><li><code>(\"Shaggy\",\"Daphnie\",\"Velma\")</code></li></ul>" +
                     "<p>Actually, let's say our villain <em>is</em> " +
-                    villain +
+                    "<code>" + villain + "</code>" +
                     ", how do you get their age?</p>" +
-                    "<code>let villain = " + villain + " in fst villain</code>"
+                    "<code>fst " + villain + "</code>"
             },
              trigger:function(result){
                  return result.type == "(Num t) => (t, [Char])";
@@ -240,24 +240,64 @@ function toHex(n){
                     rmsg(["Lesson 2 done! Wow, great job!",
                           "Lesson 2 completo!"]) +
                     '</h3>' +
-                    "<p>Good job! You got the age back from the tuple! Didn't " +
-                    " even break a sweat, did you?</p>" +
-                    "<p>Time to take a rest and see what you learned:</p>" +
+
+                "<p>Good job! You got the age back from the tuple! Didn't " +
+                    " even break a sweat, did you? The <code>fst</code> function "+
+                    "just gets the <em>first</em> value. It's called \"fst\" because " +
+                    "it's used <em>a lot</em> in Haskell so it really needs to be short!</p>" +
+
+                "<p>Time to take a rest and see what you learned:</p>" +
                     "<ol>"+
                     "<li>Functions can be used on lists of any type.</li>" +
                     "<li>We can stuff values into tuples.</li>" +
                     "<li>Getting the values back from tuples is easy.</li>"+
-                    "</ol>"+
-                    "<p>Next, we take a short detour to learn about " +
-                    "<strong>syntactic sugar</strong>. " +
-                    "Try typing this out:</p>" +
-                    "<p><code>'a' : []</code></p>" +
-                    "<p>Or skip to <code>lesson4</code> to learn about functions," +
-                    " the meat of Haskell!"
+                    "</ol>" +
+
+                "<p>Now let's say you want " +
+                    " to use a value more than once, how would you do it? "+
+                    "To make our lives easier, we can say:</p>" +
+
+                "<code>let x = 4 in x * x</code>"
             },
              trigger:function(result){
                  return result.type == "(Num t) => t";
              }
+            },
+            {guide:function(result){
+                return "<h3>Let them eat cake</h3>" +
+
+                "<p>You just <em>bound</em> a <em>variable</em>. " +
+                    "That is, you bound <code>x</code> to the expression <code>4</code>, " +
+                    " and then you can write <code>x</code> in some code (the <em>body</em>) and " +
+                    " it will mean the same as if you'd written <code>4</code>.</p>" +
+
+                "<p>It's like this: <code>let <em>var</em> = <em>expression</em> in <em>body</em></code></p>" +
+                    
+                    "The <code>in</code> part just separates the expression from the body.</p>" +
+
+                "<p>For example try: " + 
+                    "<code><span class='highlight'>let</span> x <span class='highlight'>=</span> 8 * 10 <span class='highlight'>in</span> x + x</code></p>" +
+                    
+                "<p>So if we wanted to get the age of our villain, we could do:</p>" +
+                    
+                "<code><span class='highlight'>let</span> villain <span class='highlight'>=</span> (28,\"chirs\") <span class='highlight'>in</span> fst villain</code>"
+
+            },trigger:function(result){
+                return result.type == "(Num t) => t";
+            }
+            },
+            {guide:function(result){
+                return "<h3>Basics over, let's go!</h3>" +
+                    "<p>Next, let's take a short detour to learn about " +
+                    "<strong>syntactic sugar</strong>. " +
+                    "Try typing this out:</p>" +
+                    "<p><code>'a' : []</code></p>" +
+                    "<p>Or skip to <code>lesson4</code> to learn about functions," +
+                    " the meat of Haskell!";
+            },trigger:function(result){
+                return result.expr.match(/^[ ]*let[ ]+villain[ ]*=[ ]*\([0-9]+,[ ]*"[^"]+"\)[ ]*in[ ]+fst[ ]+villain[ ]*/) &&
+                    result.type == "(Num t) => t";
+            }
             },
             // Lesson 3: Syntactic sugar
             {lesson:3,
@@ -266,7 +306,7 @@ function toHex(n){
                  return '<h3>' +
                      rmsg(["You constructed a list!"]) +
                      '</h3>' +
-                     "<p>Well done, that was tricky syntax. You used the (:) " +
+                     "<p>Well done, that was tricky syntax. You used the <code>(:)</code> " +
                      "function. It takes two values, some value and a list, and " +
                      " constructs a new list" +
                      " out of them. We call it 'cons' for short.</p>" +
@@ -310,10 +350,10 @@ function toHex(n){
                     "<ol>" +
                     "<li>In <code>'a' : []</code>, <code>:</code> is really just " +
                     " another function, just clever looking.</li>" +
-                    "<li>Pretty functions like this are written like (:) when " +
+                    "<li>Pretty functions like this are written like <code>(:)</code> when " +
                     " you talk about them.</li>" +
-                    "<li>A list of characters ['a','b'] can just be written " +
-                    "\"ab\". Much easier!</li>"
+                    "<li>A list of characters <code>['a','b']</code> can just be written " +
+                    "<code>\"ab\"</code>. Much easier!</li>"
                     + "</ol>" +
                     "<p>Phew! You're getting pretty deep! Your arch nemesis, " +
                     nemesis + ", is gonna try to steal your " + rmsg(['mojo',
@@ -347,20 +387,41 @@ function toHex(n){
                      "<li><code>filter (>5) [62,3,25,7,1,9]</code></li>" +
                      "</ul>" +
 
-                 "<p>Let's write our own functions! It's really easy. How about something simple:</p>" +
-                     "<code>let square x = x * x in square "+rmsg([52,10,3])+"</code>"
-
+                 "<p>Note that a tuple is different to a list because you can do this:</p>" +
+                     "<code>(1,\"George\")</code>"
              },
              trigger:function(result){
                  return result.type == "(Num a, Enum a) => [a]";
              }},
             {guide:function(result){
+                return "<h3>Lists and Tuples</h3>" +
+
+                 "<p>You can only " +
+                     " have a list of numbers or a list of characters, whereas in a tuple you can throw anything in! </p>" +
+                    
+                "<p>We've also seen that you can make a new list with <code>(:)</code> that joins two values together, like: </p>" +
+                    "<p><code>1 : [2,3]</code></p>" +
+
+                "<p>But we can't do this with tuples! You can only write a tuple and then look at what's inside. You can't make new ones on the fly like a list." +
+
+                 "<p>Let's write our own functions! It's really easy. How about something simple:</p>" +
+                     "<code>let square x = x * x in square "+rmsg([52,10,3])+"</code>"
+
+             },
+             trigger:function(result){
+                 return result.type == "(Num t) => (t, [Char])";
+             }},
+            {guide:function(result){
                 return "<h3>Let there be functions</h3>" +
                     "<p>Nice one! I think you're getting used to the <code>let</code> syntax.</p>" +
-                    "<p>You defined our function. You can read it as, as for a given " +
+                    "<p>You defined a function. You can read it as, as for a given " +
                     "<em>parameter</em> called <code>x</code>, <code>square</code> of " +
                     "<code>x</code> is <code>x * x</code>." +
-                    "<p>Let's go crazy and use our function with map:</p>" +
+                    "<p>Some others you can try are:</p>" + 
+                    "<ul><li><code>let add1 x = x + 1 in add1 5</code></li>" +
+                    "<li><code>let second x = snd x in second (3,4)</code></li>" +
+                    "</ul>" +
+                    "<p>Let's go crazy and use our <code>square</code> function with map:</p>" +
                     "<code>let square x = x * x in map square [1..10]</code>"
             },
              trigger:function(result){
@@ -497,8 +558,7 @@ function toHex(n){
                 "<p>If you're still a bit unsure, here are some other things you can try:</p>" +
 
                 "<ul>" +
-                    "<li><code>let (_:_:c:_) = \"abcd\" in c</code></li>" +
-                    "<li><code>let (Just a) = Just 10 in a</code></li>" +
+                    "<li><code>let _:_:c:_ = \"abcd\" in c</code></li>" +
                     "<li><code>let [a,b,c] = \"cat\" in (a,b,c)</code></li>" +
                     "</ul>" +
 

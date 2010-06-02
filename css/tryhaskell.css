@@ -133,6 +133,7 @@ div.guide p { margin-bottom:0.5em }
 div.guide ul { margin-left:1em; margin-bottom:1em }
 div.guide li { line-height:2em }
 div.guide code { color:#8ae0c2; font-family:monospace; background:#2d2542;padding:0.2em;cursor:default }
+div.guide code span.highlight { color:#fff }
 div.guide .spoiler { background: #2d2542; color: #2d2542; }
 div.guide .spoiler:hover { background: #2d2542; color:#8ae0c2; }
 div.guide code:hover { color:#8ae0c2; background:#2d2542 }
