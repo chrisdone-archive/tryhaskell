@@ -952,6 +952,7 @@ function toHex(n){
 
         var match = window.location.href.match(/#([0-9]+)$/);
         if (match) {
+            pageTrigger = match[1]-1;
             setTutorialPage(undefined,match[1]-1);
         }
 
@@ -1002,6 +1003,15 @@ function toHex(n){
             report();
             pageTrigger = 0;
             return true;
+        }
+        case 'back': { 
+            if (pageTrigger > 0) {
+                setTutorialPage(undefined,pageTrigger-1);
+                pageTrigger--;
+                report();
+                return true;
+            }
+            break;
         }
         case 'lessons': {
             var lessons = $('<ol></ol>');
@@ -1077,10 +1087,15 @@ function toHex(n){
                     tutorialGuide.html(pages[n].guide(result));
                 else
                     tutorialGuide.html(pages[n].guide);
+                var back = '';
+                if (pageTrigger>0)
+                    back = 'You\'re at <code>step' + (n+1)
+                    + '</code>. Type <code>back</code> to go back.';
+                else
+                    back = 'You\'re at step' + (n+1) + '. Type <code>step' + (n+1)
+                    + '</code> to return here.';
                 if (true) tutorialGuide
-                    .append('<div class="note">Tip: You\'re at step ' + (n+1)
-                            + ', type <code>step' + (n+1)
-                            + '</code> to return to this step.</div>')
+                    .append('<div class="note">' + back + '</div>')
                     .append('<div class="lesson">Lesson: ' +
                             searchLessonBack(n) +
                             '</div>');
