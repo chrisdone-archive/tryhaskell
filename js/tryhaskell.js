@@ -768,15 +768,18 @@ function toHex(n){
 
                 "<p>You're really making great progress. Don't hesitate to sit and play in the console between chapters to get a good feel of it!</p>" +
 
-                "<p>Stay tuned for more chapters on <em>type classes</em> and the meaning of <code>:t 1</code>, <code>:t (*)</code>, etc.</p>"
+                "<p>Stay tuned for more chapters on <em>type classes</em> and the meaning of <code>:t 1</code>, <code>:t (*)</code>, etc.</p>" +
+                    learnMore
             },
              trigger:function(result){
                  return result.type == '(Num a, Ord a) => [a]';
              }},
         ];
+
     var pageTrigger = -1;
     var notices = [];
     var controller; // Console controller
+    var learnMore;
 
     ////////////////////////////////////////////////////////////////////////
     // Unshow a string
@@ -806,6 +809,7 @@ function toHex(n){
     var lastLine;
 
     $(document).ready(function(){
+        learnMore = $('#learn-more').children('div').html();
         $('.reset-btn').click(function(){
             if (confirm("Are you sure you want to reset? " +
                         "You will lose your current state.")) {

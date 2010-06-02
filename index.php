@@ -65,20 +65,23 @@
                       </li>
                     </ul>
                   </div>
-                  <h3>Learn More</h3>
-                  <div class="indent">
-                    <p class="clearfix">
-                      <a class="tryhaskellcover sprites"
-                         href="http://book.realworldhaskell.org/"
-                         title="Real World Haskell"><span>Real World Haskell!</span></a>
-                      Get stuck into a book with
-                      <a href="http://book.realworldhaskell.org/">Real
-                        World Haskell</a> <small class="note">
-                        (readable online!)</small>, published by O'Reilly Media.
-                      Checkout
-                      <a href="http://haskell.org/"
-                         title="Haskell home page">Haskell.org</a> 
-                      for more information about Haskell.</p>
+                  <div id="learn-more">
+                    <h3>Learn More</h3>
+                    <div class="indent">
+                      <p class="clearfix">
+                        <a class="tryhaskellcover sprites"
+                           href="http://book.realworldhaskell.org/"
+                           title="Real World Haskell"><span>Real World Haskell!</span></a>
+                        Get stuck into a book with
+                        <a href="http://book.realworldhaskell.org/">Real
+                          World Haskell</a> <small class="note">
+                          (readable online!)</small>, published by O'Reilly Media.
+                        Checkout
+                        <a href="http://haskell.org/"
+                           title="Haskell home page">Haskell.org</a> 
+                        for more information about Haskell.</p>
+                    </div>
+                  </div>
                   </div>
                 </div>
               </div>
