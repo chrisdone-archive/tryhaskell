@@ -362,7 +362,7 @@
 		disableInput();
                 addToHistory(promptText);
                 var ret = config.commandHandle(promptText,function(msgs){
-			commandResult(msgs);
+                    commandResult(msgs);
                 });
                 if (typeof ret == 'boolean') {
                     if (ret) {
@@ -374,7 +374,7 @@
                     }
                 } else if (typeof ret == "string") {
                     commandResult(ret,"jquery-console-message-success");
-                } else if (ret.length) {
+                } else if (typeof ret == 'object' && ret.length) {
                     commandResult(ret);
                 }
             }
