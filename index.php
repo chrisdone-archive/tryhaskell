@@ -3,7 +3,7 @@
 <html>
   <head>
     <title>Try Haskell! An interactive tutorial in your browser</title>
-    <meta name="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="google-site-verification"
           content="q3BH34YRyNZdPysYNE0FbM4bJl2hkY67BK0tEExs1a4">
     <meta name="description" content="Try Haskell in your browser! An interactive tutorial for the Haskell programming language.">
@@ -12,10 +12,10 @@
       <?=str_replace('url(../','url(',file_get_contents("css/tryhaskell.css")); ?>
     </style>
     <!--[if lte IE 6]>
-    <style type="text/css" media="screen">
-      div.primary-content { width:600px;margin-left:70px;float:left }
-    </style>
-    <![endif]-->
+        <style type="text/css" media="screen">
+          div.primary-content { width:600px;margin-left:70px;float:left }
+        </style>
+        <![endif]-->
     <script type="text/javascript" src="js/lib.min.js"></script>
     <script type="text/javascript" src="js/jquery.console.js"></script>
     <script type="text/javascript" src="js/tryhaskell.js"></script>
@@ -61,8 +61,8 @@
                   <h3>Beginners</h3>
                   <div class="indent">
                     <p>Type <code>help</code> to start the
-                    tutorial. Type <code>lessons</code> to see the
-                    list of lessons.</p>
+                      tutorial. Type <code>lessons</code> to see the
+                      list of lessons.</p>
                     <p>Or try typing these out and see what happens
                       <small class="note">(click to insert)</small>:</p>
                     <ul>
@@ -87,10 +87,9 @@
                           (readable online!)</small>, published by O'Reilly Media.
                         Checkout
                         <a href="http://haskell.org/"
-                           title="Haskell home page">Haskell.org</a> 
+                           title="Haskell home page">Haskell.org</a>
                         for more information about Haskell.</p>
                     </div>
-                  </div>
                   </div>
                 </div>
               </div>
@@ -106,7 +105,7 @@
               <p>
                 <a href="http://chrisdone.com/posts/2010-04-05-haskell-json-service-tryhaskell.html">Evaluation
                   service</a>
-                  and <a href="http://github.com/chrisdone/tryhaskell">Try
+                and <a href="http://github.com/chrisdone/tryhaskell">Try
                   Haskell</a> by
                 <a href="http://chrisdone.com/">
                   Chris Done,
@@ -115,7 +114,7 @@
                 <a href="http://tryruby.org/"
                    title="_why's Try Ruby">
                   _why's Try Ruby!</a>,
-                Haskell evaluator powered by a patched version of 
+                Haskell evaluator powered by a patched version of
                 <a href="http://hackage.haskell.org/package/mueval"
                    title="mueval on Hackage">
                   Gwern Branwen's mueval</a>,
