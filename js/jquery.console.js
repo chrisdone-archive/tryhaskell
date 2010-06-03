@@ -355,8 +355,10 @@
         // Handle a command
         function handleCommand() {
             if (typeof config.commandHandle == 'function') {
-                var ret = config.commandHandle(promptText,function(msgs){
-                    commandResult(msgs);
+                var ret = config.commandHandle(
+		    promptText.substr(0),
+		    function(msgs){
+			commandResult(msgs);
                 });
                 if (typeof ret == 'boolean') {
                     if (ret) {
