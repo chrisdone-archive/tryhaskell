@@ -45,8 +45,56 @@
         ////////////////////////////////////////////////////////////////////////
         // Constants
         // Some are enums, data types, others just for optimisation
-        var keyCodes = { left:37,right:39,up:38,down:40,back:8,del:46,
-                         end:35,start:36,ret:13,tab:18};
+        var keyCodes = {
+	    // left
+	    37: moveBackward,
+	    // right
+	    39: moveForward,
+	    // up
+	    38: previousHistory,
+	    // down
+	    40: nextHistory,
+	    // backspace
+	    8:  backDelete,
+	    // delete
+	    46: forwardDelete,
+            // end
+	    35: moveToEnd,
+	    // start
+	    36: moveToStart,
+	    // return
+	    13: commandTrigger,
+	    // tab
+	    18: doNothing
+	};
+	var ctrlCodes = {
+	    // C-a
+	    65: moveToStart,
+	    // C-e
+	    69: moveToEnd,
+	    // C-d
+	    68: forwardDelete,
+	    // C-n
+	    78: nextHistory,
+	    // C-p
+	    80: previousHistory,
+	    // C-b
+	    66: moveBackward,
+	    // C-f
+	    70: moveForward,
+	    // C-k
+	    75: deleteUntilEnd,
+	    // C-c
+	    67: doNothing // for now
+	};
+	var altCodes = {
+	    // M-f
+	    70: moveToNextWord,
+	    // M-b
+	    66: moveToPreviousWord,
+	    // M-d
+	    68: deleteNextWord
+	};
         var cursor = '<span class="jquery-console-cursor">&nbsp;</span>';
         // Opera only works with this character, not <wbr> or &shy;,
         // but IE6 displays this character, which is bad, so just use
@@ -190,12 +238,21 @@
         typer.keydown(function(e){
             cancelKeyPress = 0;
             var keyCode = e.keyCode;
-            if (acceptInput && isControlCharacter(keyCode)) {
-                cancelKeyPress = keyCode;
-                if (!typer.consoleControl(keyCode)) {
-                    return false;
-                }
-            }
+	    if (acceptInput) {
+		if (keyCode in keyCodes) {
+                    cancelKeyPress = keyCode;
+		    (keyCodes[keyCode])();
+		    return false;
+		} else if (e.ctrlKey && keyCode in ctrlCodes) {
+                    cancelKeyPress = keyCode;
+		    (ctrlCodes[keyCode])();
+		    return false;
+		} else if (e.altKey  && keyCode in altCodes) {
+                    cancelKeyPress = keyCode;
+		    (altCodes[keyCode])();
+		    return false;
+		}
+	    }
         });
         
         ////////////////////////////////////////////////////////////////////////
@@ -215,77 +272,10 @@
             if ($.browser.webkit) return false;
         });
 
-        // Is a keycode a control character? 
-        // E.g. up, down, left, right, backspc, return, etc.
-        function isControlCharacter(keyCode){
-            // TODO: Make more precise/fast.
-            return (
-                (keyCode >= keyCodes.left && keyCode <= keyCodes.down)
-                    || keyCode == keyCodes.back || keyCode == keyCodes.del
-                    || keyCode == keyCodes.end || keyCode == keyCodes.start
-                    || keyCode == keyCodes.ret
-            );
-        };
-
         function isIgnorableKey(e) {
             // for now just filter alt+tab that we receive on some platforms when
             // user switches windows (goes away from the browser)
             return ((e.keyCode == keyCodes.tab || e.keyCode == 192) && e.altKey);
-        };
-        ////////////////////////////////////////////////////////////////////////
-        // Handle console control keys
-        // E.g. up, down, left, right, backspc, return, etc.
-        typer.consoleControl = function(keyCode){
-            switch (keyCode){
-            case keyCodes.left:{ 
-                moveColumn(-1);
-                updatePromptDisplay(); 
-                return false;
-                break;
-            }
-            case keyCodes.right:{
-                moveColumn(1); 
-                updatePromptDisplay();
-                return false;
-                break; 
-            }
-            case keyCodes.back:{
-                if (moveColumn(-1)){
-                    deleteCharAtPos();
-                    updatePromptDisplay();
-                }
-                return false;
-                break;
-            }
-            case keyCodes.del:{
-                if (deleteCharAtPos())
-                    updatePromptDisplay();
-                return false;
-                break;
-            }
-            case keyCodes.end:{
-                if (moveColumn(promptText.length-column))
-                    updatePromptDisplay();
-                return false;
-                break;
-            }
-            case keyCodes.start:{
-                if (moveColumn(-column))
-                    updatePromptDisplay();
-                return false;
-                break;
-            }
-            case keyCodes.ret:{
-                commandTrigger(); return false;
-            }
-            case keyCodes.up:{
-                rotateHistory(-1); return false;
-            }
-            case keyCodes.down:{
-                rotateHistory(1); return false;
-            }
-            default: //alert("Unknown control character: " + keyCode);
-            }
         };
 
         ////////////////////////////////////////////////////////////////////////
@@ -315,6 +305,14 @@
             updatePromptDisplay();
         };
 
+	function previousHistory() {
+	    rotateHistory(-1);
+	};
+
+	function nextHistory() {
+	    rotateHistory(1);
+	};
+
         // Add something to the history ring
         function addToHistory(line){
             history.push(line);
@@ -323,7 +321,7 @@
 
         // Delete the character at the current position
         function deleteCharAtPos(){
-            if (promptText != ''){
+            if (column < promptText.length){
                 promptText =
                     promptText.substring(0,column) +
                     promptText.substring(column+1);
@@ -331,6 +329,41 @@
                 return true;
             } else return false;
         };
+
+	function backDelete() {
+            if (moveColumn(-1)){
+                deleteCharAtPos();
+                updatePromptDisplay();
+            }
+	};
+	
+	function forwardDelete() {
+            if (deleteCharAtPos())
+                updatePromptDisplay();
+	};
+
+	function deleteUntilEnd() {
+	    while(deleteCharAtPos()) {
+		updatePromptDisplay();
+	    }
+	};
+
+	function deleteNextWord() {
+	    // A word is defined within this context as a series of alphanumeric
+	    // characters.
+	    // Delete up to the next alphanumeric character
+	    while(column < promptText.length &&
+		  !isCharAlphanumeric(promptText[column])) {
+		deleteCharAtPos();
+		updatePromptDisplay();
+	    }
+	    // Then, delete until the next non-alphanumeric character
+	    while(column < promptText.length &&
+		  isCharAlphanumeric(promptText[column])) {
+		deleteCharAtPos();
+		updatePromptDisplay();
+	    }
+	};
 
         ////////////////////////////////////////////////////////////////////////
         // Validate command and trigger it if valid, or show a validation error
@@ -439,6 +472,68 @@
                 return true;
             } else return false;
         };
+
+	function moveForward() {
+            if(moveColumn(1)) {
+		updatePromptDisplay();
+		return true;
+	    }
+	    return false;
+	};
+
+	function moveBackward() {
+            if(moveColumn(-1)) {
+		updatePromptDisplay();
+		return true;
+	    }
+	    return false;
+	};
+
+	function moveToStart() {
+            if (moveColumn(-column))
+                updatePromptDisplay();
+	};
+
+	function moveToEnd() {
+            if (moveColumn(promptText.length-column))
+                updatePromptDisplay();
+	};
+
+	function moveToNextWord() {
+	    while(column < promptText.length &&
+		  !isCharAlphanumeric(promptText[column]) &&
+		  moveForward()) {
+	    }
+	    while(column < promptText.length &&
+		  isCharAlphanumeric(promptText[column]) &&
+		  moveForward()) {
+	    }
+	};
+
+	function moveToPreviousWord() {
+	    // Move backward until we find the first alphanumeric
+	    while(column -1 >= 0 &&
+		  !isCharAlphanumeric(promptText[column-1]) &&
+		  moveBackward()) {
+	    }
+	    // Move until we find the first non-alphanumeric
+	    while(column -1 >= 0 &&
+		  isCharAlphanumeric(promptText[column-1]) &&
+		  moveBackward()) {
+	    }
+	};
+
+	function isCharAlphanumeric(charToTest) {
+	    if(typeof charToTest == 'string') {
+		var code = charToTest.charCodeAt();
+		return (code >= 'A'.charCodeAt() && code <= 'Z'.charCodeAt()) ||
+		    (code >= 'a'.charCodeAt() && code <= 'z'.charCodeAt()) ||
+		    (code >= '0'.charCodeAt() && code <= '9'.charCodeAt());
+	    }
+	    return false;
+	};
+
+	function doNothing() {};
 
         extern.promptText = function(text){
             if (text) {
