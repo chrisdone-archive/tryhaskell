@@ -869,27 +869,27 @@ function toHex(n){
                 if (line == "") return false; // Empty line is invalid
                 else return true;
             },
+            cancelHandle:function(){
+                 controller.commandRef.ignore = true;
+                 controller.finishCommand();
+                 controller.report();
+            },
             commandHandle:function(line,report){
+                controller.ajaxloader = $('<p class="ajax-loader">Loading...</p>');
+                var commandRef = {};
+                controller.currentLine = line;
+                controller.commandRef = commandRef;
+                controller.report = report;
                 if (tellAboutRet) tellAboutRet.fadeOut(function(){
                     $(this).remove();
                 });
                 if (libTrigger(line,report)) return;
-                var ajaxloader = $('<p class="ajax-loader">Loading...</p>');
-                controller.inner.append(ajaxloader);
+                controller.inner.append(controller.ajaxloader);
                 controller.scrollToBottom();
-                // TODO: a proper UrlEncode
                 jsonp("http://tryhaskell.org/haskell.json?method=eval&pad=handleJSON&expr=" + encodeHex(line),
                       function(resp){
-                          ajaxloader.remove();
-                          $('.jquery-console-prompt').each(function(){
-                              lastLine = line;
-                              if (!$(this).hasClass('prompt-done')) {
-                                  $(this).addClass('prompt-done');
-                                  $(this).click(function(){
-                                      controller.promptText(line);
-                                  });
-                              }
-                          });
+                        if (commandRef.ignore) { return; }
+                          controller.finishCommand();
                           var result = resp;
                           if (pageTrigger > -1) {
                               triggerTutorialPage(pageTrigger,result); }
@@ -945,6 +945,19 @@ function toHex(n){
             historyPreserveColumn:true,
             welcomeMessage:'Type Haskell expressions in here.'
         });
+
+      controller.finishCommand = function() {
+        controller.ajaxloader.remove();
+        $('.jquery-console-prompt :last').each(function(){
+          lastLine = controller.currentLine;
+          if (!$(this).hasClass('prompt-done')) {
+            $(this).addClass('prompt-done');
+            $(this).click(function(){
+              controller.promptText(controller.currentLine);
+            });
+          }
+        });
+      }
 
         makeGuidSamplesClickable();
 
