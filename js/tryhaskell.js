@@ -923,6 +923,8 @@ function toHex(n){
                                   [{msg:limitsError(result.internal),
                                     className:"jquery-console-message-error jquery-console-message-internal"}]
                               );
+                          } else if (result.bind) {
+                              report();
                           } else if (result.result) {
                               if (result.expr.match(/^:modules/)) {
                                   report(
