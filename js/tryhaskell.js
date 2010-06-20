@@ -891,7 +891,7 @@ function toHex(n){
                         if (commandRef.ignore) { return; }
                           controller.finishCommand();
                           var result = resp;
-                          if (pageTrigger > -1) {
+                          if (pageTrigger > -1 && result.expr) {
                               triggerTutorialPage(pageTrigger,result); }
                           if (result.type) {
                               if (pageTrigger == 24) showTypes = true;
