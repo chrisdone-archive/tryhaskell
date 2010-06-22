@@ -85,10 +85,12 @@
                         <a href="http://book.realworldhaskell.org/">Real
                           World Haskell</a> <small class="note">
                           (readable online!)</small>, published by O'Reilly Media.
-                        Checkout
+                        Check out
                         <a href="http://haskell.org/"
                            title="Haskell home page">Haskell.org</a>
-                        for more information about Haskell.</p>
+                        for more information about Haskell.
+                       For more fun, use <a href="http://codepad.org/">codepad.org</a>
+                        to run full Haskell programs.</p>
                     </div>
                   </div>
                 </div>
