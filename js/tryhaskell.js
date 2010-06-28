@@ -170,7 +170,7 @@ function toHex(n){
                     "<code>sort " + result.result + "</code></p>"
             },
              trigger:function(result){
-                 return result.expr.match(/^[ ]*\[[0-9,]+\][ ]*$/) &&
+                 return result.expr.match(/^[ ]*\[[0-9, ]+\][ ]*$/) &&
                      result.type == "(Num t) => [t]";
              }
             },
