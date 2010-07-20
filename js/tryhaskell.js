@@ -136,12 +136,7 @@ function toHex(n){
             },
             // Strings & types
             {guide:function(result){
-                setwebchat = false;
                 if (!result) result = {expr:'"chris"',result:"\"chris\""};
-                else {
-                    setwebchat = true;
-                    runWebchat(unString(result.result));
-                }
                 var n = unString(result.result); if (n) n = ", " +n;
                 n += "!";
                 return '<h3>' + rmsg(['Types of values',"What's in a name?"]) +
