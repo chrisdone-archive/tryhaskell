@@ -777,22 +777,23 @@ function toHex(n){
 
     var webchat;
 
-    function runWebchat(suggestNick) {
+    function runWebchat() {
         if (!webchat) {
-            var nick = suggestNick.replace(/[^a-zA-Z0-9_]/g,'');
-            $('.main-wrapper').css('width','600px');
-            $('.main-wrapper').css('float','left');
-            $('.page-wrap').css('width','1220px');
-            $('.primary-content').css('width','1220px');
-            $('.primary-content').css('margin-left','0');
-            webchat = '<iframe id="webchat" src="http://webchat.freenode.net?channels=haskell&uio=Mz1mYWxzZSYxMD10cnVlJjExPTI0Nge9" width="600" height="400"></iframe>';
-            $('.primary-content').append(webchat);
-            $('#webchat').css('float','left');
-            $('#webchat').css('webkit-border-radius','3px');
-            $('#webchat').css('moz-border-radius','3px');
-            $('#webchat').css('border-radius','3px');
-            $('#webchat').css('border','5px solid #eeeeee');
-            $('#webchat').css('margin-left','5px');
+            // Create webchat frame
+            var webchat =
+                $('<iframe id="webchat" src="http://webchat.freenode.net?channels=haskell&uio=Mz1mYWxzZSYxMD10cnVlJjExPTI0Nge9"></iframe>');
+            webchat.attr('width',635);
+            webchat.attr('height',500);
+            webchat.css('float','left');
+            webchat.css('webkit-border-radius','3px');
+            webchat.css('moz-border-radius','3px');
+            webchat.css('border-radius','3px');
+            webchat.css('border','5px solid #eeeeee');
+
+            // Extend page wrap to fit console and chat
+            $('.page-wrap').css({width:'1250px'});
+            $('.primary-content').css('margin-left',0);
+            $('.page-wrap').append(webchat.css('margin-left','5px'));
         }
     }
 
@@ -829,6 +830,7 @@ function toHex(n){
     var lastLine;
 
     $(document).ready(function(){
+        runWebchat();
         learnMore = $('#learn-more').children('div').html();
         $('.reset-btn').click(function(){
             if (confirm("Are you sure you want to reset? " +
@@ -1073,7 +1075,7 @@ function toHex(n){
                        'Enter your nick on the right hand side and hit Connect!',
                       'prompt');
                 report();
-                runWebchat('');
+                runWebchat();
                 return true;
             }
 
