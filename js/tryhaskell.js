@@ -830,7 +830,6 @@ function toHex(n){
     var lastLine;
 
     $(document).ready(function(){
-        runWebchat();
         learnMore = $('#learn-more').children('div').html();
         $('.reset-btn').click(function(){
             if (confirm("Are you sure you want to reset? " +
