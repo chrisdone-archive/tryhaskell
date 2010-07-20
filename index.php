@@ -16,7 +16,13 @@
           div.primary-content { width:600px;margin-left:70px;float:left }
         </style>
         <![endif]-->
+    <link rel="stylesheet" href="http://webchat.freenode.net/static/two/css/qui-0a87676e5b8b.css" type="text/css"/>
+    <script type="text/javascript"
+            src="http://webchat.freenode.net/static/two/js/qui-0a87676e5b8b.js"></script>
     <script type="text/javascript" src="js/lib.min.js"></script>
+    <script type="text/javascript">
+      jQuery.noConflict(); 
+    </script>
     <script type="text/javascript" src="js/jquery.console.js"></script>
     <script type="text/javascript" src="js/tryhaskell.js"></script>
     <script type="text/javascript" src="js/raphael-min.js"></script>

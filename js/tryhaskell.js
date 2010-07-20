@@ -136,14 +136,20 @@ function toHex(n){
             },
             // Strings & types
             {guide:function(result){
+                setwebchat = false;
                 if (!result) result = {expr:'"chris"',result:"\"chris\""};
+                else {
+                    setwebchat = true;
+                    runWebchat(unString(result.result));
+                }
                 var n = unString(result.result); if (n) n = ", " +n;
                 n += "!";
                 return '<h3>' + rmsg(['Types of values',"What's in a name?"]) +
                     '</h3>'
                     + '<p>Hi there' + htmlEncode(n)
                     + (n!="!"? " That's a pretty name. Honest." : "")
-                    + " You're getting the hang of this! </p>"
+                    + " You're getting the hang of this! </p>" +
+                    "<p><strong>Note:</strong> You can chat to Haskell programmers while learning here, enter <code>chat</code> to start it.</p>"
                     + "<p>Each time, you're getting back the value of the expression. So "+
                     "far, just a number and a list of characters.</p>" +
                     "<p>You can have lists of other stuff, too. Let's see your " +
@@ -774,6 +780,27 @@ function toHex(n){
              }},
         ];
 
+    var webchat;
+
+    function runWebchat(suggestNick) {
+        if (!webchat) {
+            var nick = suggestNick.replace(/[^a-zA-Z0-9_]/g,'');
+            $('.main-wrapper').css('width','600px');
+            $('.main-wrapper').css('float','left');
+            $('.page-wrap').css('width','1220px');
+            $('.primary-content').css('width','1220px');
+            $('.primary-content').css('margin-left','0');
+            webchat = '<iframe id="webchat" src="http://webchat.freenode.net?channels=haskell&uio=Mz1mYWxzZSYxMD10cnVlJjExPTI0Nge9" width="600" height="400"></iframe>';
+            $('.primary-content').append(webchat);
+            $('#webchat').css('float','left');
+            $('#webchat').css('webkit-border-radius','3px');
+            $('#webchat').css('moz-border-radius','3px');
+            $('#webchat').css('border-radius','3px');
+            $('#webchat').css('border','5px solid #eeeeee');
+            $('#webchat').css('margin-left','5px');
+        }
+    }
+
     var pageTrigger = -1;
     var notices = [];
     var controller; // Console controller
@@ -870,9 +897,9 @@ function toHex(n){
                 else return true;
             },
             cancelHandle:function(){
-                 controller.commandRef.ignore = true;
-                 controller.finishCommand();
-                 controller.report();
+                controller.commandRef.ignore = true;
+                controller.finishCommand();
+                controller.report();
             },
             commandHandle:function(line,report){
                 controller.ajaxloader = $('<p class="ajax-loader">Loading...</p>');
@@ -888,7 +915,7 @@ function toHex(n){
                 controller.scrollToBottom();
                 jsonp("http://tryhaskell.org/haskell.json?method=eval&pad=handleJSON&expr=" + encodeHex(line),
                       function(resp){
-                        if (commandRef.ignore) { return; }
+                          if (commandRef.ignore) { return; }
                           controller.finishCommand();
                           var result = resp;
                           if (pageTrigger > -1 && result.expr) {
@@ -948,18 +975,18 @@ function toHex(n){
             welcomeMessage:'Type Haskell expressions in here.'
         });
 
-      controller.finishCommand = function() {
-        controller.ajaxloader.remove();
-        $('.jquery-console-prompt :last').each(function(){
-          lastLine = controller.currentLine;
-          if (!$(this).hasClass('prompt-done')) {
-            $(this).addClass('prompt-done');
-            $(this).click(function(){
-              controller.promptText(controller.currentLine);
+        controller.finishCommand = function() {
+            controller.ajaxloader.remove();
+            $('.jquery-console-prompt :last').each(function(){
+                lastLine = controller.currentLine;
+                if (!$(this).hasClass('prompt-done')) {
+                    $(this).addClass('prompt-done');
+                    $(this).click(function(){
+                        controller.promptText(controller.currentLine);
+                    });
+                }
             });
-          }
-        });
-      }
+        }
 
         makeGuidSamplesClickable();
 
@@ -1046,6 +1073,15 @@ function toHex(n){
             return true;
         }
         default: {
+            if (line.trim() == 'chat') {
+                notice('irc',
+                       'Enter your nick on the right hand side and hit Connect!',
+                      'prompt');
+                report();
+                runWebchat('');
+                return true;
+            }
+
             var m = line.trim().match(/^link(.*)/);
             if (m) {
                 var data;
