@@ -144,7 +144,8 @@ function toHex(n){
                     + '<p>Hi there' + htmlEncode(n)
                     + (n!="!"? " That's a pretty name. Honest." : "")
                     + " You're getting the hang of this! </p>" +
-                    "<p><strong>Note:</strong> You can chat to Haskell programmers while learning here, enter <code>chat</code> to start it.</p>"
+                    "<p><strong>Note:</strong> You can chat to Haskell programmers while learning here, enter <code>chat</code> to start it."+
+                    " You will join the official IRC channel of the Haskell community!</p>"
                     + "<p>Each time, you're getting back the value of the expression. So "+
                     "far, just a number and a list of characters.</p>" +
                     "<p>You can have lists of other stuff, too. Let's see your " +
