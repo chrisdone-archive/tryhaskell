@@ -585,7 +585,7 @@ function toHex(n){
                 "<code>let abc@(a,b,c) = (10,20,30) in (abc,a,b,c)</code>"
             },
              trigger:function(result){
-                 return result.expr.match(/^[ ]*let[ ]*\(_,\(a:_\)\)[ ]*=[ ]*\(10,\"abc\"\)[ ]*in[ ]*a[ ]*$/) &&
+                 return result.expr.match(/^[ ]*let[ ]*\(_,\(?a:_\)?\)[ ]*=[ ]*\(10,\"abc\"\)[ ]*in[ ]*a[ ]*$/) &&
                      result.type == "Char";
              }},
             {guide:function(result){
@@ -624,7 +624,7 @@ function toHex(n){
 
                  "<p>You've seen the type of a character, now what about" +
                      " a list of characters?</p>" +
-                     "<code>\"Sparticus\"</code>"
+                     "<code>\"Spartacus\"</code>"
              },
              trigger:function(result){
                  return result.type == 'Char';
@@ -633,7 +633,7 @@ function toHex(n){
                 showTypes = true;
                 return "<h3>"+rmsg(["Lists of stuff, types"])+"</h3>" +
 
-                "<p>I'm Sparticus!</p>" +
+                "<p>I'm Spartacus!</p>" +
 
                 "<p>Okay, so a list of characters has type <code>[Char]</code>.</p>" +
 
