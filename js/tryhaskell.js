@@ -234,7 +234,7 @@ function toHex(n){
                     "<code>fst " + villain + "</code>"
             },
              trigger:function(result){
-                 return result.expr.match(/\([0-9]+,"[^"]+"\)/) &&
+                 return result.expr.match(/\([0-9]+,[ ]*"[^"]+"\)/) &&
                      result.type == "(Num t) => (t, [Char])";
              }
             },
@@ -773,7 +773,7 @@ function toHex(n){
             },
              trigger:function(result){
                  return result.type == '(Num a, Ord a) => [a]';
-             }},
+             }}
         ];
 
     var webchat;
