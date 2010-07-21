@@ -40,6 +40,8 @@
 //   Chromium 4.0.237.0 (Ubuntu build 31094)
 //   Firefox 3.5.8
 
+// Temporary fix
+function opera(){ return navigator.userAgent.indexOf("Opera") == 0; }
 
 function encodeHex(str){
     var result = "";
@@ -1224,6 +1226,7 @@ function toHex(n){
     }
 
     function notice(name,msg,style) {
+      if (opera()) return;
         if (!notices[name]) {
             notices[name] = name;
             return controller.notice(msg,style);
