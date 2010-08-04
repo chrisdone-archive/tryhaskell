@@ -912,7 +912,7 @@ function toHex(n){
                 if (libTrigger(line,report)) return;
                 controller.inner.append(controller.ajaxloader);
                 controller.scrollToBottom();
-                jsonp("http://tryhaskell.org/haskell.json?method=eval&pad=handleJSON&expr=" + encodeHex(line),
+                jsonp("http://tryhaskell.org/haskell.json?method=eval&pad=handleJSON&expr=" + encodeHex(line) + "&random=" + Math.random(),
                       function(resp){
                           if (commandRef.ignore) { return; }
                           controller.finishCommand();
