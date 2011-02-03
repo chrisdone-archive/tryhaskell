@@ -223,7 +223,7 @@ function toHex(n){
                 var age = result.result.match(/^\(([0-9]+)+/);
                 var villain = htmlEncode(result.result.replace(/\\"/g,'"'));
                 return '<h3>' +
-                    rmsg(["We'll keep them safe, sir."]) +
+                    rmsg(["We'll keep them safe, don't worry about it."]) +
                     '</h3>' +
                     "<p>Is "+(age?age[1]:"that")+" a normal age for a " +
                     "super-villain?</p>" +
@@ -517,7 +517,7 @@ function toHex(n){
                            "Pattern matching!"])
                  return "<h3>" + title + "</h3>" +
 
-                 "<p>Good typing, sir!</p>" +
+                 "<p>Jolly good show!</p>" +
                      "<p>So you had a value <code>(10,12)</code> and matched " +
                      "it against a pattern <code>(a,b)</code>, then you were able" +
                      " to do stuff with the <code>a</code> and <code>b</code>!" +
