@@ -94,20 +94,25 @@
         // Opera only works with this character, not <wbr> or &shy;,
         // but IE6 displays this character, which is bad, so just use
         // it on Opera.
-        var wbr = $.browser.opera? '&#8203;' : '';
+        var wbr = $.browser.opera? '' : '<wbr>&shy;';
 
         ////////////////////////////////////////////////////////////////////////
         // Globals
         var container = $(this);
         var inner = $('<div class="jquery-console-inner"></div>');
-        var typer = $('<input class="jquery-console-typer" type="text">');
+        // erjiang: changed this from a text input to a textarea so we
+        // can get pasted newlines
+        var typer = $('<textarea class="jquery-console-typer"></textarea>');
         // Prompt
         var promptBox;
         var prompt;
         var promptLabel = config && config.promptLabel? config.promptLabel : "> ";
+        var continuedPromptLabel = config && config.continuedPromptLabel?
+        config.continuedPromptLabel : "> ";
         var column = 0;
         var promptText = '';
         var restoreText = '';
+        var continuedText = '';
         // Prompt history stack
         var history = [];
         var ringn = 0;
@@ -152,12 +157,14 @@
         ////////////////////////////////////////////////////////////////////////
         // Reset terminal
         extern.reset = function(){
-            var welcome = true;
+            var welcome = (typeof config.welcomeMessage != 'undefined');
             inner.parent().fadeOut(function(){
                 inner.find('div').each(function(){
-                    if (!welcome) 
+                    if (!welcome) {
                         $(this).remove();
-                    welcome = false;
+		    } else {
+			welcome = false;
+		    }
                 });
                 newPromptBox();
                 inner.parent().fadeIn(function(){
@@ -204,7 +211,9 @@
 	    enableInput();
             promptBox = $('<div class="jquery-console-prompt-box"></div>');
             var label = $('<span class="jquery-console-prompt-label"></span>');
-            promptBox.append(label.text(promptLabel).show());
+            var labelText = extern.continuedPrompt? continuedPromptLabel : promptLabel;
+            promptBox.append(label.text(labelText).show());
+            label.html(label.html().replace(' ','&nbsp;'));
             prompt = $('<span class="jquery-console-prompt"></span>');
             promptBox.append(prompt);
             inner.append(promptBox);
@@ -227,7 +236,21 @@
             inner.removeClass('jquery-console-focus');
             inner.addClass('jquery-console-nofocus');
         });
-
+        
+        ////////////////////////////////////////////////////////////////////////
+        // Bind to the paste event of the input box so we know when we
+        // get pasted data
+        typer.bind('paste', function(e) {
+            // wipe typer input clean just in case
+            typer.val("");
+            // this timeout is required because the onpaste event is
+            // fired *before* the text is actually pasted
+            setTimeout(function() {
+                typer.consoleInsert(typer.val());
+                typer.val("");
+            }, 0);
+        });
+        
         ////////////////////////////////////////////////////////////////////////
         // Handle key hit before translation
         // For picking up control characters like up/left/down/right
@@ -265,6 +288,10 @@
             if (isIgnorableKey(e)) {
                 return false;
             }
+          // // C-v: don't insert on paste event
+            if (e.ctrlKey && String.fromCharCode(keyCode).toLowerCase() == 'v') {
+              return true;
+            }
             if (acceptInput && cancelKeyPress != keyCode && keyCode >= 32){
                 if (cancelKeyPress) return false;
                 if (typeof config.charInsertTrigger == 'undefined' ||
@@ -300,10 +327,8 @@
                 } else if (column == 0) {
                     column = promptText.length;
                 }
-            } else if (config.historyColumnAtEnd) {
-                column = promptText.length;
             } else {
-                column = 0;
+                column = promptText.length;
             }
             updatePromptDisplay();
         };
@@ -403,9 +428,18 @@
             if (typeof config.commandHandle == 'function') {
 		disableInput();
                 addToHistory(promptText);
-                var ret = config.commandHandle(promptText,function(msgs){
+                var text = promptText;
+                if (extern.continuedPrompt) {
+                  if (continuedText)
+                    continuedText += '\n' + promptText;
+                  else continuedText = promptText;
+                } else continuedText = undefined;
+                if (continuedText) text = continuedText;
+                var ret = config.commandHandle(text,function(msgs){
                     commandResult(msgs);
                 });
+                if (extern.continuedPrompt && !continuedText)
+                  continuedText = promptText;
                 if (typeof ret == 'boolean') {
                     if (ret) {
                         // Command succeeded without a result.
@@ -418,6 +452,8 @@
                     commandResult(ret,"jquery-console-message-success");
                 } else if (typeof ret == 'object' && ret.length) {
                     commandResult(ret);
+                } else if (extern.continuedPrompt) {
+                    commandResult();
                 }
             }
         };
@@ -461,13 +497,15 @@
 
         ////////////////////////////////////////////////////////////////////////
         // Handle normal character insertion
-        typer.consoleInsert = function(keyCode){
+        // data can either be a number, which will be interpreted as the
+        // numeric value of a single character, or a string
+        typer.consoleInsert = function(data){
             // TODO: remove redundant indirection
-            var char = String.fromCharCode(keyCode);
+            var text = isNaN(data) ? data : String.fromCharCode(data);
             var before = promptText.substring(0,column);
             var after = promptText.substring(column);
-            promptText = before + char + after;
-            moveColumn(1);
+            promptText = before + text + after;
+            moveColumn(text.length);
             restoreText = promptText;
             updatePromptDisplay();
         };
@@ -547,8 +585,7 @@
         extern.promptText = function(text){
             if (text) {
                 promptText = text;
-                if (column > promptText.length)
-                    column = promptText.length;
+                column = promptText.length;
                 updatePromptDisplay();
             }
             return promptText;
@@ -594,7 +631,8 @@
                     .replace(/</g,'&lt;')
                     .replace(/</g,'&lt;')
                     .replace(/ /g,'&nbsp;')
-                    .replace(/([^<>&]{10})/g,'$1<wbr>&shy;' + wbr)
+                    .replace(/\n/g,'<br />')
+                    .replace(/([^<>&]{10})/g,'$1' + wbr)
             );
         };
 
