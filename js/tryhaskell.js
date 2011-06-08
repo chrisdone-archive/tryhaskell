@@ -749,7 +749,7 @@ function toHex(n){
 
                 "<p>It's okay to peek! Have a go at guessing these: <code>filter</code>, <code>take</code></p>" +
 
-                "<p>Tip: You can use parantheses to use more than one function. You want to double all the numbers over five? Psch! </p>" +
+                "<p>Tip: You can use parentheses to use more than one function. You want to double all the numbers over five? Psch! </p>" +
                     "<code>map (*2) (filter (>5) [10,2,16,9,4])</code>"
             },
              trigger:function(result){
