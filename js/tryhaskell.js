@@ -1129,6 +1129,7 @@ function toHex(n){
     function setTutorialPage(result,n) {
         if (pages[n]) {
             window.location.href = '#' + (1*n + 1);
+            window.ga_tracker._trackPageview('/page' +(1*n + 1));
             tutorialGuide.find('.lesson').remove();
             tutorialGuide.animate({opacity:0,height:0},'fast',function(){
                 if (typeof(pages[n].guide) == 'function')
