@@ -149,5 +149,13 @@
       pageTracker._setAllowLinker(true);
       pageTracker._trackPageview();
       } catch(err) {}</script>
+    <script type="text/javascript">
+      try {
+      var pageTracker2 = _gat._getTracker("UA-7443395-14");
+      pageTracker2._setDomainName("none");
+      pageTracker2._setAllowLinker(true);
+      pageTracker2._trackPageview(location.pathname + location.search + location.hash);
+      window.ga_tracker = pageTracker2;
+      } catch(err) {}</script>
   </body>
 </html>
