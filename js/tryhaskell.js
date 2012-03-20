@@ -323,7 +323,7 @@ function toHex(n){
                      "tacking <code>'a'</code> at the start of an empty list just "+
                      "makes a list <code>['a']</code>!</p>" +
                      "<p>But thankfully we don't have to type out " +
-                     "<code>'a' : 'b' : []</code> every time to we want to make a "+
+                     "<code>'a' : 'b' : []</code> every time we want to make a "+
                      "list of characters; we can use " +
                      "<strong>syntactic sugar</strong> and just write"+
                      " <code>['a','b']</code>. Don't believe me, check this!</p>" +
