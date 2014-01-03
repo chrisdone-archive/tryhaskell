@@ -1,0 +1,26 @@
+name:                tryhaskell
+version:             0.0.0
+synopsis:            Try Haskell!
+description:         Try Haskell!
+license:             BSD3
+license-file:        LICENSE
+author:              Chris Done
+maintainer:          chrisdone@gmail.com
+copyright:           2014 Chris Done
+category:            Education
+build-type:          Simple
+cabal-version:       >=1.8
+
+executable tryhaskell
+  hs-source-dirs:    src/
+  ghc-options:       -Wall -O2
+  main-is:           Main.hs
+  build-depends:     base >= 4 && < 5,
+                     snap-server,
+                     snap-core,
+                     blaze,
+                     aeson,
+                     mueval,
+                     process-extras,
+                     text,
+                     mtl

@@ -1,0 +1,8 @@
+#! /bin/bash
+
+mkdir log -p
+echo 'Killing ...'
+killall tryhaskell
+sleep 0.2
+echo 'Starting ...'
+dist/build/tryhaskell/tryhaskell & disown

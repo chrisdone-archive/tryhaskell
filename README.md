@@ -1,0 +1,4 @@
+tryhaskell
+=====
+
+Try Haskell!

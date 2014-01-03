@@ -1,0 +1,104 @@
+body {
+  background: #f7f7f7;
+  font-family: 'Merriweather';
+}
+/* Fonts */
+@font-face {
+  font-family: 'Haskell';
+  src:url('fonts/Haskell.eot');
+  src:url('fonts/Haskell.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Haskell.woff') format('woff'),
+  url('fonts/Haskell.ttf') format('truetype'),
+  url('fonts/Haskell.svg#Haskell') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Header logo */
+.haskell-icon-container {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+.haskell-icon {
+  font-size: 3em;
+  color: #2e659c;
+  font-family: 'Haskell';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+.haskell-icon:before {
+  content: "\e000";
+}
+.try-haskell {
+  padding-left: 0.5em;
+  color: #4F4371;
+  text-shadow: 1px 1px 1px #ffffff;
+  font-size: 3em;
+}
+/* Console */
+.console {
+  background: #fff;
+  font-size: 15px;
+  padding: 2em 0 2em 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+#console {
+  font-family: "ubuntu mono",monospace;
+}
+.jquery-console-nofocus {
+  opacity: 0.8;
+}
+.jquery-console-focus .jquery-console-cursor {
+  background:#aaa;
+  color:#eee
+  font-weight:bold
+}
+.jquery-console-inner {
+  height: 20em;
+  overflow: auto;
+  word-wrap: break-word;
+}
+.jquery-console-prompt-label {
+  color: #8f4e8b;
+  font-weight: bold;
+}
+.jquery-console-error {
+  color: #8f4e8b;
+}
+.jquery-console-value {
+  color: #2e659c;
+}
+.jquery-console-type {
+  color: #777;
+}
+.jquery-console-welcome {
+  color: #888;
+  margin-bottom: 0.5em;
+}
+/* Footer */
+.footer {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+#guide h3 {
+  margin-top: 0;
+}
+#guide .spoiler {
+  color: #f7f7f9;
+  background: #f7f7f9;
+}
+#guide .spoiler:hover {
+  color: #d14;
+}
+@media (max-width: 767px){
+  .console {
+    padding: 2em 2em 2em 2em;
+    margin-left: -2em;
+    margin-right: -2em;
+  }
+}
