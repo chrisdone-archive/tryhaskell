@@ -29,12 +29,12 @@ import           System.Process.Text.Lazy
 startServer :: IO ()
 startServer =
   httpServe server dispatch
-  where server =
-          setPort 4001
-                  (setVerbose False
-                              (setErrorLog ConfigNoLog
-                                           (setAccessLog ConfigNoLog
-                                                         defaultConfig)))
+  where server = setDefaults defaultConfig
+        setDefaults =
+          setPort 4001 .
+          setVerbose False .
+          setErrorLog ConfigNoLog .
+          setAccessLog ConfigNoLog
 
 -- | Dispatch on the routes.
 dispatch :: Snap ()
