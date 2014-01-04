@@ -438,9 +438,7 @@ tryhaskell.pages.list =
 
             "<p>Let's check out <em>pattern matching</em>; a way to "+
                 "get values from other values using patterns. Try this: </p>" +
-                "<p><code>let (a,b) = (10,12) in a * 2</code></p>" +
-
-            "<p>Or you can skip this section and go to straight to <code>lesson6</code>; <em>types!</em></p>"
+                "<p><code>let (a,b) = (10,12) in a * 2</code></p>"
         },
          trigger:function(result){
              return result.type == "[Char]" &&
