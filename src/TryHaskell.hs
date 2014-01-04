@@ -38,9 +38,10 @@ startServer =
 
 -- | Dispatch on the routes.
 dispatch :: Snap ()
-dispatch = route [("/static",serveDirectory "static")
-                 ,("/eval",eval)
-                 ,("/",home)]
+dispatch =
+  route [("/static",serveDirectory "static")
+        ,("/eval",eval)
+        ,("/",home)]
 
 -- | Evaluate the given expression.
 eval :: Snap ()
