@@ -1,5 +1,6 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings   #-}
+{-# OPTIONS -fno-warn-unused-do-bind #-}
 
 -- | Try Haskell!
 
@@ -51,9 +52,9 @@ eval =
                     (case result of
                        Left err ->
                          [("error" .= err)]
-                       Right (expr,typ,value) ->
+                       Right (expr,typ,value') ->
                          [("success" .=
-                           Aeson.object [("value" .= value)
+                           Aeson.object [("value" .= value')
                                         ,("expr" .= expr)
                                         ,("type" .= typ)])])))
 
@@ -63,7 +64,7 @@ mueval e =
     case status of
       ExitSuccess ->
         case drop 1 (T.lines out) of
-          [typ,value] -> return (Right (T.pack e,typ,value))
+          [typ,value'] -> return (Right (T.pack e,typ,value'))
           _ -> return (Left "Unable to get type and value of expression.")
       ExitFailure{} -> return (Left out)
 
