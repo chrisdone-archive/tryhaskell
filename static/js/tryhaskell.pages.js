@@ -25,8 +25,7 @@ tryhaskell.pages.list =
          guide: '<div class="indent">' +
          '<h3>Got 5 minutes?</h3>' +
          '<p>Type <code title="Click me to insert &quot;help&quot; into the console." style="cursor: pointer;">help</code> to start the ' +
-         'tutorial. Type <code title="Click me to insert &quot;lessons&quot; into the console." style="cursor: pointer;">lessons</code> to see the ' +
-         'list of lessons.</p>' +
+         'tutorial.</p>' +
          '<p>Or try typing these out and see what happens ' +
          '<small class="note">(click to insert)</small>:</p>' +
          '<p>' +
