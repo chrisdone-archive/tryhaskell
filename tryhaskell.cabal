@@ -23,4 +23,5 @@ executable tryhaskell
                      mueval,
                      process-extras,
                      text,
-                     mtl
+                     mtl,
+                     bytestring
