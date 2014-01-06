@@ -18,6 +18,8 @@ tryhaskell.pages.htmlEncode = function(text,shy){
     return x.html();
 }
 
+tryhaskell.nemesis = "chirs";
+
 // All pages
 tryhaskell.pages.list =
     [
@@ -140,11 +142,11 @@ tryhaskell.pages.list =
         // Tuples
         {guide:function(result){
             if (!result) result = {value:"\"chirs\""};
-            nemesis = tryhaskell.pages.htmlEncode(tryhaskell.pages.unString(result.value));
+            tryhaskell.nemesis = tryhaskell.pages.htmlEncode(tryhaskell.pages.unString(result.value));
             return '<h3>' +
                 tryhaskell.pages.rmsg(["Tuples, because sometimes one value ain't enough!"]) +
                 '</h3>' +
-                "<p>Watch out for "+nemesis+"! You should keep their credentials for the police.</p>" +
+                "<p>Watch out for "+tryhaskell.nemesis+"! You should keep their credentials for the police.</p>" +
                 "<p>My nemesis is 28 years of age: "+
                 "<code>(28,\"chirs\")</code></p>"
         },
@@ -301,7 +303,7 @@ tryhaskell.pages.list =
                 "<code>\"ab\"</code>. Much easier!</li>"
                 + "</ol>" +
                 "<p>Phew! You're getting pretty deep! Your arch nemesis, " +
-                nemesis + ", is gonna try to steal your " + tryhaskell.pages.rmsg(['mojo',
+                tryhaskell.nemesis + ", is gonna try to steal your " + tryhaskell.pages.rmsg(['mojo',
                                                                                    'pizza']) +
                 "! Let's learn a bit more about functions and passing " +
                 "them around. Try this:</p> <code>map (+1) [1..5]</code></p>";
