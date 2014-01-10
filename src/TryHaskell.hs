@@ -24,10 +24,11 @@ import           Snap.Http.Server hiding (Config)
 import           Snap.Util.FileServe
 import           System.Exit
 import           System.Process.Text.Lazy
+import           System.IO (stderr, hPutStrLn)
 
 -- | Start a web server.
 startServer :: IO ()
-startServer =
+startServer = checkMuEval >>
   httpServe server dispatch
   where server = setDefaults defaultConfig
         setDefaults =
@@ -35,6 +36,14 @@ startServer =
           setVerbose False .
           setErrorLog ConfigNoLog .
           setAccessLog ConfigNoLog
+
+-- | Ensure mueval is available and working
+checkMuEval :: IO ()
+checkMuEval = mueval False "()" >>= either die (return () `const`)
+  where
+    die err = hPutStrLn stderr ("ERROR: mueval " ++ msg err) >> exitFailure
+    msg err | T.null err = "failed to start"
+            | otherwise  = "startup failure:\n" ++ T.unpack err
 
 -- | Dispatch on the routes.
 dispatch :: Snap ()
