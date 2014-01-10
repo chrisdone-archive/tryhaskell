@@ -55,7 +55,7 @@ eval =
 -- | Evaluate the given expression and return the result as a JSON value.
 muevalToJson :: MonadIO m => ByteString -> m Value
 muevalToJson ex =
-  do result <- liftIO (mueval (unpack (decodeUtf8 ex)))
+  do result <- liftIO (muevalOrType (unpack (decodeUtf8 ex)))
      return
        (Aeson.object
           (case result of
@@ -67,17 +67,29 @@ muevalToJson ex =
                               ,("expr" .= expr)
                               ,("type" .= typ)])]))
 
+-- | Try to evaluate the given expression. If there's a mueval error
+-- (i.e. a compile error), then try just getting the type of the
+-- expression.
+muevalOrType :: String -> IO (Either Text (Text,Text,Text))
+muevalOrType e =
+  do result <- mueval False e
+     case result of
+       Left{} -> mueval True e
+       Right r -> return (Right r)
+
 -- | Evaluate the given expression and return either an error or an
 -- (expr,type,value) triple.
-mueval :: String -> IO (Either Text (Text,Text,Text))
-mueval e =
- do (status,out,_) <- readProcessWithExitCode "mueval" ["-i","-t","1","--expression",e] ""
+mueval :: Bool -> String -> IO (Either Text (Text,Text,Text))
+mueval typeOnly e =
+ do (status,out,_) <- readProcessWithExitCode "mueval" options ""
     case status of
       ExitSuccess ->
         case drop 1 (T.lines out) of
           [typ,value'] -> return (Right (T.pack e,typ,value'))
           _ -> return (Left "Unable to get type and value of expression.")
       ExitFailure{} -> return (Left out)
+  where options = ["-i","-t","1","--expression",e] ++
+                  ["--type-only" | typeOnly]
 
 -- | The home page.
 home :: Snap ()
