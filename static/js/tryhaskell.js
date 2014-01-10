@@ -75,8 +75,8 @@ tryhaskell.ajaxCommand = function(line,report){
         dataType: 'json',
         data: { 'exp': line },
         success: function(result){
-            if(result.error){
-                report([{msg:result.error,className:'jquery-console-error'}]);
+            if(result.error !== undefined){
+                report([{msg:result.error || 'Unspecified error. Have you installed mueval?',className:'jquery-console-error'}]);
             } else if (result.success){
                 if(tryhaskell.successHook != null)
                     tryhaskell.successHook(result.success);
