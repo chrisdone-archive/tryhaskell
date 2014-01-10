@@ -31,8 +31,8 @@ tryhaskell.pages.list =
          '<p>Or try typing these out and see what happens ' +
          '<small class="note">(click to insert)</small>:</p>' +
          '<p>' +
-         '<code title="Click me to insert &quot;23*36&quot; into the console." style="cursor: pointer;">23*36</code> or <code title="Click me to insert &quot;reverse' +
-         '&quot;hello&quot;&quot; into the console." style="cursor: pointer;">reverse' +
+         '<code title="Click me to insert &quot;23 * 36&quot; into the console." style="cursor: pointer;">23 * 36</code> or <code title="Click me to insert &quot;reverse ' +
+         '&quot;hello&quot;&quot; into the console." style="cursor: pointer;">reverse ' +
          '"hello"</code> or <code title="Click me to insert &quot;foldr (:) [] [1,2,3]&quot; into the console." style="cursor: pointer;">foldr (:) [] [1,2,3]</code>' +
          '</p>' +
          '<p><strong>Other cool learning places</strong></pa>' +
