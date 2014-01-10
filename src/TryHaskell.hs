@@ -28,8 +28,9 @@ import           System.IO (stderr, hPutStrLn)
 
 -- | Start a web server.
 startServer :: IO ()
-startServer = checkMuEval >>
-  httpServe server dispatch
+startServer =
+  do checkMuEval
+     httpServe server dispatch
   where server = setDefaults defaultConfig
         setDefaults =
           setPort 4001 .
@@ -41,7 +42,8 @@ startServer = checkMuEval >>
 checkMuEval :: IO ()
 checkMuEval = mueval False "()" >>= either die (return () `const`)
   where
-    die err = hPutStrLn stderr ("ERROR: mueval " ++ msg err) >> exitFailure
+    die err = do hPutStrLn stderr ("ERROR: mueval " ++ msg err)
+                 exitFailure
     msg err | T.null err = "failed to start"
             | otherwise  = "startup failure:\n" ++ T.unpack err
 
