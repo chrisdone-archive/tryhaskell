@@ -121,7 +121,8 @@ tryhaskell.ajaxCommand = function(line,report,stdin){
                     }
                     if(tryhaskell.successHook != null)
                         tryhaskell.successHook(result);
-                    msgs.push({ msg: result.value, className: 'jquery-console-value' });
+                    if(result.type !== 'IO ()')
+                        msgs.push({ msg: result.value, className: 'jquery-console-value' });
                     msgs.push({ msg: ':: ' + result.type, className: 'jquery-console-type' });
                     report(msgs);
                 }

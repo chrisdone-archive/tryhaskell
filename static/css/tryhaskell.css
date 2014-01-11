@@ -121,6 +121,6 @@ body {
 }
 @media (max-width: 480px){
   .active-users {
-    display: none
+    display: none;
   }
 }
