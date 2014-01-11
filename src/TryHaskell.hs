@@ -25,6 +25,7 @@ import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as T
 import           Prelude hiding (div,head)
 import           PureIO (Interrupt(..),Output(..),Input(..),IOException(..))
+import           Safe
 import           Snap.Core
 import           Snap.Http.Server hiding (Config)
 import           Snap.Util.FileServe
@@ -124,8 +125,9 @@ muevalIO e is =
               (case result' of
                  Left err -> ErrorResult err
                  Right r -> SuccessResult r [])
-       Right (_,_,read . T.unpack -> r) ->
+       Right (_,_,readMay . T.unpack -> Just r) ->
          ioResult e r
+       _ -> return (ErrorResult "Unable to get reply from evaluation service. Did you go too far, this time?")
 
 -- | Extract an eval result from the IO reply.
 ioResult :: String -> Either (Interrupt,Output) (String,Output) -> IO EvalResult
