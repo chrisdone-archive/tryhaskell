@@ -13,16 +13,19 @@ import qualified Blaze as H
 import           Blaze hiding (html,param,i)
 import           Blaze.Bootstrap
 import qualified Blaze.Elements as E
-import           Control.Arrow
+import           Control.Arrow ((***))
 import           Control.Concurrent
 import           Control.Monad
 import           Control.Monad.Trans
 import           Data.Aeson as Aeson
+import           Data.Bifunctor
 import           Data.ByteString (ByteString)
 import           Data.ByteString.Lazy (fromChunks)
 import           Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as M
 import           Data.Hashable
+import           Data.Map (Map)
+import qualified Data.Map as Map
 import           Data.Maybe
 import           Data.Monoid
 import           Data.Text (unpack)
@@ -43,8 +46,8 @@ import           System.Process.Text.Lazy
 
 data EvalResult
   = ErrorResult !Text
-  | SuccessResult !(Text,Text,Text) ![Text]
-  | GetInputResult ![Text]
+  | SuccessResult !(Text,Text,Text) ![Text] !(Map FilePath String)
+  | GetInputResult ![Text] !(Map FilePath String)
   deriving (Show)
 
 data Stats = Stats
@@ -124,55 +127,64 @@ eval stats =
      case mex of
        Nothing -> error "exp expected"
        Just ex ->
-         muevalToJson ex (getArgs (fmap (fromChunks . return) args)) >>= writeLBS . encode
-  where getArgs args =
-          fromMaybe [] (args >>= decode)
+         case (getArgs args) of
+           Nothing -> muevalToJson ex mempty mempty >>= writeLBS . encode
+           Just (is,fs) -> muevalToJson ex is fs >>= writeLBS . encode
+
+  where getArgs args = fmap (fromChunks . return) args >>= decode
 
 -- | Evaluate the given expression and return the result as a JSON value.
-muevalToJson :: MonadIO m => ByteString -> [String] -> m Value
-muevalToJson ex args =
-  do result <- liftIO (muevalOrType (unpack (decodeUtf8 ex)) args)
+muevalToJson :: MonadIO m => ByteString -> [String] -> Map FilePath String -> m Value
+muevalToJson ex is fs =
+  do result <- liftIO (muevalOrType (unpack (decodeUtf8 ex)) is fs)
      return
        (Aeson.object
           (case result of
              ErrorResult err ->
                [("error" .= err)]
-             SuccessResult (expr,typ,value') stdouts ->
+             SuccessResult (expr,typ,value') stdouts files ->
                [("success" .=
                  Aeson.object [("value"  .= value')
                               ,("expr"   .= expr)
                               ,("type"   .= typ)
-                              ,("stdout" .= stdouts)])]
-             GetInputResult stdouts ->
-               [("stdout" .= stdouts)]))
+                              ,("stdout" .= stdouts)
+                              ,("files"  .= files)])]
+             GetInputResult stdouts files ->
+               [("stdout" .= stdouts)
+               ,("files" .= files)]))
 
 -- | Try to evaluate the given expression. If there's a mueval error
 -- (i.e. a compile error), then try just getting the type of the
 -- expression.
-muevalOrType :: String -> [String] -> IO EvalResult
-muevalOrType e is =
+muevalOrType :: String -> [String] -> Map FilePath String -> IO EvalResult
+muevalOrType e is fs =
   do result <- mueval False e
      case result of
-       Left{} -> muevalIO e is
-       Right r -> return (SuccessResult r [])
+       Left{} -> muevalIO e is fs
+       Right r -> return (SuccessResult r mempty fs)
 
 -- | Try to evaluate the expression as a (pure) IO action, if it type
 -- checks and evaluates, then we're going to enter a potential
 -- (referentially transparent) back-and-forth between the server and
 -- the client.
-muevalIO :: String -> [String] -> IO EvalResult
-muevalIO e is =
-  do result <- mueval False ("runTryHaskellIO " ++ show (Input is) ++ " (" ++ e ++ ")")
+--
+-- It handles stdin/stdout and files.
+muevalIO :: String -> [String] -> Map FilePath String -> IO EvalResult
+muevalIO e is fs =
+  do result <- mueval False ("runTryHaskellIO " ++ show (convert (Input is fs)) ++ " (" ++ e ++ ")")
      case result of
-       Left{} ->
+       Left err ->
          do result' <- mueval True e
             return
               (case result' of
                  Left err -> ErrorResult err
-                 Right r -> SuccessResult r [])
+                 Right r -> SuccessResult r mempty mempty)
        Right (_,_,readMay . T.unpack -> Just r) ->
-         ioResult e r
-       _ -> return (ErrorResult "Unable to get reply from evaluation service. Did you go too far, this time?")
+         ioResult e (bimap (second oconvert) (second oconvert) r)
+       _ -> do putStrLn (show result)
+               return (ErrorResult ("Unable to get reply from evaluation service. Did you go too far, this time? "))
+  where convert (Input os fs) = (os,Map.toList fs)
+        oconvert (os,fs) = Output os (Map.fromList fs)
 
 -- | Extract an eval result from the IO reply.
 ioResult :: String -> Either (Interrupt,Output) (String,Output) -> IO EvalResult
@@ -184,10 +196,12 @@ ioResult e r =
           return
             (ErrorResult
                (case ex of
-                  UserError err -> T.pack err))
-        (InterruptStdin,Output os) ->
-          return (GetInputResult (map T.pack os))
-    Right (value',Output os) ->
+                  UserError err -> T.pack err
+                  FileNotFound fp -> T.pack ("File not found: " <> fp)
+                  DirectoryNotFound fp -> T.pack ("Directory not found: " <> fp)))
+        (InterruptStdin,Output os fs) ->
+          return (GetInputResult (map T.pack os) fs)
+    Right (value',Output os fs) ->
       do typ <- mueval True e
          return
            (case typ of
@@ -195,7 +209,8 @@ ioResult e r =
                 ErrorResult err
               Right (_,iotyp,_) ->
                 SuccessResult (T.pack e,iotyp,T.pack value')
-                              (map T.pack os))
+                              (map T.pack os)
+                              fs)
 
 -- | Evaluate the given expression and return either an error or an
 -- (expr,type,value) triple.
@@ -207,7 +222,7 @@ mueval typeOnly e =
        ExitSuccess ->
          case drop 1 (T.lines out) of
            [typ,value'] -> return (Right (T.pack e,typ,value'))
-           _ -> return (Left "Unable to get type and value of expression.")
+           _ -> return (Left ("Unable to get type and value of expression: " <> T.pack e))
        ExitFailure{} -> return (Left out)
   where options importsfp =
           ["-i","-t","1","--expression",e] ++

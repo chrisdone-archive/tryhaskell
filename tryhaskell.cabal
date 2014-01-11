@@ -31,4 +31,6 @@ executable tryhaskell
                      unordered-containers,
                      time,
                      hashable,
-                     old-locale
+                     old-locale,
+                     containers,
+                     bifunctors

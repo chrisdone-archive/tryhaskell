@@ -119,6 +119,11 @@
 	var fadeOnReset = config.fadeOnReset !== undefined ? config.fadeOnReset : true;
 	// Prompt history stack
 	var history = [];
+        if(typeof(Storage)!=="undefined")
+        {
+            if(localStorage.history)
+                history = JSON.parse(localStorage.history);
+        }
 	var ringn = 0;
 	// For reasons unknown to The Sword of Michael himself, Opera
 	// triggers and sends a key character when you hit various
@@ -375,6 +380,10 @@
 	// Add something to the history ring
 	function addToHistory(line){
 	    history.push(line);
+            if(typeof(Storage)!=="undefined")
+            {
+                localStorage.history = JSON.stringify(history);
+            }
 	    restoreText = '';
 	};
 

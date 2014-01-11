@@ -16,6 +16,22 @@ tryhaskell.stdin = [];
 // IO expression.
 tryhaskell.io = null;
 
+// Files in the file system.
+tryhaskell.files = {
+    "/hello": "Hello, World!",
+    "/files": "Your file system changes will stick around in your browser's local storage!",
+    "/welcome": "Welcome to your mini filesystem! Try playing with this function: getDirectoryContents",
+    "/functions": "You can also check out removeFile, writeFile, appendFile"
+};
+
+try {
+    if(typeof(Storage)!=="undefined")
+    {
+        tryhaskell.files = (localStorage.files && JSON.parse(localStorage.files))
+            || tryhaskell.files;
+    };
+} catch (e){ tryhaskell.files = {} }
+
 // A pre-command hook which can prevent the command from being run if
 // it returns true.
 tryhaskell.preCommandHook = function(line,report){
@@ -68,7 +84,7 @@ tryhaskell.makeController = function(){
         commandHandle: function(line,report){
             if(tryhaskell.io === null){
                 if(!tryhaskell.preCommandHook(line,report)){
-                    tryhaskell.ajaxCommand(line,report,undefined);
+                    tryhaskell.ajaxCommand(line,report,[]);
                 }
             } else {
                 tryhaskell.stdin.push(line);
@@ -86,7 +102,7 @@ tryhaskell.makeController = function(){
 // Make an AJAX command to the server with the given line.
 tryhaskell.ajaxCommand = function(line,report,stdin){
     var args = { 'exp': line,
-                 'args': JSON.stringify(stdin)
+                 'args': JSON.stringify([stdin,tryhaskell.files])
                };
     $.ajax({
         url: '/eval',
@@ -94,6 +110,7 @@ tryhaskell.ajaxCommand = function(line,report,stdin){
         data: args,
         success: function(result){
             if(result.stdout !== undefined){
+                tryhaskell.files = result.files;
                 result = result.stdout;
                 tryhaskell.io = line;
                 var msgs = [];
@@ -114,10 +131,8 @@ tryhaskell.ajaxCommand = function(line,report,stdin){
                 } else if(result.success){
                     result = result.success;
                     var msgs = [];
-                    if(result.stdout != null){
-                        for(var i = tryhaskell.stdout.length; i < result.stdout.length; i++) {
-                            msgs.push({ msg: result.stdout[i], className: 'jquery-console-stdout' });
-                        }
+                    for(var i = tryhaskell.stdout.length; i < result.stdout.length; i++) {
+                        msgs.push({ msg: result.stdout[i], className: 'jquery-console-stdout' });
                     }
                     if(tryhaskell.successHook != null)
                         tryhaskell.successHook(result);
@@ -125,10 +140,15 @@ tryhaskell.ajaxCommand = function(line,report,stdin){
                         msgs.push({ msg: result.value, className: 'jquery-console-value' });
                     msgs.push({ msg: ':: ' + result.type, className: 'jquery-console-type' });
                     report(msgs);
+                    tryhaskell.files = result.files;
                 }
                 tryhaskell.io = null;
                 tryhaskell.stdout = [];
                 tryhaskell.stdin = [];
+            }
+            if(typeof(Storage)!=="undefined")
+            {
+                localStorage.files = JSON.stringify(tryhaskell.files);
             }
         }
     });

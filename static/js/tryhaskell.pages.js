@@ -35,9 +35,9 @@ tryhaskell.pages.list =
          '<p>' +
          '<code title="Click me to insert &quot;23 * 36&quot; into the console." style="cursor: pointer;">23 * 36</code> or <code title="Click me to insert &quot;reverse ' +
          '&quot;hello&quot;&quot; into the console." style="cursor: pointer;">reverse ' +
-         '"hello"</code> or <code title="Click me to insert &quot;foldr (:) [] [1,2,3]&quot; into the console." style="cursor: pointer;">foldr (:) [] [1,2,3]</code> or <code title="Click me to insert." style="cursor: pointer;">do line <- getLine; putStrLn line</code>' +
+         '"hello"</code> or <code title="Click me to insert &quot;foldr (:) [] [1,2,3]&quot; into the console." style="cursor: pointer;">foldr (:) [] [1,2,3]</code> or <code title="Click me to insert." style="cursor: pointer;">do line <- getLine; putStrLn line</code> or <code>readFile "/welcome"</code>' +
          '</p>' +
-         '<p><a href="http://hackage.haskell.org/package/pure-io/docs/PureIO.html#g:2">These</a> IO actions are supported in this app.</p>' +
+         '<p><a href="https://hackage.haskell.org/package/pure-io-0.1.1/docs/PureIO.html#g:2">These</a> IO actions are supported in this app.</p>' +
          '<p><strong>Other cool learning places</strong></pa>' +
          '<p class="clearfix">' +
          'You can also run real Haskell code—file I/O, ' +
