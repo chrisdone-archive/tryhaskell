@@ -107,6 +107,7 @@ tryhaskell.ajaxCommand = function(line,report,stdin){
     $.ajax({
         url: '/eval',
         dataType: 'json',
+        type: 'POST',
         data: args,
         success: function(result){
             if(result.stdout !== undefined){
