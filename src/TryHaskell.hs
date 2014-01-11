@@ -97,7 +97,8 @@ users statsv =
 -- | Log the current user's visit to the stats table.
 logVisit :: MVar Stats -> Snap ()
 logVisit stats =
-  do addr <- fmap rqRemoteAddr getRequest
+  do ipHeaderFilter
+     addr <- fmap rqRemoteAddr getRequest
      now <- liftIO getCurrentTime
      let updateStats (Stats u) = Stats (M.insert addr now u)
      liftIO (modifyMVar_ stats (return . updateStats))
