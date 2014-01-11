@@ -27,4 +27,8 @@ executable tryhaskell
                      mtl,
                      bytestring,
                      pure-io,
-                     safe
+                     safe,
+                     unordered-containers,
+                     time,
+                     hashable,
+                     old-locale

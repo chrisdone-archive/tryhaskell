@@ -105,3 +105,21 @@ body {
     margin-right: -2em;
   }
 }
+.active-users  {
+  padding: 2em;
+  text-align: right;
+}
+.user {
+  background: #e1e1e8;
+  height: 1em;
+  width: 1em;
+  border-radius: 0.2em;
+  display: inline-block;
+  margin-left: 0.25em;
+  margin-bottom: 0.25em;
+}
+@media (max-width: 767px){
+  .active-users {
+    padding: 0 0 1em 0;
+  }
+}

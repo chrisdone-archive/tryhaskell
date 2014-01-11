@@ -13,16 +13,23 @@ import qualified Blaze as H
 import           Blaze hiding (html,param,i)
 import           Blaze.Bootstrap
 import qualified Blaze.Elements as E
+import           Control.Arrow
+import           Control.Concurrent
+import           Control.Monad
 import           Control.Monad.Trans
 import           Data.Aeson as Aeson
 import           Data.ByteString (ByteString)
 import           Data.ByteString.Lazy (fromChunks)
+import           Data.HashMap.Strict (HashMap)
+import qualified Data.HashMap.Strict as M
+import           Data.Hashable
 import           Data.Maybe
 import           Data.Monoid
 import           Data.Text (unpack)
 import           Data.Text.Encoding (decodeUtf8)
 import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as T
+import           Data.Time
 import           Prelude hiding (div,head)
 import           PureIO (Interrupt(..),Output(..),Input(..),IOException(..))
 import           Safe
@@ -31,6 +38,7 @@ import           Snap.Http.Server hiding (Config)
 import           Snap.Util.FileServe
 import           System.Exit
 import           System.IO (stderr, hPutStrLn)
+import           System.Locale
 import           System.Process.Text.Lazy
 
 data EvalResult
@@ -39,11 +47,16 @@ data EvalResult
   | GetInputResult ![Text]
   deriving (Show)
 
+data Stats = Stats
+  { statsUsers :: !(HashMap ByteString UTCTime) }
+
 -- | Start a web server.
 startServer :: IO ()
 startServer =
   do checkMuEval
-     httpServe server dispatch
+     stats <- newMVar (Stats mempty)
+     void (forkIO (expireVisitors stats))
+     httpServe server (dispatch stats)
   where server = setDefaults defaultConfig
         setDefaults =
           setPort 4001 .
@@ -65,16 +78,47 @@ checkMuEval =
             | otherwise  = "startup failure:\n" ++ T.unpack err
 
 -- | Dispatch on the routes.
-dispatch :: Snap ()
-dispatch =
+dispatch :: MVar Stats -> Snap ()
+dispatch stats =
   route [("/static",serveDirectory "static")
-        ,("/eval",eval)
-        ,("/",home)]
+        ,("/eval",eval stats)
+        ,("/users",users stats)
+        ,("/",home stats)]
+
+-- | Write out the list of current users.
+users :: MVar Stats -> Snap ()
+users statsv =
+  do stats <- liftIO (readMVar statsv)
+     writeLBS (encode (map (show . hash *** epoch)
+                           (M.toList (statsUsers stats))))
+  where epoch :: UTCTime -> Integer
+        epoch = read . formatTime defaultTimeLocale "%s"
+
+-- | Log the current user's visit to the stats table.
+logVisit :: MVar Stats -> Snap ()
+logVisit stats =
+  do addr <- fmap rqRemoteAddr getRequest
+     now <- liftIO getCurrentTime
+     let updateStats (Stats u) = Stats (M.insert addr now u)
+     liftIO (modifyMVar_ stats (return . updateStats))
+
+-- | Reap visitors that have been inactive for one minute.
+expireVisitors :: MVar Stats -> IO ()
+expireVisitors stats =
+  forever
+    (do threadDelay (1000 * 1000 * 15)
+        now <- getCurrentTime
+        modifyMVar_ stats
+                    (return .
+                     Stats .
+                     M.filter (not . (>60) . diffUTCTime now) .
+                     statsUsers))
 
 -- | Evaluate the given expression.
-eval :: Snap ()
-eval =
-  do mex <- getParam "exp"
+eval :: MVar Stats -> Snap ()
+eval stats =
+  do logVisit stats
+     mex <- getParam "exp"
      args <- getParam "args"
      case mex of
        Nothing -> error "exp expected"
@@ -142,15 +186,15 @@ ioResult e r =
                   UserError err -> T.pack err))
         (InterruptStdin,Output os) ->
           return (GetInputResult (map T.pack os))
-    Right (value',Output os) -> do
-      typ <- mueval True e
-      return
-        (case typ of
-           Left err ->
-             ErrorResult err
-           Right (_,iotyp,_) ->
-             SuccessResult (T.pack e,iotyp,T.pack value')
-                           (map T.pack os))
+    Right (value',Output os) ->
+      do typ <- mueval True e
+         return
+           (case typ of
+              Left err ->
+                ErrorResult err
+              Right (_,iotyp,_) ->
+                SuccessResult (T.pack e,iotyp,T.pack value')
+                              (map T.pack os))
 
 -- | Evaluate the given expression and return either an error or an
 -- (expr,type,value) triple.
@@ -170,11 +214,12 @@ mueval typeOnly e =
           ["--type-only" | typeOnly]
 
 -- | The home page.
-home :: Snap ()
-home =
-  writeLazyText
-    (renderHtml (H.html (do head headContent
-                            body bodyContent)))
+home :: MVar Stats -> Snap ()
+home stats =
+  do logVisit stats
+     writeLazyText
+       (renderHtml (H.html (do head headContent
+                               body bodyContent)))
   where headContent =
           do E.title "Try Haskell! An interactive tutorial in your browser"
              meta ! charset "utf-8"
@@ -189,10 +234,18 @@ home =
 -- | Content of the body.
 bodyContent :: Html
 bodyContent =
-  do container (row (span12 bodyHeader))
+  do container
+       (row (do span9 bodyHeader
+                span3 bodyUsers))
      consoleArea
      bodyFooter
      scripts
+
+-- | The active users display.
+bodyUsers :: Html
+bodyUsers =
+  (div !. "active-users")
+    (div "Active users")
 
 -- | The header.
 bodyHeader :: Html
