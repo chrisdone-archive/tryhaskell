@@ -210,21 +210,16 @@ tryhaskell.activeUsers = function(){
     var active = $('.active-users');
     // Tomorrow theme
     var colors =
-        ["#4d4d4c" // Foreground
-         ,"#8e908c" // Comment
-         ,"#c82829" // Red
-         ,"#f5871f" // Orange
+        [// Tomorrow theme
+          "#f5871f" // Orange
          ,"#eab700" // Yellow
          ,"#718c00" // Green
          ,"#3e999f" // Aqua
          ,"#4271ae" // Blue
          ,"#8959a8" // Purple
          // Solarized theme
-         ,"#002b36" // base03
          ,"#073642" // base02
          ,"#586e75" // base01
-         ,"#657b83" // base00
-         ,"#839496" // base0
          ,"#b58900" // yellow
          ,"#cb4b16" // orange
          ,"#dc322f" // red
@@ -234,14 +229,21 @@ tryhaskell.activeUsers = function(){
          ,"#2aa198" // cyan
          ,"#859900" // green
         ]
+    var color_index = 0;
+    var color_cache = {};
     function update(){
         if(!$('.active-users').is(':visible')) return;
         $.get('/users',function(users){
             users = JSON.parse(users);
             $('.active-users .user').remove();
+            var color;
             for(var i = 0; i < users.length; i++){
-                var color = colors[users[i][0] % colors.length];
-                if (!color) color = colors[0];
+                if(typeof color_cache[users[i][0].toString()] != 'number') {
+                    color_cache[users[i][0].toString()] = color_index;
+                    color_index++;
+                }
+                color = colors[color_cache[users[i][0].toString()] % colors.length];
+                if (!color) color = colors[5];
                 active.append($('<div class="user"></div>').css('background-color',color));
             }
         });
