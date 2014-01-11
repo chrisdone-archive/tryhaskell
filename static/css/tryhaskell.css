@@ -119,8 +119,8 @@ body {
   margin-left: 0.25em;
   margin-bottom: 0.25em;
 }
-@media (max-width: 767px){
+@media (max-width: 480px){
   .active-users {
-    display: none;
+    display: none
   }
 }
