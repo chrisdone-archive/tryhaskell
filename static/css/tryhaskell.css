@@ -106,6 +106,7 @@ body {
   }
 }
 .active-users  {
+  float: right;
   padding: 2em;
   text-align: right;
 }
@@ -120,6 +121,6 @@ body {
 }
 @media (max-width: 767px){
   .active-users {
-    padding: 0 0 1em 0;
+    display: none;
   }
 }

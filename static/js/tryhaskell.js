@@ -213,6 +213,7 @@ tryhaskell.activeUsers = function(){
          ,"#859900" // green
         ]
     function update(){
+        if(!$('.active-users').is(':visible')) return;
         $.get('/users',function(users){
             users = JSON.parse(users);
             $('.active-users .user').remove();

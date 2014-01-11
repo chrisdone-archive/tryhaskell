@@ -235,8 +235,8 @@ home stats =
 bodyContent :: Html
 bodyContent =
   do container
-       (row (do span9 bodyHeader
-                span3 bodyUsers))
+       (row (span12 (do bodyUsers
+                        bodyHeader)))
      consoleArea
      bodyFooter
      scripts
