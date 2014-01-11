@@ -1,7 +1,7 @@
 module Imports where
 
 import Prelude hiding (IO,putStr,putStrLn,getLine,readLn,print,readIO)
-import PureIO
+import PureIO as IO
 import ShowFun
 import Debug.SimpleReflect
 import Data.Function
