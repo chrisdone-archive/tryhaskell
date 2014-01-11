@@ -1,3 +1,4 @@
+{-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings   #-}
 {-# OPTIONS -fno-warn-unused-do-bind #-}
@@ -6,25 +7,36 @@
 
 module TryHaskell where
 
+import           Paths_tryhaskell
+
 import qualified Blaze as H
-import           Blaze hiding (html,param)
+import           Blaze hiding (html,param,i)
 import           Blaze.Bootstrap
 import qualified Blaze.Elements as E
 import           Control.Monad.Trans
 import           Data.Aeson as Aeson
 import           Data.ByteString (ByteString)
+import           Data.ByteString.Lazy (fromStrict)
+import           Data.Maybe
 import           Data.Monoid
 import           Data.Text (unpack)
 import           Data.Text.Encoding (decodeUtf8)
 import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as T
 import           Prelude hiding (div,head)
+import           PureIO (Interrupt(..),Output(..),Input(..),IOException(..))
 import           Snap.Core
 import           Snap.Http.Server hiding (Config)
 import           Snap.Util.FileServe
 import           System.Exit
-import           System.Process.Text.Lazy
 import           System.IO (stderr, hPutStrLn)
+import           System.Process.Text.Lazy
+
+data EvalResult
+  = ErrorResult Text
+  | SuccessResult (Text,Text,Text) [Text]
+  | GetInputResult [Text]
+  deriving (Show)
 
 -- | Start a web server.
 startServer :: IO ()
@@ -40,7 +52,11 @@ startServer =
 
 -- | Ensure mueval is available and working
 checkMuEval :: IO ()
-checkMuEval = mueval False "()" >>= either die (return () `const`)
+checkMuEval =
+  do result <- mueval False "()"
+     case result of
+       Left err -> die err
+       _ -> return ()
   where
     die err = do hPutStrLn stderr ("ERROR: mueval " ++ msg err)
                  exitFailure
@@ -58,49 +74,98 @@ dispatch =
 eval :: Snap ()
 eval =
   do mex <- getParam "exp"
+     args <- getParam "args"
      case mex of
        Nothing -> error "exp expected"
        Just ex ->
-         muevalToJson ex >>= writeLBS . encode
+         muevalToJson ex (getArgs (fmap fromStrict args)) >>= writeLBS . encode
+  where getArgs args =
+          fromMaybe [] (args >>= decode)
 
 -- | Evaluate the given expression and return the result as a JSON value.
-muevalToJson :: MonadIO m => ByteString -> m Value
-muevalToJson ex =
-  do result <- liftIO (muevalOrType (unpack (decodeUtf8 ex)))
+muevalToJson :: MonadIO m => ByteString -> [String] -> m Value
+muevalToJson ex args =
+  do result <- liftIO (muevalOrType (unpack (decodeUtf8 ex)) args)
      return
        (Aeson.object
           (case result of
-             Left err ->
+             ErrorResult err ->
                [("error" .= err)]
-             Right (expr,typ,value') ->
+             SuccessResult (expr,typ,value') stdouts ->
                [("success" .=
-                 Aeson.object [("value" .= value')
-                              ,("expr" .= expr)
-                              ,("type" .= typ)])]))
+                 Aeson.object [("value"  .= value')
+                              ,("expr"   .= expr)
+                              ,("type"   .= typ)
+                              ,("stdout" .= stdouts)])]
+             GetInputResult stdouts ->
+               [("stdout" .= stdouts)]))
 
 -- | Try to evaluate the given expression. If there's a mueval error
 -- (i.e. a compile error), then try just getting the type of the
 -- expression.
-muevalOrType :: String -> IO (Either Text (Text,Text,Text))
-muevalOrType e =
+muevalOrType :: String -> [String] -> IO EvalResult
+muevalOrType e is =
   do result <- mueval False e
      case result of
-       Left{} -> mueval True e
-       Right r -> return (Right r)
+       Left{} -> muevalIO e is
+       Right r -> return (SuccessResult r [])
+
+-- | Try to evaluate the expression as a (pure) IO action, if it type
+-- checks and evaluates, then we're going to enter a potential
+-- (referentially transparent) back-and-forth between the server and
+-- the client.
+muevalIO :: String -> [String] -> IO EvalResult
+muevalIO e is =
+  do result <- mueval False ("runTryHaskellIO " ++ show (Input is) ++ " (" ++ e ++ ")")
+     case result of
+       Left{} ->
+         do result' <- mueval True e
+            return
+              (case result' of
+                 Left err -> ErrorResult err
+                 Right r -> SuccessResult r [])
+       Right (_,_,read . T.unpack -> r) ->
+         ioResult e r
+
+-- | Extract an eval result from the IO reply.
+ioResult :: String -> Either (Interrupt,Output) (String,Output) -> IO EvalResult
+ioResult e r =
+  case r of
+    Left i ->
+      case i of
+        (InterruptException ex,_) ->
+          return
+            (ErrorResult
+               (case ex of
+                  UserError err -> T.pack err))
+        (InterruptStdin,Output os) ->
+          return (GetInputResult (map T.pack os))
+    Right (value',Output os) -> do
+      typ <- mueval True e
+      return
+        (case typ of
+           Left err ->
+             ErrorResult err
+           Right (_,iotyp,_) ->
+             SuccessResult (T.pack e,iotyp,T.pack value')
+                           (map T.pack os))
 
 -- | Evaluate the given expression and return either an error or an
 -- (expr,type,value) triple.
 mueval :: Bool -> String -> IO (Either Text (Text,Text,Text))
 mueval typeOnly e =
- do (status,out,_) <- readProcessWithExitCode "mueval" options ""
-    case status of
-      ExitSuccess ->
-        case drop 1 (T.lines out) of
-          [typ,value'] -> return (Right (T.pack e,typ,value'))
-          _ -> return (Left "Unable to get type and value of expression.")
-      ExitFailure{} -> return (Left out)
-  where options = ["-i","-t","1","--expression",e] ++
-                  ["--type-only" | typeOnly]
+  do importsfp <- getDataFileName "Imports.hs"
+     (status,out,_) <- readProcessWithExitCode "mueval" (options importsfp) ""
+     case status of
+       ExitSuccess ->
+         case drop 1 (T.lines out) of
+           [typ,value'] -> return (Right (T.pack e,typ,value'))
+           _ -> return (Left "Unable to get type and value of expression.")
+       ExitFailure{} -> return (Left out)
+  where options importsfp =
+          ["-i","-t","1","--expression",e] ++
+          ["--no-imports","-l",importsfp] ++
+          ["--type-only" | typeOnly]
 
 -- | The home page.
 home :: Snap ()

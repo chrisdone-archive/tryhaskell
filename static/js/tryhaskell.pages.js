@@ -18,13 +18,15 @@ tryhaskell.pages.htmlEncode = function(text,shy){
     return x.html();
 }
 
+// The nemesis
 tryhaskell.nemesis = "chirs";
 
 // All pages
 tryhaskell.pages.list =
     [
         {title:'Got five minutes?',
-         guide: '<div class="indent">' +
+         guide:
+         '<div class="indent">' +
          '<h3>Got 5 minutes?</h3>' +
          '<p>Type <code title="Click me to insert &quot;help&quot; into the console." style="cursor: pointer;">help</code> to start the ' +
          'tutorial.</p>' +
@@ -41,7 +43,6 @@ tryhaskell.pages.list =
          'web apps, and lots more in <a href="https://www.fpcomplete.com/page/project-build">an online IDE</a>. See also the <a href="https://www.fpcomplete.com/school">school of Haskell</a> for practical tutorials.' +
          '</p>' +
          '</div>' +
-
          '</div>'
         },
         ////////////////////////////////////////////////////////////////////////

@@ -7,6 +7,15 @@ tryhaskell.successHook = null;
 // The current page number.
 tryhaskell.currentPage = null;
 
+// Stdout state from the current IO evaluation.
+tryhaskell.stdout = [];
+
+// Stdin state for the current IO evaluation.
+tryhaskell.stdin = [];
+
+// IO expression.
+tryhaskell.io = null;
+
 // A pre-command hook which can prevent the command from being run if
 // it returns true.
 tryhaskell.preCommandHook = function(line,report){
@@ -52,40 +61,76 @@ tryhaskell.preCommandHook = function(line,report){
 tryhaskell.makeController = function(){
     tryhaskell.controller = $('#console').console({
         promptLabel: 'λ ',
-        commandValidate:function(line){
+        commandValidate: function(line){
             if (line == "") return false;
             else return true;
         },
-        commandHandle:function(line,report){
-            if(!tryhaskell.preCommandHook(line,report)) {
-                tryhaskell.ajaxCommand(line,report);
+        commandHandle: function(line,report){
+            if(tryhaskell.io === null){
+                if(!tryhaskell.preCommandHook(line,report)){
+                    tryhaskell.ajaxCommand(line,report,undefined);
+                }
+            } else {
+                tryhaskell.stdin.push(line);
+                tryhaskell.ajaxCommand(tryhaskell.io,report,tryhaskell.stdin);
             }
         },
-        autofocus:true,
-        animateScroll:true,
-        promptHistory:true,
-        welcomeMessage:'Type Haskell expressions in here.'
+        autofocus: true,
+        animateScroll: true,
+        promptHistory: true,
+        welcomeMessage: 'Type Haskell expressions in here.',
+        continuedPromptLabel: '> '
     });
 };
 
 // Make an AJAX command to the server with the given line.
-tryhaskell.ajaxCommand = function(line,report){
+tryhaskell.ajaxCommand = function(line,report,stdin){
+    var args = { 'exp': line,
+                 'args': JSON.stringify(stdin)
+               };
     $.ajax({
         url: '/eval',
         dataType: 'json',
-        data: { 'exp': line },
+        data: args,
         success: function(result){
-            if(result.error !== undefined){
-                report([{msg:result.error || 'Unspecified error. Have you installed mueval?',className:'jquery-console-error'}]);
-            } else if (result.success){
-                if(tryhaskell.successHook != null)
-                    tryhaskell.successHook(result.success);
-                report([{msg:result.success.value,className:'jquery-console-value'},
-                        {msg:':: ' + result.success.type,className:'jquery-console-type'}]);
+            if(result.stdout !== undefined){
+                result = result.stdout;
+                tryhaskell.io = line;
+                var msgs = [];
+                if(result != null){
+                    for(var i = tryhaskell.stdout.length; i < result.length; i++) {
+                        msgs.push({ msg: result[i], className: 'jquery-console-stdout' });
+                    }
+                }
+                tryhaskell.stdout = result;
+                tryhaskell.controller.continuedPrompt = true;
+                report(msgs);
+                tryhaskell.controller.continuedPrompt = false;
+            } else {
+                if(result.error !== undefined){
+                    result = result.error;
+                    report([{ msg: result || 'Unspecified error. Have you installed mueval?',
+                              className:'jquery-console-error' }]);
+                } else if(result.success){
+                    result = result.success;
+                    var msgs = [];
+                    if(result.stdout != null){
+                        for(var i = tryhaskell.stdout.length; i < result.stdout.length; i++) {
+                            msgs.push({ msg: result.stdout[i], className: 'jquery-console-stdout' });
+                        }
+                    }
+                    if(tryhaskell.successHook != null)
+                        tryhaskell.successHook(result);
+                    msgs.push({ msg: result.value, className: 'jquery-console-value' });
+                    msgs.push({ msg: ':: ' + result.type, className: 'jquery-console-type' });
+                    report(msgs);
+                }
+                tryhaskell.io = null;
+                tryhaskell.stdout = [];
+                tryhaskell.stdin = [];
             }
         }
     });
-
 };
 
 // Make the guide on the rhs.

@@ -73,6 +73,9 @@ body {
 .jquery-console-value {
   color: #2e659c;
 }
+.jquery-console-stdout {
+  color: #216f42;
+}
 .jquery-console-type {
   color: #777;
 }
