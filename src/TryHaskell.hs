@@ -126,8 +126,10 @@ eval stats =
   do ip <- logVisit stats
      mex <- getParam "exp"
      args <- getParam "args"
+     now <- liftIO getCurrentTime
      liftIO (appendFile "/tmp/tryhaskell-log"
-                        (S.unpack (decodeUtf8 ip) ++
+                        (show now ++  " " ++
+                         S.unpack (decodeUtf8 ip) ++
                          "> " ++
                          maybe "" (S.unpack . decodeUtf8) mex ++
                          "\n"))
