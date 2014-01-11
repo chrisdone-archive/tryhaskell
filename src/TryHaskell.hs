@@ -29,6 +29,7 @@ import qualified Data.Map as Map
 import           Data.Maybe
 import           Data.Monoid
 import           Data.Text (unpack)
+import qualified Data.Text as S
 import           Data.Text.Encoding (decodeUtf8)
 import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as T
@@ -98,13 +99,14 @@ users statsv =
         epoch = read . formatTime defaultTimeLocale "%s"
 
 -- | Log the current user's visit to the stats table.
-logVisit :: MVar Stats -> Snap ()
+logVisit :: MVar Stats -> Snap ByteString
 logVisit stats =
   do ipHeaderFilter
      addr <- fmap rqRemoteAddr getRequest
      now <- liftIO getCurrentTime
      let updateStats (Stats u) = Stats (M.insert addr now u)
      liftIO (modifyMVar_ stats (return . updateStats))
+     return addr
 
 -- | Reap visitors that have been inactive for one minute.
 expireVisitors :: MVar Stats -> IO ()
@@ -121,9 +123,12 @@ expireVisitors stats =
 -- | Evaluate the given expression.
 eval :: MVar Stats -> Snap ()
 eval stats =
-  do logVisit stats
+  do ip <- logVisit stats
      mex <- getParam "exp"
      args <- getParam "args"
+     liftIO (putStrLn (S.unpack (decodeUtf8 ip) ++
+                       "> " ++
+                       maybe "" (S.unpack . decodeUtf8) mex))
      case mex of
        Nothing -> error "exp expected"
        Just ex ->
@@ -173,7 +178,7 @@ muevalIO :: String -> [String] -> Map FilePath String -> IO EvalResult
 muevalIO e is fs =
   do result <- mueval False ("runTryHaskellIO " ++ show (convert (Input is fs)) ++ " (" ++ e ++ ")")
      case result of
-       Left err ->
+       Left{} ->
          do result' <- mueval True e
             return
               (case result' of
@@ -183,8 +188,8 @@ muevalIO e is fs =
          ioResult e (bimap (second oconvert) (second oconvert) r)
        _ -> do putStrLn (show result)
                return (ErrorResult ("Unable to get reply from evaluation service. Did you go too far, this time? "))
-  where convert (Input os fs) = (os,Map.toList fs)
-        oconvert (os,fs) = Output os (Map.fromList fs)
+  where convert (Input os fs') = (os,Map.toList fs')
+        oconvert (os,fs') = Output os (Map.fromList fs')
 
 -- | Extract an eval result from the IO reply.
 ioResult :: String -> Either (Interrupt,Output) (String,Output) -> IO EvalResult
