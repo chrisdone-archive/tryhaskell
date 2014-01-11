@@ -126,9 +126,11 @@ eval stats =
   do ip <- logVisit stats
      mex <- getParam "exp"
      args <- getParam "args"
-     liftIO (putStrLn (S.unpack (decodeUtf8 ip) ++
-                       "> " ++
-                       maybe "" (S.unpack . decodeUtf8) mex))
+     liftIO (appendFile "/tmp/tryhaskell-log"
+                        (S.unpack (decodeUtf8 ip) ++
+                         "> " ++
+                         maybe "" (S.unpack . decodeUtf8) mex ++
+                         "\n"))
      case mex of
        Nothing -> error "exp expected"
        Just ex ->
