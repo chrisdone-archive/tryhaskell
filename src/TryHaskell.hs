@@ -16,7 +16,7 @@ import qualified Blaze.Elements as E
 import           Control.Monad.Trans
 import           Data.Aeson as Aeson
 import           Data.ByteString (ByteString)
-import           Data.ByteString.Lazy (fromStrict)
+import           Data.ByteString.Lazy (fromChunks)
 import           Data.Maybe
 import           Data.Monoid
 import           Data.Text (unpack)
@@ -78,7 +78,7 @@ eval =
      case mex of
        Nothing -> error "exp expected"
        Just ex ->
-         muevalToJson ex (getArgs (fmap fromStrict args)) >>= writeLBS . encode
+         muevalToJson ex (getArgs (fmap (fromChunks . return) args)) >>= writeLBS . encode
   where getArgs args =
           fromMaybe [] (args >>= decode)
 
