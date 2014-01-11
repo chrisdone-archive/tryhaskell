@@ -178,7 +178,7 @@ muevalIO e is fs =
             return
               (case result' of
                  Left err -> ErrorResult err
-                 Right r -> SuccessResult r mempty mempty)
+                 Right r -> SuccessResult r mempty fs)
        Right (_,_,readMay . T.unpack -> Just r) ->
          ioResult e (bimap (second oconvert) (second oconvert) r)
        _ -> do putStrLn (show result)
