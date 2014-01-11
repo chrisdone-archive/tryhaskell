@@ -34,9 +34,9 @@ import           System.IO (stderr, hPutStrLn)
 import           System.Process.Text.Lazy
 
 data EvalResult
-  = ErrorResult Text
-  | SuccessResult (Text,Text,Text) [Text]
-  | GetInputResult [Text]
+  = ErrorResult !Text
+  | SuccessResult !(Text,Text,Text) ![Text]
+  | GetInputResult ![Text]
   deriving (Show)
 
 -- | Start a web server.
