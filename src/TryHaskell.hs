@@ -272,7 +272,7 @@ bodyFooter =
   where links =
           do (a ! href "http://github.com/chrisdone/tryhaskell") "Try Haskell"
              " by "
-             (a ! href "http://chrisdone.com/") "Chris Done"
+             (a ! href "http://twitter.com/christopherdone") "@christopherdone"
              ", concept inspired by "
              (a ! href "http://tryruby.org/") "Try Ruby"
              ", Haskell evaluator powered by Gwern Branwen's "
