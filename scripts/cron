@@ -15,6 +15,10 @@
 # minute. It generally takes under a second for an evaluation to start
 # and finish, so this should be more than enough.
 #
+# If you modify the script, be careful not to delete the whole
+# /tmp/tryhaskell dir, GHC will not auto-create it, and mueval will
+# bail out.
+#
 # It's pretty annoying that this happens and there is an issue filed
 # here: https://ghc.haskell.org/trac/ghc/ticket/4114 That's set to low
 # priority. So the real solution here is to fix that issue directly in
