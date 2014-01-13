@@ -1,3 +1,26 @@
+#!/bin/sh
+
+# When GHC, and so Hint, and so Mueval evaluates something that
+# results in a compile error, it leaves some files in /tmp and never
+# deletes them. So we have to deal with this by removing them.
+#
+# The first thing to do is isolate the output to a specific
+# directory. That's been done. TMPDIR is now set to /tmp/tryhaskell.
+#
+# The second thing to do is delete any files and directories in there
+# once in a while. The current cron job on the server is set to every
+# minute. But we have to be careful not to delete something in use in
+# a race condition. So that's what the -mmin +1 parts are for, to
+# ensure we only delete files and directories that are older than a
+# minute. It generally takes under a second for an evaluation to start
+# and finish, so this should be more than enough.
+#
+# It's pretty annoying that this happens and there is an issue filed
+# here: https://ghc.haskell.org/trac/ghc/ticket/4114 That's set to low
+# priority. So the real solution here is to fix that issue directly in
+# GHC. See also:
+# http://stackoverflow.com/questions/1411089/how-to-stop-ghc-from-generating-intermediate-files
+
 cd /tmp/tryhaskell
 find . -mmin +1 -exec rm {} \; 2> /dev/null
 find . -mmin +1 -type d -exec rmdir {} \; 2> /dev/null
