@@ -232,7 +232,7 @@ mueval typeOnly e =
          case drop 1 (T.lines out) of
            [typ,value'] -> return (Right (T.pack e,typ,value'))
            _ -> return (Left ("Unable to get type and value of expression: " <> T.pack e))
-       ExitFailure{} -> return (Left out)
+       ExitFailure{} -> return (Left (out <> " " <> T.pack (show status)))
   where options importsfp =
           ["-i","-t","1","--expression",e] ++
           ["--no-imports","-l",importsfp] ++
