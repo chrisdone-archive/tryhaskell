@@ -1,0 +1,3 @@
+cd /tmp/tryhaskell
+find . -mmin +1 -exec rm {} \; 2> /dev/null
+find . -mmin +1 -type d -exec rmdir {} \; 2> /dev/null
