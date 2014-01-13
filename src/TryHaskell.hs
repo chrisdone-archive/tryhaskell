@@ -226,13 +226,13 @@ ioResult e r =
 mueval :: Bool -> String -> IO (Either Text (Text,Text,Text))
 mueval typeOnly e =
   do importsfp <- getDataFileName "Imports.hs"
-     (status,out,_) <- readProcessWithExitCode "mueval" (options importsfp) ""
+     (status,out,err) <- readProcessWithExitCode "mueval" (options importsfp) ""
      case status of
        ExitSuccess ->
          case drop 1 (T.lines out) of
            [typ,value'] -> return (Right (T.pack e,typ,value'))
            _ -> return (Left ("Unable to get type and value of expression: " <> T.pack e))
-       ExitFailure{} -> return (Left (out <> if out == "" then " " <> T.pack (show status)  else ""))
+       ExitFailure{} -> return (Left (out <> if out == "" then err <> " " <> T.pack (show status)  else ""))
   where options importsfp =
           ["-i","-t","1","--expression",e] ++
           ["--no-imports","-l",importsfp] ++
