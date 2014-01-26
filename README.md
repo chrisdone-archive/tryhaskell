@@ -6,6 +6,9 @@ Try Haskell at [tryhaskell.org](http://tryhaskell.org/)!
 Hacking
 =====
 
+Get the Git version of Mueval from here:
+https://github.com/gwern/mueval It has some additions that tryhaskell needs.
+
 Build tryhaskell
 ```
 $ cabal sandbox init
