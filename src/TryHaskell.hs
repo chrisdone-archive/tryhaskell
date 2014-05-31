@@ -133,14 +133,23 @@ eval stats =
                          "> " ++
                          maybe "" (S.unpack . decodeUtf8) mex ++
                          "\n"))
-     case mex of
-       Nothing -> error "exp expected"
-       Just ex ->
-         case (getArgs args) of
-           Nothing -> muevalToJson ex mempty mempty >>= writeLBS . encode
-           Just (is,fs) -> muevalToJson ex is fs >>= writeLBS . encode
+     o <- case mex of
+            Nothing -> error "exp expected"
+            Just ex ->
+              case (getArgs args) of
+                Nothing -> muevalToJson ex mempty mempty
+                Just (is,fs) -> muevalToJson ex is fs
+     jsonp o
+  where getArgs args = fmap toLazy args >>= decode
 
-  where getArgs args = fmap (fromChunks . return) args >>= decode
+-- | Output a JSON value, possibly wrapping it in a callback if one
+-- was requested.
+jsonp :: Value -> Snap ()
+jsonp o =
+  do mcallback <- getParam "callback"
+     writeLBS (case mcallback of
+                 Nothing -> encode o
+                 Just c -> toLazy c <> "(" <> encode o <> ");")
 
 -- | Evaluate the given expression and return the result as a JSON value.
 muevalToJson :: MonadIO m => ByteString -> [String] -> Map FilePath String -> m Value
@@ -161,6 +170,9 @@ muevalToJson ex is fs =
              GetInputResult stdouts files ->
                [("stdout" .= stdouts)
                ,("files" .= files)]))
+
+-- | Strict bystring to lazy.
+toLazy = fromChunks . return
 
 -- | Try to evaluate the given expression. If there's a mueval error
 -- (i.e. a compile error), then try just getting the type of the
