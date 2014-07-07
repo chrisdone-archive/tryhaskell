@@ -348,8 +348,8 @@ tryhaskell.pages.list =
         {guide:function(result){
             return "<h3>Lists and Tuples</h3>" +
 
-            "<p>You can only " +
-                " have a list of numbers or a list of characters, whereas in a tuple you can throw anything in! </p>" +
+            "<p>You can have a list of numbers, or a list of characters, but you can't have a list containing a mix of numbers and characters." +
+                " In a tuple, however, you can throw anything in! </p>" +
 
             "<p>We've also seen that you can make a new list with <code>(:)</code> that joins two values together, like: </p>" +
                 "<p><code>1 : [2,3]</code></p>" +
