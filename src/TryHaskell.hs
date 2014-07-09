@@ -155,21 +155,24 @@ jsonp o =
 muevalToJson :: MonadIO m => ByteString -> [String] -> Map FilePath String -> m Value
 muevalToJson ex is fs =
   do result <- liftIO (muevalOrType (unpack (decodeUtf8 ex)) is fs)
-     return
-       (Aeson.object
-          (case result of
-             ErrorResult err ->
-               [("error" .= err)]
-             SuccessResult (expr,typ,value') stdouts files ->
-               [("success" .=
-                 Aeson.object [("value"  .= value')
-                              ,("expr"   .= expr)
-                              ,("type"   .= typ)
-                              ,("stdout" .= stdouts)
-                              ,("files"  .= files)])]
-             GetInputResult stdouts files ->
-               [("stdout" .= stdouts)
-               ,("files" .= files)]))
+     case result of
+       ErrorResult "can't find file: Imports.hs" -> muevalToJson ex is fs
+       _ ->
+         return
+           (Aeson.object
+              (case result of
+                 ErrorResult err ->
+                   [("error" .= err)]
+                 SuccessResult (expr,typ,value') stdouts files ->
+                   [("success" .=
+                     Aeson.object [("value"  .= value')
+                                  ,("expr"   .= expr)
+                                  ,("type"   .= typ)
+                                  ,("stdout" .= stdouts)
+                                  ,("files"  .= files)])]
+                 GetInputResult stdouts files ->
+                   [("stdout" .= stdouts)
+                   ,("files" .= files)]))
 
 -- | Strict bystring to lazy.
 toLazy = fromChunks . return
