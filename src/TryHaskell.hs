@@ -162,7 +162,9 @@ muevalToJson ex is fs =
            (Aeson.object
               (case result of
                  ErrorResult err ->
-                   [("error" .= err)]
+                   [("error" .= if err == ""
+                                   then "No result, evaluator might've been killed due to heavy traffic. Retry?"
+                                   else err)]
                  SuccessResult (expr,typ,value') stdouts files ->
                    [("success" .=
                      Aeson.object [("value"  .= value')
