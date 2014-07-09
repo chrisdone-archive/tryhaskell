@@ -157,24 +157,28 @@ muevalToJson ex is fs =
   do result <- liftIO (muevalOrType (unpack (decodeUtf8 ex)) is fs)
      case result of
        ErrorResult "can't find file: Imports.hs\n" -> muevalToJson ex is fs
-       _ ->
-         return
-           (Aeson.object
-              (case result of
-                 ErrorResult err ->
-                   [("error" .= if err == ""
-                                   then "No result, evaluator might've been killed due to heavy traffic. Retry?"
-                                   else err)]
-                 SuccessResult (expr,typ,value') stdouts files ->
-                   [("success" .=
-                     Aeson.object [("value"  .= value')
-                                  ,("expr"   .= expr)
-                                  ,("type"   .= typ)
-                                  ,("stdout" .= stdouts)
-                                  ,("files"  .= files)])]
-                 GetInputResult stdouts files ->
-                   [("stdout" .= stdouts)
-                   ,("files" .= files)]))
+       SuccessResult (_,_,val) _ _
+         | val == "" ->
+           return
+             (codify
+                (ErrorResult "No result, evaluator might've been \
+                             \killed due to heavy traffic. Retry?"))
+       _ -> return (codify result)
+  where codify result =
+          Aeson.object
+            (case result of
+               ErrorResult err ->
+                 [("error" .= err)]
+               SuccessResult (expr,typ,value') stdouts files ->
+                 [("success" .=
+                   Aeson.object [("value"  .= value')
+                                ,("expr"   .= expr)
+                                ,("type"   .= typ)
+                                ,("stdout" .= stdouts)
+                                ,("files"  .= files)])]
+               GetInputResult stdouts files ->
+                 [("stdout" .= stdouts)
+                 ,("files" .= files)])
 
 -- | Strict bystring to lazy.
 toLazy = fromChunks . return

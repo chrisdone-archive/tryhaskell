@@ -137,9 +137,6 @@ tryhaskell.ajaxCommand = function(line,report,stdin){
                     }
                     if(tryhaskell.successHook != null)
                         tryhaskell.successHook(result);
-                    if (result.value == '')
-                      result.value =
-                    "No result, evaluator might've been killed due to heavy traffic. Retry?";
                     if(result.type !== 'IO ()' && !result.value.match(/^</))
                         msgs.push({ msg: result.value, className: 'jquery-console-value' });
                     msgs.push({ msg: ':: ' + result.type, className: 'jquery-console-type' });
