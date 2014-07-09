@@ -156,7 +156,7 @@ muevalToJson :: MonadIO m => ByteString -> [String] -> Map FilePath String -> m 
 muevalToJson ex is fs =
   do result <- liftIO (muevalOrType (unpack (decodeUtf8 ex)) is fs)
      case result of
-       ErrorResult "can't find file: Imports.hs" -> muevalToJson ex is fs
+       ErrorResult "can't find file: Imports.hs\n" -> muevalToJson ex is fs
        _ ->
          return
            (Aeson.object
