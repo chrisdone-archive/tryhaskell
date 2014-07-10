@@ -58,9 +58,11 @@ data Stats = Stats
 startServer :: IO ()
 startServer =
   do checkMuEval
+     cache <- newMVar mempty
      stats <- newMVar (Stats mempty)
      void (forkIO (expireVisitors stats))
-     httpServe server (dispatch stats)
+     void (forkIO (expireCache cache))
+     httpServe server (dispatch cache stats)
   where server = setDefaults defaultConfig
         setDefaults =
           setPort 4001 .
@@ -82,10 +84,10 @@ checkMuEval =
             | otherwise  = "startup failure:\n" ++ T.unpack err
 
 -- | Dispatch on the routes.
-dispatch :: MVar Stats -> Snap ()
-dispatch stats =
+dispatch :: MVar (HashMap (ByteString,ByteString) Value) -> MVar Stats -> Snap ()
+dispatch cache stats =
   route [("/static",serveDirectory "static")
-        ,("/eval",eval stats)
+        ,("/eval",eval cache stats)
         ,("/users",users stats)
         ,("/",home stats)]
 
@@ -120,27 +122,46 @@ expireVisitors stats =
                      M.filter (not . (>60) . diffUTCTime now) .
                      statsUsers))
 
+-- | Expire the cache once an hour.
+expireCache :: MVar (HashMap (ByteString,ByteString) Value) -> IO ()
+expireCache cache =
+  forever
+    (do threadDelay (1000 * 1000 * 60 * 60)
+        modifyMVar_ cache (const (return mempty)))
+
 -- | Evaluate the given expression.
-eval :: MVar Stats -> Snap ()
-eval stats =
-  do ip <- logVisit stats
-     mex <- getParam "exp"
+eval :: MVar (HashMap (ByteString,ByteString) Value) -> MVar Stats -> Snap ()
+eval cache stats =
+  do mex <- getParam "exp"
      args <- getParam "args"
-     now <- liftIO getCurrentTime
-     liftIO (appendFile "/tmp/tryhaskell-log"
-                        (show now ++  " " ++
-                         S.unpack (decodeUtf8 ip) ++
-                         "> " ++
-                         maybe "" (S.unpack . decodeUtf8) mex ++
-                         "\n"))
-     o <- case mex of
-            Nothing -> error "exp expected"
-            Just ex ->
-              case (getArgs args) of
-                Nothing -> muevalToJson ex mempty mempty
-                Just (is,fs) -> muevalToJson ex is fs
-     jsonp o
+     case mex of
+       Nothing -> error "exp expected"
+       Just ex ->
+         do let key = (ex,fromMaybe "" args)
+            logit ex args
+            cacheMap <- liftIO (readMVar cache)
+            case M.lookup key cacheMap of
+              Just cached -> jsonp cached
+              Nothing ->
+                do o <- case (getArgs args) of
+                          Nothing -> muevalToJson ex mempty mempty
+                          Just (is,fs) -> muevalToJson ex is fs
+                   case o of
+                     (Object i)
+                       | Just x <- M.lookup "error" i -> return ()
+                     _ ->
+                       liftIO (modifyMVar_ cache (return . M.insert key o))
+                   jsonp o
   where getArgs args = fmap toLazy args >>= decode
+        logit ex args =
+          do ip <- logVisit stats
+             now <- liftIO getCurrentTime
+             liftIO (appendFile "/tmp/tryhaskell-log"
+                                 (show now ++  " " ++
+                                  S.unpack (decodeUtf8 ip) ++
+                                  "> " ++
+                                  (S.unpack . decodeUtf8) ex ++
+                                  "\n"))
 
 -- | Output a JSON value, possibly wrapping it in a callback if one
 -- was requested.
