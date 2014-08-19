@@ -51,7 +51,7 @@ data EvalResult
   = ErrorResult !Text
   | SuccessResult !(Text,Text,Text) ![Text] !(Map FilePath String)
   | GetInputResult ![Text] !(Map FilePath String)
-  deriving (Show)
+  deriving (Show,Eq)
 
 data Stats = Stats
   { statsUsers :: !(HashMap ByteString UTCTime) }
@@ -163,7 +163,7 @@ cachedEval key cache args ex =
      case M.lookup key cacheMap of
        Just cached -> return cached
        Nothing ->
-         do o <- case (getArgs args) of
+         do o <- case getArgs of
                    Nothing -> muevalToJson ex mempty mempty
                    Just (is,fs) -> muevalToJson ex is fs
             case o of
@@ -172,7 +172,7 @@ cachedEval key cache args ex =
               _ ->
                 modifyMVar_ cache (return . M.insert key o)
             return o
-  where getArgs args = fmap toLazy args >>= decode
+  where getArgs = fmap toLazy args >>= decode
 
 -- | Output a JSON value, possibly wrapping it in a callback if one
 -- was requested.
@@ -189,14 +189,17 @@ muevalToJson ex is fs =
   do result <- liftIO (muevalOrType (unpack (decodeUtf8 ex)) is fs)
      case result of
        ErrorResult "can't find file: Imports.hs\n" -> muevalToJson ex is fs
-       SuccessResult (_,_,val) _ _
-         | val == "" ->
-           return
-             (codify
-                (ErrorResult "No result, evaluator might've been \
-                             \killed due to heavy traffic. Retry?"))
+       ErrorResult e ->
+         return
+           (codify
+              (ErrorResult
+                 (if e == ""
+                     then helpfulMsg
+                     else e)))
        _ -> return (codify result)
-  where codify result =
+  where helpfulMsg = "No result, evaluator might've been \
+                     \killed due to heavy traffic. Retry?"
+        codify result =
           Aeson.object
             (case result of
                ErrorResult err ->
@@ -221,10 +224,22 @@ toLazy = fromChunks . return
 -- expression.
 muevalOrType :: String -> [String] -> Map FilePath String -> IO EvalResult
 muevalOrType e is fs =
-  do result <- mueval False e
-     case result of
-       Left{} -> muevalIO e is fs
-       Right r -> return (SuccessResult r mempty fs)
+  do typeResult <- mueval True e
+     case typeResult of
+       Left err ->
+         return (ErrorResult err)
+       Right (expr,typ,_) ->
+         if T.isPrefixOf "IO " typ
+            then muevalIO e is fs
+            else
+              do evalResult <- mueval False e
+                 case evalResult of
+                   Left err ->
+                     if T.isPrefixOf "No instance for" err
+                        then return (SuccessResult (expr,typ,"") mempty fs)
+                        else return (ErrorResult err)
+                   Right (_,_,val) ->
+                     return (SuccessResult (expr,typ,val) mempty fs)
 
 -- | Try to evaluate the expression as a (pure) IO action, if it type
 -- checks and evaluates, then we're going to enter a potential
@@ -236,16 +251,12 @@ muevalIO :: String -> [String] -> Map FilePath String -> IO EvalResult
 muevalIO e is fs =
   do result <- mueval False ("runTryHaskellIO " ++ show (convert (Input is fs)) ++ " (" ++ e ++ ")")
      case result of
-       Left{} ->
-         do result' <- mueval True e
-            return
-              (case result' of
-                 Left err -> ErrorResult err
-                 Right r -> SuccessResult r mempty fs)
+       Left err ->
+         return (ErrorResult err)
        Right (_,_,readMay . T.unpack -> Just r) ->
          ioResult e (bimap (second oconvert) (second oconvert) r)
-       _ -> do putStrLn (show result)
-               return (ErrorResult ("Unable to get reply from evaluation service. Did you go too far, this time? "))
+       _ ->
+         return (ErrorResult "Problem running IO.")
   where convert (Input os fs') = (os,Map.toList fs')
         oconvert (os,fs') = Output os (Map.fromList fs')
 
@@ -283,10 +294,15 @@ mueval typeOnly e =
      (status,out,err) <- readProcessWithExitCode "mueval" (options importsfp) ""
      case status of
        ExitSuccess ->
-         case drop 1 (T.lines out) of
-           [typ,value'] -> return (Right (T.pack e,typ,value'))
+         case T.lines out of
+           [e',typ,value'] | T.pack e == e' -> return (Right (T.pack e,typ,value'))
            _ -> return (Left ("Unable to get type and value of expression: " <> T.pack e))
-       ExitFailure{} -> return (Left (out <> if out == "" then err <> " " <> T.pack (show status)  else ""))
+       ExitFailure{} ->
+         case T.lines out of
+           [e',_typ,value'] | T.pack e == e' -> return (Left value')
+           [e',_typ]        | T.pack e == e' -> return (Left "Evaluation killed!")
+           _ ->
+             return (Left (out <> if out == "" then err <> " " <> T.pack (show status)  else ""))
   where options importsfp =
           ["-i","-t","1","--expression",e] ++
           ["--no-imports","-l",importsfp] ++
