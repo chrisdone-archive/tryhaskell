@@ -141,20 +141,8 @@ eval cache stats =
        Just ex ->
          do let key = (ex,fromMaybe "" args)
             logit ex args
-            cacheMap <- liftIO (readMVar cache)
-            case M.lookup key cacheMap of
-              Just cached -> jsonp cached
-              Nothing ->
-                do o <- case (getArgs args) of
-                          Nothing -> muevalToJson ex mempty mempty
-                          Just (is,fs) -> muevalToJson ex is fs
-                   case o of
-                     (Object i)
-                       | Just _ <- M.lookup "error" i -> return ()
-                     _ ->
-                       liftIO (modifyMVar_ cache (return . M.insert key o))
-                   jsonp o
-  where getArgs args = fmap toLazy args >>= decode
+            liftIO (cachedEval key cache args ex) >>= jsonp
+  where
         logit ex _ =
           do ip <- logVisit stats
              now <- liftIO getCurrentTime
@@ -164,6 +152,27 @@ eval cache stats =
                                   "> " ++
                                   (S.unpack . decodeUtf8) ex ++
                                   "\n"))
+
+-- | Read from the cache for the given expression (and context), or
+-- otherwise generate the JSON.
+cachedEval :: (Eq k, Hashable k)
+           => k -> MVar (HashMap k Value) -> Maybe ByteString -> ByteString
+           -> IO Value
+cachedEval key cache args ex =
+  do cacheMap <- readMVar cache
+     case M.lookup key cacheMap of
+       Just cached -> return cached
+       Nothing ->
+         do o <- case (getArgs args) of
+                   Nothing -> muevalToJson ex mempty mempty
+                   Just (is,fs) -> muevalToJson ex is fs
+            case o of
+              (Object i)
+                | Just _ <- M.lookup "error" i -> return ()
+              _ ->
+                modifyMVar_ cache (return . M.insert key o)
+            return o
+  where getArgs args = fmap toLazy args >>= decode
 
 -- | Output a JSON value, possibly wrapping it in a callback if one
 -- was requested.
