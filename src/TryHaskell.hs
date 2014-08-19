@@ -235,7 +235,8 @@ muevalOrType e is fs =
               do evalResult <- mueval False e
                  case evalResult of
                    Left err ->
-                     if T.isPrefixOf "No instance for" err
+                     if T.isPrefixOf "No instance for" err ||
+                        T.isPrefixOf "Ambiguous " err
                         then return (SuccessResult (expr,typ,"") mempty fs)
                         else return (ErrorResult err)
                    Right (_,_,val) ->
