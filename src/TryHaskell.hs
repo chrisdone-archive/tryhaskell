@@ -1,3 +1,4 @@
+{-# LANGUAGE PatternGuards #-}
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings   #-}
@@ -21,6 +22,7 @@ import           Data.Aeson as Aeson
 import           Data.Bifunctor
 import           Data.ByteString (ByteString)
 import           Data.ByteString.Lazy (fromChunks)
+import qualified Data.ByteString.Lazy as L (ByteString)
 import           Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as M
 import           Data.Hashable
@@ -148,12 +150,12 @@ eval cache stats =
                           Just (is,fs) -> muevalToJson ex is fs
                    case o of
                      (Object i)
-                       | Just x <- M.lookup "error" i -> return ()
+                       | Just _ <- M.lookup "error" i -> return ()
                      _ ->
                        liftIO (modifyMVar_ cache (return . M.insert key o))
                    jsonp o
   where getArgs args = fmap toLazy args >>= decode
-        logit ex args =
+        logit ex _ =
           do ip <- logVisit stats
              now <- liftIO getCurrentTime
              liftIO (appendFile "/tmp/tryhaskell-log"
@@ -202,6 +204,7 @@ muevalToJson ex is fs =
                  ,("files" .= files)])
 
 -- | Strict bystring to lazy.
+toLazy :: ByteString -> L.ByteString
 toLazy = fromChunks . return
 
 -- | Try to evaluate the given expression. If there's a mueval error
