@@ -9,7 +9,8 @@ Hacking
 Get the Git version of Mueval from here:
 https://github.com/gwern/mueval It has some additions that tryhaskell needs.
 
-Build tryhaskell
+## Sandboxes
+
 ```
 $ cabal sandbox init
 $ cabal install --only-dependencies
@@ -26,3 +27,17 @@ $ env PATH=./.cabal-sandbox/bin:$PATH \
 
 tryhaskell does not currently support any command line arguments
 or configuration files.
+
+## Stackage and hsenv
+
+    $ hsenv
+    $ source .hsenv/bin/activate
+
+Set your remote-repo in your `.hsenv/cabal/config` to
+
+    stackage:http://www.stackage.org/stackage/924db6d52b90801aa1aaf7ab5d0686720d5b3964
+
+Then install
+
+    $ cabal update
+    $ cabal install
