@@ -297,7 +297,12 @@ mueval typeOnly e =
        ExitSuccess ->
          case T.lines out of
            [e',typ,value'] | T.pack e == e' -> return (Right (T.pack e,typ,value'))
-           _ -> return (Left ("Unable to get type and value of expression: " <> T.pack e))
+           _ -> do appendFile "/tmp/tryhaskell-log"
+                               (e ++
+                                " -> " ++
+                                show out ++ " (bad output)" ++
+                                "\n")
+                   return (Left ("Unable to get type and value of expression: " <> T.pack e))
        ExitFailure{} ->
          case T.lines out of
            [e',_typ,value'] | T.pack e == e' -> return (Left value')
