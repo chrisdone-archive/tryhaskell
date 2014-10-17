@@ -7,7 +7,6 @@ import           Control.Monad.Cont
 import           Control.Monad.Error
 import           Control.Monad.Fix
 import           Control.Monad.Identity
-import           Control.Monad.Instances
 import           Control.Monad.RWS
 import           Control.Monad.Reader
 import           Control.Monad.State
