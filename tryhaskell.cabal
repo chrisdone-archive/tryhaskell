@@ -34,7 +34,9 @@ library
                      hashable,
                      old-locale,
                      containers,
-                     bifunctors
+                     bifunctors,
+                     QuickCheck,
+                     show
 
 executable tryhaskell
   hs-source-dirs:    src/main
