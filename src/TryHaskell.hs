@@ -387,7 +387,7 @@ bodyFooter =
 -- | Scripts; jquery, console, tryhaskell, ga, the usual.
 scripts :: Html
 scripts =
-  do (script ! src "http://code.jquery.com/jquery-2.0.3.min.js") mempty
+  do (script ! src "//code.jquery.com/jquery-2.0.3.min.js") mempty
      (script ! src "/static/js/jquery.console.js") mempty
      (script ! src "/static/js/tryhaskell.js") mempty
      (script ! src "/static/js/tryhaskell.pages.js") mempty
