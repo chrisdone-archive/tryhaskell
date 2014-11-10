@@ -11,7 +11,7 @@ module TryHaskell where
 import           Paths_tryhaskell
 
 import qualified Blaze as H
-import           Blaze hiding (html,param,i)
+import           Blaze hiding (html,param,i,id)
 import           Blaze.Bootstrap
 import qualified Blaze.Elements as E
 import           Control.Arrow ((***))
@@ -42,6 +42,7 @@ import           Safe
 import           Snap.Core
 import           Snap.Http.Server hiding (Config)
 import           Snap.Util.FileServe
+import           System.Environment (getEnvironment)
 import           System.Exit
 import           System.IO (stderr, hPutStrLn)
 import           System.Locale
@@ -60,17 +61,18 @@ data Stats = Stats
 startServer :: IO ()
 startServer =
   do checkMuEval
+     env <- getEnvironment
+     let port = maybe 4001 read $ lookup "PORT" env
+     let config = setPort port
+                . setAccessLog ConfigNoLog
+                . setErrorLog ConfigNoLog
+                . setVerbose False
+                $ defaultConfig
      cache <- newMVar mempty
      stats <- newMVar (Stats mempty)
      void (forkIO (expireVisitors stats))
      void (forkIO (expireCache cache))
-     httpServe server (dispatch cache stats)
-  where server = setDefaults defaultConfig
-        setDefaults =
-          setPort 4001 .
-          setVerbose False .
-          setErrorLog ConfigNoLog .
-          setAccessLog ConfigNoLog
+     httpServe config (dispatch cache stats)
 
 -- | Ensure mueval is available and working
 checkMuEval :: IO ()
@@ -291,8 +293,13 @@ ioResult e r =
 -- (expr,type,value) triple.
 mueval :: Bool -> String -> IO (Either Text (Text,Text,Text))
 mueval typeOnly e =
-  do importsfp <- getDataFileName "Imports.hs"
-     (status,out,err) <- readProcessWithExitCode "mueval" (options importsfp) ""
+  do env <- getEnvironment
+     importsfp <- getDataFileName "Imports.hs"
+     let timeout = maybe "1" id $ lookup "MUEVAL_TIMEOUT" env
+         options = ["-i","-t",timeout,"--expression",e] ++
+                   ["--no-imports","-l",importsfp] ++
+                   ["--type-only" | typeOnly]
+     (status,out,err) <- readProcessWithExitCode "mueval" options ""
      case status of
        ExitSuccess ->
          case T.lines out of
@@ -309,10 +316,6 @@ mueval typeOnly e =
            [e',_typ]        | T.pack e == e' -> return (Left "Evaluation killed!")
            _ ->
              return (Left (out <> if out == "" then err <> " " <> T.pack (show status)  else ""))
-  where options importsfp =
-          ["-i","-t","1","--expression",e] ++
-          ["--no-imports","-l",importsfp] ++
-          ["--type-only" | typeOnly]
 
 -- | The home page.
 home :: MVar Stats -> Snap ()
@@ -384,7 +387,7 @@ bodyFooter =
 -- | Scripts; jquery, console, tryhaskell, ga, the usual.
 scripts :: Html
 scripts =
-  do (script ! src "http://code.jquery.com/jquery-2.0.3.min.js") mempty
+  do (script ! src "//code.jquery.com/jquery-2.0.3.min.js") mempty
      (script ! src "/static/js/jquery.console.js") mempty
      (script ! src "/static/js/tryhaskell.js") mempty
      (script ! src "/static/js/tryhaskell.pages.js") mempty
