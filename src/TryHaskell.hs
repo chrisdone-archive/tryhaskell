@@ -11,7 +11,7 @@ module TryHaskell where
 import           Paths_tryhaskell
 
 import qualified Blaze as H
-import           Blaze hiding (html,param,i)
+import           Blaze hiding (html,param,i,id)
 import           Blaze.Bootstrap
 import qualified Blaze.Elements as E
 import           Control.Arrow ((***))
@@ -293,8 +293,13 @@ ioResult e r =
 -- (expr,type,value) triple.
 mueval :: Bool -> String -> IO (Either Text (Text,Text,Text))
 mueval typeOnly e =
-  do importsfp <- getDataFileName "Imports.hs"
-     (status,out,err) <- readProcessWithExitCode "mueval" (options importsfp) ""
+  do env <- getEnvironment
+     importsfp <- getDataFileName "Imports.hs"
+     let timeout = maybe "1" id $ lookup "MUEVAL_TIMEOUT" env
+         options = ["-i","-t",timeout,"--expression",e] ++
+                   ["--no-imports","-l",importsfp] ++
+                   ["--type-only" | typeOnly]
+     (status,out,err) <- readProcessWithExitCode "mueval" options ""
      case status of
        ExitSuccess ->
          case T.lines out of
@@ -311,10 +316,6 @@ mueval typeOnly e =
            [e',_typ]        | T.pack e == e' -> return (Left "Evaluation killed!")
            _ ->
              return (Left (out <> if out == "" then err <> " " <> T.pack (show status)  else ""))
-  where options importsfp =
-          ["-i","-t","1","--expression",e] ++
-          ["--no-imports","-l",importsfp] ++
-          ["--type-only" | typeOnly]
 
 -- | The home page.
 home :: MVar Stats -> Snap ()
