@@ -42,6 +42,7 @@ import           Safe
 import           Snap.Core
 import           Snap.Http.Server hiding (Config)
 import           Snap.Util.FileServe
+import           System.Environment (getEnvironment)
 import           System.Exit
 import           System.IO (stderr, hPutStrLn)
 import           System.Locale
@@ -71,13 +72,17 @@ startServer :: MVar (HashMap (ByteString,ByteString) Value)
             -> MVar Stats
             -> IO ()
 startServer cache stats =
-  httpServe server (dispatch cache stats)
-  where server = setDefaults defaultConfig
-        setDefaults =
-          setPort 4001 .
-          setVerbose False .
-          setErrorLog ConfigNoLog .
-          setAccessLog ConfigNoLog
+  do env <- getEnvironment
+     let port =
+           maybe 4001 read $
+           lookup "PORT" env
+     let config =
+           setPort port .
+           setAccessLog ConfigNoLog .
+           setErrorLog ConfigNoLog .
+           setVerbose False
+     httpServe (config defaultConfig)
+               (dispatch cache stats)
 
 -- | Ensure mueval is available and working
 checkMuEval :: IO ()
