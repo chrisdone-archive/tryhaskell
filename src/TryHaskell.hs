@@ -338,6 +338,7 @@ bodyContent =
   do container
        (row (span12 (do bodyUsers
                         bodyHeader)))
+     warningArea
      consoleArea
      bodyFooter
      scripts
@@ -355,6 +356,18 @@ bodyHeader =
     ((a ! href "/")
        (table (tr (do td ((p !. "haskell-icon") mempty)
                       (td !. "try-haskell") "Try Haskell"))))
+
+-- | An area for warnings (e.g. cookie warning)
+warningArea :: Html
+warningArea =
+  (div !. "warnings")
+    (container
+      (row (do (span6 ! hidden "" !# "cookie-warning")
+                 ((div !. "alert alert-error")
+                   "Cookies are required. Please enable them")
+               (span6 ! hidden "" !# "storage-warning")
+                 ((div !. "alert alert-error")
+                   "Local storage is required. Please enable it"))))
 
 -- | The white area in the middle.
 consoleArea :: Html
