@@ -17,26 +17,27 @@ library
   other-modules:     Paths_tryhaskell
   hs-source-dirs:    src/
   ghc-options:       -Wall
-  build-depends:     base >= 4 && < 5,
-                     snap-server,
-                     snap-core,
-                     blaze,
-                     aeson >= 0.8.0.1,
-                     mueval,
-                     process-extras,
-                     text,
-                     mtl,
-                     bytestring >= 0.10.4.0,
-                     pure-io,
-                     safe,
-                     unordered-containers,
-                     time,
-                     hashable,
-                     old-locale,
-                     containers,
-                     bifunctors,
-                     QuickCheck,
-                     show
+  build-depends:     QuickCheck
+                   , aeson >= 0.8.0.1
+                   , base >= 4 && < 5
+                   , bifunctors
+                   , blaze
+                   , bytestring >= 0.10.4.0
+                   , containers
+                   , foreign-store
+                   , hashable
+                   , mtl
+                   , mueval
+                   , old-locale
+                   , process-extras
+                   , pure-io
+                   , safe
+                   , show
+                   , snap-core
+                   , snap-server
+                   , text
+                   , time
+                   , unordered-containers
 
 executable tryhaskell
   hs-source-dirs:    src/main

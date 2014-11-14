@@ -56,15 +56,22 @@ data EvalResult
 data Stats = Stats
   { statsUsers :: !(HashMap ByteString UTCTime) }
 
--- | Start a web server.
-startServer :: IO ()
-startServer =
+-- | Setup the server threads and state.
+setupServer :: IO ((MVar Stats,ThreadId),(MVar (HashMap (ByteString,ByteString) Value),ThreadId))
+setupServer =
   do checkMuEval
      cache <- newMVar mempty
      stats <- newMVar (Stats mempty)
-     void (forkIO (expireVisitors stats))
-     void (forkIO (expireCache cache))
-     httpServe server (dispatch cache stats)
+     expire <- forkIO (expireVisitors stats)
+     cacheT <- forkIO (expireCache cache)
+     return ((stats,expire),(cache,cacheT))
+
+-- | Start a web server.
+startServer :: MVar (HashMap (ByteString,ByteString) Value)
+            -> MVar Stats
+            -> IO ()
+startServer cache stats =
+  httpServe server (dispatch cache stats)
   where server = setDefaults defaultConfig
         setDefaults =
           setPort 4001 .
