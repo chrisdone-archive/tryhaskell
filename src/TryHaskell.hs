@@ -1,3 +1,4 @@
+{-# LANGUAGE ExtendedDefaultRules #-}
 {-# LANGUAGE PatternGuards #-}
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -10,10 +11,6 @@ module TryHaskell where
 
 import           Paths_tryhaskell
 
-import qualified Blaze as H
-import           Blaze hiding (html,param,i,id)
-import           Blaze.Bootstrap
-import qualified Blaze.Elements as E
 import           Control.Arrow ((***))
 import           Control.Concurrent
 import           Control.Monad
@@ -36,6 +33,8 @@ import           Data.Text.Encoding (decodeUtf8)
 import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as T
 import           Data.Time
+import           Lucid
+import           Lucid.Bootstrap
 import           Prelude hiding (div,head)
 import           PureIO (Interrupt(..),Output(..),Input(..),IOException(..))
 import           Safe
@@ -332,94 +331,101 @@ home :: MVar Stats -> Snap ()
 home stats =
   do logVisit stats
      writeLazyText
-       (renderHtml (H.html (do head headContent
-                               body bodyContent)))
+       (renderText
+          (html_ (do head_ headContent
+                     body_ bodyContent)))
   where headContent =
-          do E.title "Try Haskell! An interactive tutorial in your browser"
-             meta ! charset "utf-8"
+          do title_ "Try Haskell! An interactive tutorial in your browser"
+             with meta_ [charset_ "utf-8"]
              css "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"
              css "/static/css/tryhaskell.css"
              css "//fonts.googleapis.com/css?family=Merriweather"
         css url =
-          link ! rel "stylesheet"
-               ! type_ "text/css"
-               ! href url
+          with link_ [rel_ "stylesheet",type_ "text/css",href_ url]
 
 -- | Content of the body.
-bodyContent :: Html
+bodyContent :: Html ()
 bodyContent =
-  do container
-       (row (span12 (do bodyUsers
-                        bodyHeader)))
+  do container_
+       (row_ (span12_ (do bodyUsers
+                          bodyHeader)))
      warningArea
      consoleArea
      bodyFooter
      scripts
 
 -- | The active users display.
-bodyUsers :: Html
+bodyUsers :: Html ()
 bodyUsers =
-  (div !. "active-users")
-    (div "Active users")
+  with div_
+       [class_ "active-users"]
+       (div_ "Active users")
 
 -- | The header.
-bodyHeader :: Html
+bodyHeader :: Html ()
 bodyHeader =
-  (div !. "haskell-icon-container")
-    ((a ! href "/")
-       (table (tr (do td ((p !. "haskell-icon") mempty)
-                      (td !. "try-haskell") "Try Haskell"))))
+  with div_
+       [class_ "haskell-icon-container"]
+       (with a_
+             [href_ "/"]
+             (table_ (tr_ (do td_ (with p_ [class_ "haskell-icon"] mempty)
+                              with td_ [class_ "try-haskell"] "Try Haskell"))))
 
 -- | An area for warnings (e.g. cookie warning)
-warningArea :: Html
+warningArea :: Html ()
 warningArea =
-  (div !. "warnings")
-    (container
-      (row (do (span6 ! hidden "" !# "cookie-warning")
-                 ((div !. "alert alert-error")
-                   "Cookies are required. Please enable them.")
-               (span6 ! hidden "" !# "storage-warning")
-                 ((div !. "alert alert-error")
-                   "Local storage is required. Please enable it."))))
+  with div_
+       [class_ "warnings"]
+       (container_
+          (row_ (do with span6_
+                         [hidden_ "",id_ "cookie-warning"]
+                         (with div_
+                               [class_ "alert alert-error"]
+                               "Cookies are required. Please enable them.")
+                    with span6_
+                         [hidden_ "",id_ "storage-warning"]
+                         (with div_
+                               [class_ "alert alert-error"]
+                               "Local storage is required. Please enable it."))))
 
 -- | The white area in the middle.
-consoleArea :: Html
+consoleArea :: Html ()
 consoleArea =
-  (div !. "console")
-    (container
-       (row (do (span6 !# "console") mempty
-                (span6 !# "guide") mempty)))
+  with div_
+       [class_ "console"]
+       (container_
+          (row_ (do with span6_ [id_ "console"] mempty
+                    with span6_ [id_ "guide"] mempty)))
 
 -- | The footer with links and such.
-bodyFooter :: Html
+bodyFooter :: Html ()
 bodyFooter =
-  (div !. "footer")
-    (container (row (span12 ((p !. "muted credit") links))))
+  footer_ (container_ (row_ (span12_ (with p_ [class_ "muted credit"] links))))
   where links =
-          do (a ! href "http://github.com/chrisdone/tryhaskell") "Try Haskell"
+          do with a_ [href_ "http://github.com/chrisdone/tryhaskell"] "Try Haskell"
              " by "
-             (a ! href "http://twitter.com/christopherdone") "@christopherdone"
+             with a_ [href_ "http://twitter.com/christopherdone"] "@christopherdone"
              ", concept inspired by "
-             (a ! href "http://tryruby.org/") "Try Ruby"
+             with a_ [href_ "http://tryruby.org/"] "Try Ruby"
              ", Haskell evaluator powered by Gwern Branwen's "
-             (a ! href "http://hackage.haskell.org/package/mueval") "Mueval"
+             with a_ [href_ "http://hackage.haskell.org/package/mueval"] "Mueval"
              ",  and console by "
-             (a ! href "http://github.com/chrisdone/jquery-console") "jquery-console"
+             with a_ [href_ "http://github.com/chrisdone/jquery-console"] "jquery-console"
              "."
 
 -- | Scripts; jquery, console, tryhaskell, ga, the usual.
-scripts :: Html
+scripts :: Html ()
 scripts =
-  do (script ! src "//code.jquery.com/jquery-2.0.3.min.js") mempty
-     (script ! src "/static/js/jquery.console.js") mempty
-     (script ! src "/static/js/tryhaskell.js") mempty
-     (script ! src "/static/js/tryhaskell.pages.js") mempty
-     script "var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");\
-             \document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));"
-     script "try {\
-             \var pageTracker2 = _gat._getTracker(\"UA-7443395-14\");\
-             \pageTracker2._setDomainName(\"none\");\
-             \pageTracker2._setAllowLinker(true);\
-             \pageTracker2._trackPageview(location.pathname + location.search + location.hash);\
-             \window.ga_tracker = pageTracker2;\
-             \} catch(err) {}"
+  do with script_ [src_ "//code.jquery.com/jquery-2.0.3.min.js"] mempty
+     with script_ [src_ "/static/js/jquery.console.js"] mempty
+     with script_ [src_ "/static/js/tryhaskell.js"] mempty
+     with script_ [src_ "/static/js/tryhaskell.pages.js"] mempty
+     script_ "var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");\
+              \document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));"
+     script_ "try {\
+              \var pageTracker2 = _gat._getTracker(\"UA-7443395-14\");\
+              \pageTracker2._setDomainName(\"none\");\
+              \pageTracker2._setAllowLinker(true);\
+              \pageTracker2._trackPageview(location.pathname + location.search + location.hash);\
+              \window.ga_tracker = pageTracker2;\
+              \} catch(err) {}"

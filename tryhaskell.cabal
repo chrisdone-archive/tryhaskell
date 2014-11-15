@@ -26,6 +26,7 @@ library
                    , containers
                    , foreign-store
                    , hashable
+                   , lucid
                    , mtl
                    , mueval
                    , old-locale
