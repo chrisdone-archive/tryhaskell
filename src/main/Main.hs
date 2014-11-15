@@ -11,7 +11,6 @@ import TryHaskell
 -- | Main entry point.
 main :: IO ()
 main =
-  do ((stats,statsT),(cache,cacheT)) <- setupServer
+  do ((stats,statsT),cache) <- setupServer
      finally (startServer cache stats)
-             (do killThread statsT
-                 killThread cacheT)
+             (killThread statsT)
