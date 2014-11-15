@@ -15,6 +15,7 @@ import           Blaze hiding (html,param,i,id)
 import           Blaze.Bootstrap
 import qualified Blaze.Elements as E
 import           Control.Arrow ((***))
+import           Control.Applicative ((<$>),(<|>))
 import           Control.Concurrent
 import           Control.Monad
 import           Control.Monad.Trans
@@ -23,6 +24,7 @@ import           Data.Bifunctor
 import           Data.ByteString (ByteString)
 import           Data.ByteString.Lazy (fromChunks)
 import qualified Data.ByteString.Lazy as L (ByteString)
+import qualified Data.Cache.LRU.IO as LRU
 import           Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as M
 import           Data.Hashable
@@ -42,7 +44,7 @@ import           Safe
 import           Snap.Core
 import           Snap.Http.Server hiding (Config)
 import           Snap.Util.FileServe
-import           System.Environment (getEnvironment)
+import           System.Environment (getEnvironment, lookupEnv)
 import           System.Exit
 import           System.IO (stderr, hPutStrLn)
 import           System.Locale
@@ -57,18 +59,20 @@ data EvalResult
 data Stats = Stats
   { statsUsers :: !(HashMap ByteString UTCTime) }
 
+type Cache = LRU.AtomicLRU (ByteString, ByteString) Value
+
 -- | Setup the server threads and state.
-setupServer :: IO ((MVar Stats,ThreadId),(MVar (HashMap (ByteString,ByteString) Value),ThreadId))
+setupServer :: IO ((MVar Stats,ThreadId), Cache)
 setupServer =
   do checkMuEval
-     cache <- newMVar mempty
+     mCacheLimit <- (readMay =<<) <$> lookupEnv "CACHE_LIMIT"
+     cache <- LRU.newAtomicLRU (mCacheLimit <|> Just 1000)
      stats <- newMVar (Stats mempty)
      expire <- forkIO (expireVisitors stats)
-     cacheT <- forkIO (expireCache cache)
-     return ((stats,expire),(cache,cacheT))
+     return ((stats,expire),cache)
 
 -- | Start a web server.
-startServer :: MVar (HashMap (ByteString,ByteString) Value)
+startServer :: Cache
             -> MVar Stats
             -> IO ()
 startServer cache stats =
@@ -98,7 +102,7 @@ checkMuEval =
             | otherwise  = "startup failure:\n" ++ T.unpack err
 
 -- | Dispatch on the routes.
-dispatch :: MVar (HashMap (ByteString,ByteString) Value) -> MVar Stats -> Snap ()
+dispatch :: Cache -> MVar Stats -> Snap ()
 dispatch cache stats =
   route [("/static",serveDirectory "static")
         ,("/eval",eval cache stats)
@@ -136,15 +140,8 @@ expireVisitors stats =
                      M.filter (not . (>60) . diffUTCTime now) .
                      statsUsers))
 
--- | Expire the cache once an hour.
-expireCache :: MVar (HashMap (ByteString,ByteString) Value) -> IO ()
-expireCache cache =
-  forever
-    (do threadDelay (1000 * 1000 * 60 * 60)
-        modifyMVar_ cache (const (return mempty)))
-
 -- | Evaluate the given expression.
-eval :: MVar (HashMap (ByteString,ByteString) Value) -> MVar Stats -> Snap ()
+eval :: Cache -> MVar Stats -> Snap ()
 eval cache stats =
   do mex <- getParam "exp"
      args <- getParam "args"
@@ -167,12 +164,12 @@ eval cache stats =
 
 -- | Read from the cache for the given expression (and context), or
 -- otherwise generate the JSON.
-cachedEval :: (Eq k, Hashable k)
-           => k -> MVar (HashMap k Value) -> Maybe ByteString -> ByteString
+cachedEval :: (Eq k, Ord k)
+           => k -> LRU.AtomicLRU k Value -> Maybe ByteString -> ByteString
            -> IO Value
 cachedEval key cache args ex =
-  do cacheMap <- readMVar cache
-     case M.lookup key cacheMap of
+  do mCached <- LRU.lookup key cache
+     case mCached of
        Just cached -> return cached
        Nothing ->
          do o <- case getArgs of
@@ -182,7 +179,7 @@ cachedEval key cache args ex =
               (Object i)
                 | Just _ <- M.lookup "error" i -> return ()
               _ ->
-                modifyMVar_ cache (return . M.insert key o)
+                LRU.insert key o cache
             return o
   where getArgs = fmap toLazy args >>= decode
 

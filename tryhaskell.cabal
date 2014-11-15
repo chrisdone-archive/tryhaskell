@@ -38,6 +38,7 @@ library
                    , text
                    , time
                    , unordered-containers
+                   , lrucache
 
 executable tryhaskell
   hs-source-dirs:    src/main
