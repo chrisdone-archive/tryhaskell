@@ -3,7 +3,7 @@
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings   #-}
-{-# OPTIONS -fno-warn-unused-do-bind #-}
+{-# OPTIONS -fno-warn-type-defaults #-}
 
 -- | Try Haskell!
 
@@ -326,19 +326,19 @@ mueval typeOnly e =
 -- | The home page.
 home :: MVar Stats -> Snap ()
 home stats =
-  do logVisit stats
+  do void (logVisit stats)
      writeLazyText
        (renderText
           (html_ (do head_ headContent
                      body_ bodyContent)))
   where headContent =
           do title_ "Try Haskell! An interactive tutorial in your browser"
-             with meta_ [charset_ "utf-8"]
+             meta_ [charset_ "utf-8"]
              css "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"
              css "/static/css/tryhaskell.css"
              css "//fonts.googleapis.com/css?family=Merriweather"
         css url =
-          with link_ [rel_ "stylesheet",type_ "text/css",href_ url]
+          link_ [rel_ "stylesheet",type_ "text/css",href_ url]
 
 -- | Content of the body.
 bodyContent :: Html ()
@@ -354,69 +354,60 @@ bodyContent =
 -- | The active users display.
 bodyUsers :: Html ()
 bodyUsers =
-  with div_
-       [class_ "active-users"]
+  div_ [class_ "active-users"]
        (div_ "Active users")
 
 -- | The header.
 bodyHeader :: Html ()
 bodyHeader =
-  with div_
-       [class_ "haskell-icon-container"]
-       (with a_
-             [href_ "/"]
-             (table_ (tr_ (do td_ (with p_ [class_ "haskell-icon"] mempty)
-                              with td_ [class_ "try-haskell"] "Try Haskell"))))
+  div_ [class_ "haskell-icon-container"]
+       (a_ [href_ "/"]
+           (table_ (tr_ (do td_ (p_ [class_ "haskell-icon"] mempty)
+                            td_ [class_ "try-haskell"] "Try Haskell"))))
 
 -- | An area for warnings (e.g. cookie warning)
 warningArea :: Html ()
 warningArea =
-  with div_
-       [class_ "warnings"]
+  div_ [class_ "warnings"]
        (container_
-          (row_ (do with span6_
-                         [hidden_ "",id_ "cookie-warning"]
-                         (with div_
-                               [class_ "alert alert-error"]
-                               "Cookies are required. Please enable them.")
-                    with span6_
-                         [hidden_ "",id_ "storage-warning"]
-                         (with div_
-                               [class_ "alert alert-error"]
-                               "Local storage is required. Please enable it."))))
+          (row_ (do span6_ [hidden_ "",id_ "cookie-warning"]
+                           (div_ [class_ "alert alert-error"]
+                                 "Cookies are required. Please enable them.")
+                    span6_ [hidden_ "",id_ "storage-warning"]
+                           (div_ [class_ "alert alert-error"]
+                                 "Local storage is required. Please enable it."))))
 
 -- | The white area in the middle.
 consoleArea :: Html ()
 consoleArea =
-  with div_
-       [class_ "console"]
+  div_ [class_ "console"]
        (container_
-          (row_ (do with span6_ [id_ "console"] mempty
-                    with span6_ [id_ "guide"] mempty)))
+          (row_ (do span6_ [id_ "console"] mempty
+                    span6_ [id_ "guide"] mempty)))
 
 -- | The footer with links and such.
 bodyFooter :: Html ()
 bodyFooter =
-  footer_ (container_ (row_ (span12_ (with p_ [class_ "muted credit"] links))))
+  footer_ (container_ (row_ (span12_ (p_ [class_ "muted credit"] links))))
   where links =
-          do with a_ [href_ "http://github.com/chrisdone/tryhaskell"] "Try Haskell"
+          do a_ [href_ "http://github.com/chrisdone/tryhaskell"] "Try Haskell"
              " by "
-             with a_ [href_ "http://twitter.com/christopherdone"] "@christopherdone"
+             a_ [href_ "http://twitter.com/christopherdone"] "@christopherdone"
              ", concept inspired by "
-             with a_ [href_ "http://tryruby.org/"] "Try Ruby"
+             a_ [href_ "http://tryruby.org/"] "Try Ruby"
              ", Haskell evaluator powered by Gwern Branwen's "
-             with a_ [href_ "http://hackage.haskell.org/package/mueval"] "Mueval"
+             a_ [href_ "http://hackage.haskell.org/package/mueval"] "Mueval"
              ",  and console by "
-             with a_ [href_ "http://github.com/chrisdone/jquery-console"] "jquery-console"
+             a_ [href_ "http://github.com/chrisdone/jquery-console"] "jquery-console"
              "."
 
 -- | Scripts; jquery, console, tryhaskell, ga, the usual.
 scripts :: Html ()
 scripts =
-  do with script_ [src_ "//code.jquery.com/jquery-2.0.3.min.js"] mempty
-     with script_ [src_ "/static/js/jquery.console.js"] mempty
-     with script_ [src_ "/static/js/tryhaskell.js"] mempty
-     with script_ [src_ "/static/js/tryhaskell.pages.js"] mempty
+  do script_ [src_ "//code.jquery.com/jquery-2.0.3.min.js"] ""
+     script_ [src_ "/static/js/jquery.console.js"] ""
+     script_ [src_ "/static/js/tryhaskell.js"] ""
+     script_ [src_ "/static/js/tryhaskell.pages.js"] ""
      script_ "var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");\
               \document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));"
      script_ "try {\
