@@ -76,6 +76,7 @@ startServer :: Cache
             -> IO ()
 startServer cache stats =
   do env <- getEnvironment
+     static <- getDataFileName "static"
      let port =
            maybe 4001 read $
            lookup "PORT" env
@@ -85,7 +86,7 @@ startServer cache stats =
            setErrorLog ConfigNoLog .
            setVerbose False
      httpServe (config defaultConfig)
-               (dispatch cache stats)
+               (dispatch static cache stats)
 
 -- | Ensure mueval is available and working
 checkMuEval :: IO ()
@@ -101,9 +102,9 @@ checkMuEval =
             | otherwise  = "startup failure:\n" ++ T.unpack err
 
 -- | Dispatch on the routes.
-dispatch :: Cache -> MVar Stats -> Snap ()
-dispatch cache stats =
-  route [("/static",serveDirectory "static")
+dispatch :: FilePath -> Cache -> MVar Stats -> Snap ()
+dispatch static cache stats =
+  route [("/static",serveDirectory static)
         ,("/eval",eval cache stats)
         ,("/users",users stats)
         ,("/",home stats)]

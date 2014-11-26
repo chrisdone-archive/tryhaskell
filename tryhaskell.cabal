@@ -11,6 +11,15 @@ category:            Education
 build-type:          Simple
 cabal-version:       >=1.8
 data-files:          Imports.hs
+                     static/css/fonts/Haskell.dev.svg
+                     static/css/fonts/Haskell.eot
+                     static/css/fonts/Haskell.svg
+                     static/css/fonts/Haskell.ttf
+                     static/css/fonts/Haskell.woff
+                     static/css/tryhaskell.css
+                     static/js/jquery.console.js
+                     static/js/tryhaskell.js
+                     static/js/tryhaskell.pages.js
 
 library
   exposed-modules:   TryHaskell
