@@ -35,7 +35,7 @@ library
                    , containers
                    , foreign-store
                    , hashable
-                   , lucid >= 2.0
+                   , lucid >= 2.6
                    , mtl
                    , mueval
                    , old-locale
