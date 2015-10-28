@@ -48,7 +48,6 @@ tryhaskell.pages.list =
         },
         ////////////////////////////////////////////////////////////////////////
         // Lesson 1
-
         // Simple addition
         {lesson:1,
          title:'Basics; numbers, strings, etc.',
@@ -247,7 +246,9 @@ tryhaskell.pages.list =
                 result.type.match(/\(?Num [a-z]\)? => [a-z]$/);
         }
         },
-        // Lesson 3: Syntactic sugar
+        ////////////////////////////////////////////////////////////////////////
+        // Lesson 3
+        // Syntactic sugar
         {lesson:3,
          title:'Syntactic Sugar',
          guide:function(result){
@@ -315,6 +316,9 @@ tryhaskell.pages.list =
                  result.type == "Bool";
          }
         },
+        ////////////////////////////////////////////////////////////////////////
+        // Lesson 4
+        // Functions
         {lesson:4,
          title:'Functions, reloaded; passing, defining, etc.',
          guide:function(){
@@ -341,7 +345,7 @@ tryhaskell.pages.list =
                  "<code>(1,\"George\")</code>"
          },
          trigger:function(result){
-             return result.expr.match(/^[ ]*map[ ]+\(\+1\)[ ]*\[1..5\][ ]*$/) &&
+             return result.expr.match(/^[ ]*map[ ]*\(\+1\)[ ]*\[1..5\][ ]*$/) &&
                  (result.type.match(/^\(?Num [a-z], Enum [a-z]\)? => \[[a-z]\]$/) ||
                   result.type.match(/^\(?Enum [a-z], Num [a-z]\)? => \[[a-z]\]$/));
          }},
@@ -361,7 +365,7 @@ tryhaskell.pages.list =
 
         },
          trigger:function(result){
-             return result.expr.match(/^[ ]*\(1,"[^"]+"\)[ ]*$/) &&
+             return result.expr.match(/^[ ]*\([0-9],[ ]*"[^"]+"\)[ ]*$/) &&
                  result.type.match(/^\(?Num [a-z]\)? => \([a-z], \[Char\]\)$/);
          }},
         {guide:function(result){
@@ -405,7 +409,7 @@ tryhaskell.pages.list =
             "<p><code>toUpper 'a'</code></p>"
         },
          trigger:function(result){
-             return result.expr.match(/^[ ]*let[ ]+square[ ]+x[ ]*=[ ]*x[ ]*\*[ ]*x[ ]*in[ ]+map[ ]+square[ ]*\[1..10\][ ]*$/) &&
+             return result.expr.match(/^[ ]*let[ ]+square[ ]+x[ ]*=[ ]*x[ ]*\*[ ]*x[ ]*in[ ]+map[ ]+square[ ]*\[1[ ]*..[ ]*10\][ ]*$/) &&
                  (result.type.match(/^\(?Num [a-z], Enum [a-z]\)? => \[[a-z]\]$/) ||
                   result.type.match(/^\(?Enum [a-z], Num [a-z]\)? => \[[a-z]\]$/));
          }},
@@ -422,7 +426,7 @@ tryhaskell.pages.list =
             '<p>Spoiler: <code class="spoiler">map toUpper "Chris"</code></p>'
         },
          trigger:function(result){
-             return result.expr.match(/^toUpper 'a'$/) &&
+             return result.expr.match(/^[ ]*toUpper[ ]*'a'[ ]*$/) &&
                  result.type == "Char";
          }},
         {guide:function(result){
@@ -475,7 +479,7 @@ tryhaskell.pages.list =
              "<code>let (a:b:c:[]) = \"xyz\" in a</code>"
          },
          trigger:function(result){
-             return result.expr.match(/^[ ]*let[ ]+\(a,b\)[ ]+=[ ]+\(10,12\)[ ]+in[ ]+a[ ]*\*[ ]*2[ ]*$/) &&
+             return result.expr.match(/^[ ]*let[ ]+\(a,[ ]*b\)[ ]*=[ ]*\(10,[ ]*12\)[ ]*in[ ]+a[ ]*\*[ ]*2[ ]*$/) &&
                  result.type.match(/\(?Num [a-z]\)? => [a-z]$/);
          }},
         {guide:function(result){
@@ -493,7 +497,7 @@ tryhaskell.pages.list =
             "<code>let (a:_) = \"xyz\" in a</code>"
         },
          trigger:function(result){
-             return result.expr.match(/^[ ]*let[ ]+\(a:b:c:\[\]\)[ ]*=[ ]*\"xyz\"[ ]*in[ ]+a[ ]*$/) &&
+             return result.expr.match(/^[ ]*let[ ]*\([ ]*a[ ]*:[ ]*b[ ]*:[ ]*c[ ]*:[ ]*\[[ ]*\][ ]*\)[ ]*=[ ]*\"xyz\"[ ]*in[ ]+a[ ]*$/) &&
                  result.type == "Char";
          }},
         {guide:function(result){
@@ -505,7 +509,7 @@ tryhaskell.pages.list =
             "<p>Spoiler: <code class='spoiler'>let (_,(a:_)) = (10,\"abc\") in a</code></p>"
         },
          trigger:function(result){
-             return result.expr.match(/^[ ]*let[ ]*\(a:_\)[ ]*=[ ]*"xyz"[ ]*in[ ]*a[ ]*$/) &&
+             return result.expr.match(/^[ ]*let[ ]*\([ ]*a[ ]*:[ ]*_[ ]*\)[ ]*=[ ]*"xyz"[ ]*in[ ]+a[ ]*$/) &&
                  result.type == "Char";
          }},
         {guide:function(result){
@@ -525,7 +529,7 @@ tryhaskell.pages.list =
             "<code>let abc@(a,b,c) = (10,20,30) in (abc,a,b,c)</code>"
         },
          trigger:function(result){
-             return result.expr.match(/^[ ]*let[ ]*\(_,\(?a:_\)?\)[ ]*=[ ]*\(10,\"abc\"\)[ ]*in[ ]*a[ ]*$/) &&
+             return result.expr.match(/^[ ]*let[ ]*\([ ]*_[ ]*,[ ]*\(?[ ]*a[ ]*:[ ]*_[ ]*\)?[ ]*\)[ ]*=[ ]*\([ ]*10[ ]*,[ ]*\"abc\"[ ]*\)[ ]*in[ ]+a[ ]*$/) &&
                  result.type == "Char";
          }},
         {guide:function(result){
