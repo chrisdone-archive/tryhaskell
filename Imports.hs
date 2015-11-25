@@ -10,7 +10,6 @@ import           Control.Monad.Identity
 import           Control.Monad.RWS
 import           Control.Monad.Reader
 import           Control.Monad.State
-import           Control.Monad.State
 import           Control.Monad.Writer
 import           Data.Array
 import           Data.Bits
@@ -41,6 +40,7 @@ import           PureIO as IO
 import           ShowFun
 import           System.Random
 import           Test.QuickCheck
+import           Text.JSON
 import           Text.PrettyPrint.HughesPJ
 import           Text.Printf
 
