@@ -46,7 +46,6 @@ import           Snap.Util.FileServe
 import           System.Environment (getEnvironment, lookupEnv)
 import           System.Exit
 import           System.IO (stderr, hPutStrLn)
-import           System.Locale
 import           System.Process.Text.Lazy
 
 data EvalResult
