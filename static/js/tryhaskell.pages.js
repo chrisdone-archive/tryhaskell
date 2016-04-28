@@ -367,7 +367,7 @@ tryhaskell.pages.list =
         {guide:function(result){
             return "<h3>Let there be functions</h3>" +
                 "<p>Nice one! I think you're getting used to the <code>let</code> syntax.</p>" +
-                "<p>You defined a function. You can read it as, as for a given " +
+                "<p>You defined a function. You can read it as such: for a given " +
                 "<em>parameter</em> called <code>x</code>, <code>square</code> of " +
                 "<code>x</code> is <code>x * x</code>." +
                 "<p>Some others you can try are:</p>" +
