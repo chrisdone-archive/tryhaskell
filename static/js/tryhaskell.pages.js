@@ -434,11 +434,11 @@ tryhaskell.pages.list =
             "<p>Let's go over what you've learned in this lesson:</p>" +
 
             "<ol>" +
-                "<li>Functions like <code>map</code> take other functions as parameters.</li>" +
+                "<li>Functions like <code>map</code> take other functions as arguments.</li>" +
                 "<li>Functions like <code>(+1)</code>, <code>(>5)</code> and "+
                 "<code>square</code> can be passed to other functions.</li>" +
                 "<li>Defining functions is just a case of writing what "+
-                "to do with the parameters.</li>"  + "</ol>" +
+                "to do with the arguments.</li>"  + "</ol>" +
 
             "<p>Let's check out <em>pattern matching</em>; a way to "+
                 "get values from other values using patterns. Try this: </p>" +
