@@ -38,11 +38,6 @@ tryhaskell.pages.list =
          '"hello"</code> or <code title="Click me to insert &quot;foldr (:) [] [1,2,3]&quot; into the console." style="cursor: pointer;">foldr (:) [] [1,2,3]</code> or <code title="Click me to insert." style="cursor: pointer;">do line <- getLine; putStrLn line</code> or <code>readFile "/welcome"</code>' +
          '</p>' +
          '<p><a href="https://hackage.haskell.org/package/pure-io-0.2.0/docs/PureIO.html#g:2">These</a> IO actions are supported in this app.</p>' +
-         '<p><strong>Other cool learning places</strong></pa>' +
-         '<p class="clearfix">' +
-         'You can also run real Haskell code—file I/O, ' +
-         'web apps, and lots more in <a href="https://www.fpcomplete.com/page/project-build">an online IDE</a>. See also the <a href="https://www.fpcomplete.com/school">school of Haskell</a> for practical tutorials.' +
-         '</p>' +
          '</div>' +
          '</div>'
         },
