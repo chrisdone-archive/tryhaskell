@@ -9,8 +9,6 @@
 
 module TryHaskell where
 
-import           Paths_tryhaskell
-
 import           Control.Arrow ((***))
 import           Control.Applicative ((<$>),(<|>))
 import           Control.Concurrent
@@ -75,7 +73,7 @@ startServer :: Cache
             -> IO ()
 startServer cache stats =
   do env <- getEnvironment
-     static <- getDataFileName "static"
+     static <- return "static"
      let port =
            maybe 4001 read $
            lookup "PORT" env
@@ -300,7 +298,7 @@ ioResult e r =
 mueval :: Bool -> String -> IO (Either Text (Text,Text,Text))
 mueval typeOnly e =
   do env <- getEnvironment
-     importsfp <- getDataFileName "Imports.hs"
+     importsfp <- return "Imports.hs"
      let timeout = maybe "1" id $ lookup "MUEVAL_TIMEOUT" env
          options = ["-i","-t",timeout,"--expression",e] ++
                    ["--no-imports","-l",importsfp] ++

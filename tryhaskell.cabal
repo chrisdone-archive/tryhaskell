@@ -23,7 +23,6 @@ data-files:          Imports.hs
 
 library
   exposed-modules:   TryHaskell
-  other-modules:     Paths_tryhaskell
   hs-source-dirs:    src/
   ghc-options:       -Wall
   build-depends:     QuickCheck
