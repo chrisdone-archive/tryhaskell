@@ -90,7 +90,7 @@ checkMuEval :: IO ()
 checkMuEval =
   do result <- mueval False "()"
      case result of
-       Left err -> die err
+       Left err | err /= "()" -> die err
        _ -> return ()
   where
     die err = do hPutStrLn stderr ("ERROR: mueval " ++ msg err)
@@ -368,10 +368,14 @@ warningArea :: Html ()
 warningArea =
   div_ [class_ "warnings"]
        (container_
-          (row_ (do span6_ [hidden_ "",id_ "cookie-warning"]
+          (row_ (do noscript_
+                      (span6_ [id_ "cookie-warning"]
+                              (div_ [class_ "alert alert-error"]
+                                    "JavaScript is required. Please enable it."))
+                    span6_ [style_ "display:none",id_ "cookie-warning"]
                            (div_ [class_ "alert alert-error"]
                                  "Cookies are required. Please enable them.")
-                    span6_ [hidden_ "",id_ "storage-warning"]
+                    span6_ [style_ "display:none",id_ "storage-warning"]
                            (div_ [class_ "alert alert-error"]
                                  "Local storage is required. Please enable it."))))
 
