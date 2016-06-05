@@ -301,19 +301,23 @@
 	return false;
       }
       if (acceptInput) {
-	if (e.shiftKey && keyCode in shiftCodes) {
+	if (e.shiftKey && !e.altKey && !e.ctrlKey && keyCode in shiftCodes) {
+	  // Only the shift key was pressed with one of the shift codes
 	  cancelKeyPress = keyCode;
 	  (shiftCodes[keyCode])();
 	  return false;
-	} else if (e.altKey  && keyCode in altCodes) {
+	} else if (e.altKey && !e.shiftKey && !e.ctrlKey && keyCode in altCodes) {
+	  // Only the alt key was pressed with one of the shift codes
 	  cancelKeyPress = keyCode;
 	  (altCodes[keyCode])();
 	  return false;
-	} else if (e.ctrlKey && keyCode in ctrlCodes) {
+	} else if (e.ctrlKey && !e.shiftKey && !e.altKey && keyCode in ctrlCodes) {
+	  // Only the ctrl key was pressed with one of the shift codes
 	  cancelKeyPress = keyCode;
 	  (ctrlCodes[keyCode])();
 	  return false;
-	} else if (keyCode in keyCodes) {
+	} else if (!e.shiftKey && !e.ctrlKey && !e.altKey && keyCode in keyCodes) {
+	  // No modifier key was pressed with one of the normal codes
 	  cancelKeyPress = keyCode;
 	  (keyCodes[keyCode])();
 	  return false;
