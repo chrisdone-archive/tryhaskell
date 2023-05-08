@@ -34,6 +34,11 @@ library
       OverloadedStrings
       MultiWayIf
       BlockArguments
+      ScopedTypeVariables
+      LambdaCase
+      RecordWildCards
+      FlexibleContexts
+      ViewPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       async
@@ -41,8 +46,11 @@ library
     , bytestring
     , containers
     , duet
+    , exceptions
     , http-types
     , lucid2
+    , monad-logger
+    , mtl
     , safe-exceptions
     , stm
     , text
@@ -62,6 +70,11 @@ executable tryhaskell-exe
       OverloadedStrings
       MultiWayIf
       BlockArguments
+      ScopedTypeVariables
+      LambdaCase
+      RecordWildCards
+      FlexibleContexts
+      ViewPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       async
@@ -69,8 +82,11 @@ executable tryhaskell-exe
     , bytestring
     , containers
     , duet
+    , exceptions
     , http-types
     , lucid2
+    , monad-logger
+    , mtl
     , safe-exceptions
     , stm
     , text
@@ -92,6 +108,11 @@ test-suite tryhaskell-test
       OverloadedStrings
       MultiWayIf
       BlockArguments
+      ScopedTypeVariables
+      LambdaCase
+      RecordWildCards
+      FlexibleContexts
+      ViewPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       async
@@ -99,8 +120,11 @@ test-suite tryhaskell-test
     , bytestring
     , containers
     , duet
+    , exceptions
     , http-types
     , lucid2
+    , monad-logger
+    , mtl
     , safe-exceptions
     , stm
     , text

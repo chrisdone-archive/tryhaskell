@@ -17,6 +17,39 @@ import Lucid hiding (for_)
 import Data.Foldable
 import Lucid.Base
 import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.Encoding as T
+
+-- Duet dependencies
+import qualified Control.Monad.Catch as Exceptions
+import           Control.Monad.Logger
+import           Control.Monad.Supply
+import           Control.Monad.Writer
+import qualified Data.Map.Strict as M
+import           Data.Semigroup ((<>))
+import           Duet.Context
+import           Duet.Errors
+import           Duet.Infer
+import           Duet.Parser
+import           Duet.Printer
+import           Duet.Renamer
+import           Duet.Setup
+import           Duet.Simple
+import           Duet.Stepper
+import           Duet.Types
+import           System.IO
+
+--------------------------------------------------------------------------------
+-- Types
+
+data Run = Run
+  { runInputCode :: Text
+  , runMainIs :: String
+  , runConcise :: Bool
+  , runNumbered :: Bool
+  , runSteps :: Maybe Integer
+  , runHideSteps :: Bool
+  } deriving (Show)
 
 --------------------------------------------------------------------------------
 -- Main entry point
@@ -42,7 +75,8 @@ app request respond =
           case method of
             GET ->
               case queryString request of
-                [("code", code)] -> respond evaluatorResponse
+                [("code", Just (T.decodeUtf8 -> code))] ->
+                  evaluatorResponse code >>= respond
                 _ -> respond invalidArgumentResponse
             _ -> respond invalidMethodResponse
         _ -> respond pageNotFoundResponse
@@ -90,18 +124,103 @@ rootResponse = responseLBS status200 [("Content-Type", "text/html; charset=utf-8
       body_ [makeAttributes "hx-ext" "preload"] do
         evaluator_ Nothing
 
-evaluatorResponse :: Response
-evaluatorResponse = responseLBS status200 [("Content-Type", "text/html; charset=utf-8")] $
-  renderBS do
-    evaluator_ (Just ())
+evaluatorResponse :: Text -> IO Response
+evaluatorResponse input = do
+  output <- runProgram Run {
+     runInputCode = input,
+     runMainIs = "main",
+     runConcise = True,
+     runNumbered = False,
+     runSteps = Just 100,
+     runHideSteps = False
+     }
+  pure $ responseLBS status200 [("Content-Type", "text/html; charset=utf-8")] $
+    renderBS do
+      evaluator_ (Just (input, output))
 
 --------------------------------------------------------------------------------
 -- Htmx fragments
 
-evaluator_ :: Maybe () -> Html ()
-evaluator_ mresult =
+evaluator_ :: Maybe (Text, String) -> Html ()
+evaluator_ minputOutput =
   form_ [makeAttributes "hx-include" "*",
          makeAttributes "hx-get" "/evaluator"] do
-    for_ mresult \_ -> p_ "Evaluator output..."
-    textarea_ [name_ "code"] (pure ())
+    textarea_ [name_ "code"] (for_ minputOutput $ toHtml . fst)
+    for_ minputOutput $ pre_ . toHtml . snd
     button_ [makeAttributes "preload" "mousedown"] "Run"
+
+--------------------------------------------------------------------------------
+-- Code evaluation via Duet
+
+runProgram :: Run -> IO String
+runProgram run@Run {..} = do
+  Exceptions.catch
+    (Exceptions.catch
+       (runNoLoggingT
+          (evalSupplyT
+             (do decls <- liftIO (parseText "" runInputCode)
+                 (binds, ctx) <- createContext decls
+                 things <-
+                   execWriterT
+                     (runStepperIO
+                        run
+                        runSteps
+                        ctx
+                        (fmap (fmap typeSignatureA) binds)
+                        runMainIs)
+                 pure (concat things))
+             [1 ..]))
+       (pure . displayContextException))
+    (pure . displayParseException)
+
+-- | Run the substitution model on the code.
+runStepperIO ::
+     forall m. (MonadSupply Int m, MonadThrow m, MonadIO m, MonadWriter [String] m)
+  => Run
+  -> Maybe Integer
+  -> Context Type Name Location
+  -> [BindGroup Type Name Location]
+  -> String
+  -> m ()
+runStepperIO Run {..} maxSteps ctx bindGroups' i = do
+  e0 <- lookupNameByString i bindGroups'
+  loop 1 "" e0
+  where
+    loop :: Integer -> String -> Expression Type Name Location -> m ()
+    loop count lastString e = do
+      e' <- expandSeq1 ctx bindGroups' e
+      let string = printExpression (defaultPrint) e
+      when
+        (string /= lastString && not runHideSteps)
+        (if cleanExpression e || not runConcise
+           then
+                  (tell [
+                     ((if runNumbered
+                         then "[" ++ show count ++ "]\n"
+                         else "\n") ++
+                      printExpression defaultPrint e) ])
+           else pure ())
+      if (fmap (const ()) e' /= fmap (const ()) e) &&
+         case maxSteps of
+           Just top -> count < top
+           Nothing -> True
+        then do
+          newE <-
+            renameExpression
+              (contextSpecials ctx)
+              (contextScope ctx)
+              (contextDataTypes ctx)
+              e'
+          loop (count + 1) string newE
+        else pure ()
+
+-- | Filter out expressions with intermediate case, if and immediately-applied lambdas.
+cleanExpression :: Expression Type i l -> Bool
+cleanExpression =
+  \case
+    CaseExpression {} -> False
+    IfExpression {} -> False
+    e0
+      | (LambdaExpression {}, args) <- fargs e0 -> null args
+    ApplicationExpression _ f x -> cleanExpression f && cleanExpression x
+    _ -> True

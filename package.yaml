@@ -10,6 +10,11 @@ default-extensions:
 - "OverloadedStrings"
 - "MultiWayIf"
 - "BlockArguments"
+- "ScopedTypeVariables"
+- "LambdaCase"
+- "RecordWildCards"
+- "FlexibleContexts"
+- "ViewPatterns"
 
 extra-source-files:
 - README.md
@@ -29,6 +34,9 @@ dependencies:
 - duet
 - warp
 - wai
+- mtl
+- monad-logger
+- exceptions
 - bytestring
 - text
 - lucid2
