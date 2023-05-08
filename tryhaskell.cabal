@@ -30,6 +30,10 @@ library
       Paths_tryhaskell
   hs-source-dirs:
       src
+  default-extensions:
+      OverloadedStrings
+      MultiWayIf
+      BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       async
@@ -54,6 +58,10 @@ executable tryhaskell-exe
       Paths_tryhaskell
   hs-source-dirs:
       app
+  default-extensions:
+      OverloadedStrings
+      MultiWayIf
+      BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       async
@@ -80,6 +88,10 @@ test-suite tryhaskell-test
       Paths_tryhaskell
   hs-source-dirs:
       test
+  default-extensions:
+      OverloadedStrings
+      MultiWayIf
+      BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       async

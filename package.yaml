@@ -6,6 +6,11 @@ author:              "Author name here"
 maintainer:          "example@example.com"
 copyright:           "2023 Author name here"
 
+default-extensions:
+- "OverloadedStrings"
+- "MultiWayIf"
+- "BlockArguments"
+
 extra-source-files:
 - README.md
 - CHANGELOG.md
