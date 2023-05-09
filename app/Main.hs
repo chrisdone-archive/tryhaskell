@@ -154,24 +154,22 @@ evaluator_ minputOutput =
 
 runProgram :: Run -> IO String
 runProgram run@Run {..} = do
-  Exceptions.catch
-    (Exceptions.catch
-       (runNoLoggingT
-          (evalSupplyT
-             (do decls <- liftIO (parseText "" runInputCode)
-                 (binds, ctx) <- createContext decls
-                 things <-
-                   execWriterT
-                     (runStepperIO
-                        run
-                        runSteps
-                        ctx
-                        (fmap (fmap typeSignatureA) binds)
-                        runMainIs)
-                 pure (concat things))
-             [1 ..]))
-       (pure . displayContextException))
-    (pure . displayParseException)
+  catchAny
+    (runNoLoggingT
+       (evalSupplyT
+          (do decls <- liftIO (parseText "" runInputCode)
+              (binds, ctx) <- createContext decls
+              things <-
+                execWriterT
+                  (runStepperIO
+                     run
+                     runSteps
+                     ctx
+                     (fmap (fmap typeSignatureA) binds)
+                     runMainIs)
+              pure (concat things))
+          [1 ..]))
+    (pure . show)
 
 -- | Run the substitution model on the code.
 runStepperIO ::
