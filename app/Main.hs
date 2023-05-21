@@ -122,6 +122,7 @@ rootResponse = responseLBS status200 [("Content-Type", "text/html; charset=utf-8
                 ,crossorigin_ "anonymous"]
                 (mempty :: Text)
       body_ [makeAttributes "hx-ext" "preload"] do
+        intro_
         evaluator_ Nothing
 
 evaluatorResponse :: Text -> IO Response
@@ -140,6 +141,13 @@ evaluatorResponse input = do
 
 --------------------------------------------------------------------------------
 -- Htmx fragments
+
+intro_ :: Html ()
+intro_ = do
+  h1_ "Try Haskell"
+  p_ do
+    "This service gives you a small version Haskell, custom designed "
+    "for teaching! You get the essence, without the distractions!"
 
 -- | The evaluator form.
 evaluator_ :: Maybe (Text, String) -> Html ()
