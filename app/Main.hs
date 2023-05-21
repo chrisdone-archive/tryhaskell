@@ -136,7 +136,7 @@ evaluatorResponse input = do
      }
   pure $ responseLBS status200 [("Content-Type", "text/html; charset=utf-8")] $
     renderBS do
-      evaluator_ (Just (input, output))
+      reply_ (Just (input, output))
 
 --------------------------------------------------------------------------------
 -- Htmx fragments
@@ -144,10 +144,14 @@ evaluatorResponse input = do
 evaluator_ :: Maybe (Text, String) -> Html ()
 evaluator_ minputOutput =
   form_ [makeAttributes "hx-include" "*",
-         makeAttributes "hx-get" "/evaluator"] do
+         makeAttributes "hx-get" "/evaluator",
+         makeAttributes "hx-target" "#reply"] do
     textarea_ [name_ "code"] (for_ minputOutput $ toHtml . fst)
-    for_ minputOutput $ pre_ . toHtml . snd
+    div_ [id_ "reply"] $ reply_ minputOutput
     button_ [makeAttributes "preload" "mousedown"] "Run"
+
+reply_ :: Maybe (Text, String) -> Html ()
+reply_ minputOutput = for_ minputOutput $ pre_ . toHtml . snd
 
 --------------------------------------------------------------------------------
 -- Code evaluation via Duet
