@@ -145,9 +145,6 @@ evaluatorResponse input = do
 intro_ :: Html ()
 intro_ = do
   h1_ "Try Haskell"
-  p_ do
-    "This service gives you a small version Haskell, custom designed "
-    "for teaching! You get the essence, without the distractions!"
 
 -- | The evaluator form.
 evaluator_ :: Maybe (Text, String) -> Html ()
