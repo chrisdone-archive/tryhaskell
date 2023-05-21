@@ -141,6 +141,7 @@ evaluatorResponse input = do
 --------------------------------------------------------------------------------
 -- Htmx fragments
 
+-- | The evaluator form.
 evaluator_ :: Maybe (Text, String) -> Html ()
 evaluator_ minputOutput =
   form_ [makeAttributes "hx-include" "*",
@@ -150,6 +151,7 @@ evaluator_ minputOutput =
     div_ [id_ "reply"] $ reply_ minputOutput
     button_ [makeAttributes "preload" "mousedown"] "Run"
 
+-- | The reply from the evaluator.
 reply_ :: Maybe (Text, String) -> Html ()
 reply_ minputOutput = for_ minputOutput $ pre_ . toHtml . snd
 
