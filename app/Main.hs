@@ -71,12 +71,20 @@ app request respond =
           case method of
             GET -> respond rootResponse
             _ -> respond invalidMethodResponse
-        ["evaluator"] ->
+        ["evaluator","reply"] ->
           case method of
             GET ->
               case queryString request of
                 [("code", Just (T.decodeUtf8 -> code))] ->
-                  evaluatorResponse code >>= respond
+                  evaluatorResponse code reply_ >>= respond
+                _ -> respond invalidArgumentResponse
+            _ -> respond invalidMethodResponse
+        ["evaluator","form"] ->
+          case method of
+            GET ->
+              case queryString request of
+                [("code", Just (T.decodeUtf8 -> code))] ->
+                  evaluatorResponse code evaluator_ >>= respond
                 _ -> respond invalidArgumentResponse
             _ -> respond invalidMethodResponse
         _ -> respond pageNotFoundResponse
@@ -121,12 +129,13 @@ rootResponse = responseLBS status200 [("Content-Type", "text/html; charset=utf-8
         script_ [src_ "https://unpkg.com/htmx.org/dist/ext/preload.js"
                 ,crossorigin_ "anonymous"]
                 (mempty :: Text)
+        style_ ".evaluator-form {border-radius: 3px; border: 2px solid #eee; background: #f5f5f5; margin: 10px; display: inline-block;}"
       body_ [makeAttributes "hx-ext" "preload"] do
         intro_
         evaluator_ Nothing
 
-evaluatorResponse :: Text -> IO Response
-evaluatorResponse input = do
+evaluatorResponse :: Text -> (Maybe (Text, String) -> Html ()) -> IO Response
+evaluatorResponse input displayer = do
   output <- runProgram Run {
      runInputCode = input,
      runMainIs = "main",
@@ -137,7 +146,7 @@ evaluatorResponse input = do
      }
   pure $ responseLBS status200 [("Content-Type", "text/html; charset=utf-8")] $
     renderBS do
-      reply_ (Just (input, output))
+      displayer (Just (input, output))
 
 --------------------------------------------------------------------------------
 -- Htmx fragments
@@ -149,12 +158,19 @@ intro_ = do
 -- | The evaluator form.
 evaluator_ :: Maybe (Text, String) -> Html ()
 evaluator_ minputOutput =
-  form_ [] do
+  form_ [class_ "evaluator-form"] do
     textarea_ [name_ "code", class_ "code"] (for_ minputOutput $ toHtml . fst)
     div_ [class_ "reply"] $ reply_ minputOutput
     button_
       [makeAttributes "hx-include" "previous .code"
-      ,makeAttributes "hx-get" "/evaluator"
+      ,makeAttributes "hx-get" "/evaluator/form"
+      ,makeAttributes "hx-target" "closest form"
+      ,makeAttributes "hx-swap" "afterend"
+      ]
+      "Clone"
+    button_
+      [makeAttributes "hx-include" "previous .code"
+      ,makeAttributes "hx-get" "/evaluator/reply"
       ,makeAttributes "hx-target" "previous .reply"
       ]
       "Run"
