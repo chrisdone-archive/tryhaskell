@@ -154,7 +154,7 @@ evaluator_ minputOutput =
          makeAttributes "hx-target" "find .reply"] do
     textarea_ [name_ "code"] (for_ minputOutput $ toHtml . fst)
     div_ [class_ "reply"] $ reply_ minputOutput
-    button_ [makeAttributes "preload" "mousedown"] "Run"
+    button_ [] "Run"
 
 -- | The reply from the evaluator.
 reply_ :: Maybe (Text, String) -> Html ()
