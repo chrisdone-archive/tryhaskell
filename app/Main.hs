@@ -149,11 +149,11 @@ intro_ = do
 -- | The evaluator form.
 evaluator_ :: Maybe (Text, String) -> Html ()
 evaluator_ minputOutput =
-  form_ [makeAttributes "hx-include" "*",
+  form_ [makeAttributes "hx-include" "find [name='code']",
          makeAttributes "hx-get" "/evaluator",
-         makeAttributes "hx-target" "#reply"] do
+         makeAttributes "hx-target" "find .reply"] do
     textarea_ [name_ "code"] (for_ minputOutput $ toHtml . fst)
-    div_ [id_ "reply"] $ reply_ minputOutput
+    div_ [class_ "reply"] $ reply_ minputOutput
     button_ [makeAttributes "preload" "mousedown"] "Run"
 
 -- | The reply from the evaluator.
