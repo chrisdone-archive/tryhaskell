@@ -63,7 +63,7 @@ library:
   source-dirs: src
 
 executables:
-  tryhaskell-exe:
+  tryhaskell:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
