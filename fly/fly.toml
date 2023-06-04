@@ -14,4 +14,4 @@ primary_region = "lhr"
   min_machines_running = 0
 
 [build]
-  image = "ghcr.io/chrisdone/tryhaskell:latest"
+  image = "ghcr.io/chrisdone/tryhaskell@sha256:d968d8eb2a0f69099236c3fd9d088d14988b35e4a116f89169ca5296898bf757"

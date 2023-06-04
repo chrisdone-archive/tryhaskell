@@ -142,7 +142,7 @@ evaluatorResponse input displayer = do
      runConcise = True,
      runNumbered = False,
      runSteps = Just 100,
-     runHideSteps = True
+     runHideSteps = False
      }
   pure $ responseLBS status200 [("Content-Type", "text/html; charset=utf-8")] $
     renderBS do
